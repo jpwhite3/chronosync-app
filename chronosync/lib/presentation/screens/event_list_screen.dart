@@ -9,26 +9,30 @@ class EventListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(series.title),
-      ),
-      body: ListView.builder(
-        itemCount: series.events.length,
-        itemBuilder: (context, index) {
-          final event = series.events[index];
-          return ListTile(
-            title: Text(event.title),
-            subtitle: Text(event.duration.toString()),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showAddEventDialog(context, series);
-        },
-        child: const Icon(Icons.add),
-      ),
+    return BlocBuilder<SeriesBloc, SeriesState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(series.title),
+          ),
+          body: ListView.builder(
+            itemCount: series.events.length,
+            itemBuilder: (context, index) {
+              final event = series.events[index];
+              return ListTile(
+                title: Text(event.title),
+                subtitle: Text(event.duration.toString()),
+              );
+            },
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _showAddEventDialog(context, series);
+            },
+            child: const Icon(Icons.add),
+          ),
+        );
+      },
     );
   }
 
