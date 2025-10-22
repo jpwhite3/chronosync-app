@@ -55,8 +55,8 @@ description: "Task list for ChronoSync MVP implementation"
 
 - [X] T009 [US1] Create the UI for the Series list screen in `lib/presentation/screens/series_list_screen.dart`. This screen should display a list of all created series.
 - [X] T010 [US1] Implement the "Create Series" functionality, showing a dialog to get the series title and triggering the BLoC event to save it.
-- [ ] T011 [US1] Create the UI for the Event list screen in `lib/presentation/screens/event_list_screen.dart`. This screen should display the events for a selected series.
-- [ ] T012 [US1] Implement the "Add Event" functionality on the Event list screen, showing a dialog to get the event title and duration.
+- [X] T011 [US1] Create the UI for the Event list screen in `lib/presentation/screens/event_list_screen.dart`. This screen should display the events for a selected series.
+- [X] T012 [US1] Implement the "Add Event" functionality on the Event list screen, showing a dialog to get the event title and duration.
 - [ ] T013 [US1] Connect the UI to the `SeriesBloc` to display real data and handle state changes.
 - [ ] T014 [P] [US1] Write unit tests for the `SeriesRepository` in `test/data/repositories/series_repository_test.dart`.
 - [ ] T015 [P] [US1] Write unit tests for the `SeriesBloc` in `test/logic/series_bloc/series_bloc_test.dart`.

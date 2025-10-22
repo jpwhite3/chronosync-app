@@ -4,6 +4,7 @@ import 'package:chronosync/logic/series_bloc/series_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:chronosync/presentation/screens/event_list_screen.dart';
 
 class SeriesListScreen extends StatelessWidget {
   const SeriesListScreen({super.key});
@@ -27,6 +28,14 @@ class SeriesListScreen extends StatelessWidget {
                 final series = state.series[index];
                 return ListTile(
                   title: Text(series.title),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EventListScreen(series: series),
+                      ),
+                    );
+                  },
                 );
               },
             );
