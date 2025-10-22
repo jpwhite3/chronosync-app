@@ -1,50 +1,50 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version change: none → 1.0.0 (initial constitution)
+- Added principles: I. Specification-Driven Development, II. Template-Driven Consistency, III. Progressive Enhancement, IV. Quality Gates, V. Tool Integration
+- Added sections: Development Standards, Quality Assurance
+- Templates requiring updates: ✅ plan-template.md, ✅ spec-template.md, ✅ tasks-template.md
+- Follow-up TODOs: none
+-->
+
+# Cronos App Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Specification-Driven Development
+Every feature MUST begin with a complete specification before implementation. Specifications must define user scenarios, functional requirements, success criteria, and acceptance tests. Implementation without approved specification is prohibited. This ensures alignment between stakeholders and prevents scope creep during development.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Template-Driven Consistency
+All project artifacts MUST follow standardized templates for specifications, plans, tasks, and checklists. Templates ensure consistency across features and enable automation. Deviation from templates requires explicit justification and constitutional amendment. This principle maintains quality and enables tool integration.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Progressive Enhancement (NON-NEGOTIABLE)
+Features MUST be developed in priority order with independent testing at each increment. Each user story must be independently implementable and deliverable. This enables early validation, reduces risk, and allows for iterative feedback incorporation.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Quality Gates
+All features MUST pass constitutional compliance checks before proceeding to the next phase. Quality gates include specification completeness, plan validation, task coverage, and implementation verification. Gate violations MUST be resolved or explicitly justified before advancement.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Tool Integration
+All development processes MUST support both interactive and automated execution. Commands must provide JSON output for automation and human-readable output for manual use. This enables CI/CD integration and maintains developer experience flexibility.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Development Standards
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+Development MUST follow semantic versioning for all artifacts. Breaking changes require MAJOR version increments. New capabilities require MINOR version increments. Bug fixes and clarifications require PATCH version increments. All version changes MUST be documented with rationale.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+File organization MUST follow the prescribed directory structure with `.specify/` for templates and scripts, `specs/` for feature documentation, and source code at repository root. Absolute file paths MUST be used in all automation to ensure reliability across environments.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## CI/CD Standards
+
+- All features should be developed on a new branch off of `main`, and use the following format: feature/[name-of-feature]
+- Tasks should be completed within a single commit, and pushed to the feature branch with a descriptive commit message.
+
+## Quality Assurance
+
+Code reviews MUST verify constitutional compliance before merge. All pull requests MUST include constitutional checklist validation. Quality metrics MUST be measured and reported for each feature delivery. Performance against success criteria MUST be validated post-deployment.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other development practices and guidelines. Amendments require documentation of impact analysis, approval by project maintainers, and migration plan for existing artifacts. Constitutional violations MUST be addressed immediately upon discovery.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+All development tools and commands MUST verify compliance with these principles. Complexity introductions MUST be justified against constitutional principles. Teams MUST use agent-specific guidance files for runtime development assistance while maintaining constitutional compliance.
+
+**Version**: 1.0.0 | **Ratified**: 2025-10-22 | **Last Amended**: 2025-10-22
