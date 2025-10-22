@@ -40,8 +40,8 @@ description: "Task list for ChronoSync MVP implementation"
 
 - [X] T005 Initialize Hive for local storage in `main.dart`.
 - [X] T006 [P] Define the `Series` and `Event` data models in `lib/data/models/series.dart` and `lib/data/models/event.dart`. Register them with Hive.
-- [ ] T007 [P] Create a `SeriesRepository` in `lib/data/repositories/series_repository.dart` to handle CRUD operations for Series and Events using Hive.
-- [ ] T008 [P] Set up the basic BLoC for Series management in `lib/logic/series_bloc/series_bloc.dart`.
+- [X] T007 [P] Create a `SeriesRepository` in `lib/data/repositories/series_repository.dart` to handle CRUD operations for Series and Events using Hive.
+- [X] T008 [P] Set up the basic BLoC for Series management in `lib/logic/series_bloc/series_bloc.dart`.
 
 ---
 
