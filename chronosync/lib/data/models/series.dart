@@ -1,3 +1,4 @@
+import 'package:chronosync/data/models/event.dart';
 import 'package:hive/hive.dart';
 
 part 'series.g.dart';

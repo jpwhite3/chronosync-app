@@ -58,8 +58,8 @@ description: "Task list for ChronoSync MVP implementation"
 - [X] T011 [US1] Create the UI for the Event list screen in `lib/presentation/screens/event_list_screen.dart`. This screen should display the events for a selected series.
 - [X] T012 [US1] Implement the "Add Event" functionality on the Event list screen, showing a dialog to get the event title and duration.
 - [X] T013 [US1] Connect the UI to the `SeriesBloc` to display real data and handle state changes.
-- [ ] T014 [P] [US1] Write unit tests for the `SeriesRepository` in `test/data/repositories/series_repository_test.dart`.
-- [ ] T015 [P] [US1] Write unit tests for the `SeriesBloc` in `test/logic/series_bloc/series_bloc_test.dart`.
+- [X] T014 [P] [US1] Write unit tests for the `SeriesRepository` in `test/data/repositories/series_repository_test.dart`.
+- [X] T015 [P] [US1] Write unit tests for the `SeriesBloc` in `test/logic/series_bloc/series_bloc_test.dart`.
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently.
 
@@ -73,16 +73,16 @@ description: "Task list for ChronoSync MVP implementation"
 
 ### Implementation for User Story 2
 
-- [ ] T016 [US2] Create the `LiveTimerBloc` in `lib/logic/live_timer_bloc/live_timer_bloc.dart` to manage the state of the live timer screen (current event, timers, etc.).
-- [ ] T017 [US2] Create the UI for the Live Timer screen in `lib/presentation/screens/live_timer_screen.dart`.
-- [ ] T018 [US2] Implement the "Start" button on the Series list screen to navigate to the Live Timer screen and initialize the `LiveTimerBloc` with the selected series.
-- [ ] T019 [US2] Implement the display of the current event's title.
-- [ ] T020 [US2] Implement the countdown and count-up timers using a `Timer.periodic`.
-- [ ] T021 [US2] Implement the logic for the countdown timer turning red and showing negative time when the duration is exceeded.
-- [ ] T022 [US2] Implement the "NEXT" button to advance to the next event, updating the BLoC state.
-- [ ] T023 [US2] Implement the summary screen when the last event is completed.
-- [ ] T024 [P] [US2] Write unit tests for the `LiveTimerBloc` in `test/logic/live_timer_bloc/live_timer_bloc_test.dart`.
-- [ ] T025 [P] [US2] Write widget tests for the `LiveTimerScreen` in `test/presentation/screens/live_timer_screen_test.dart` to verify UI updates.
+- [X] T016 [US2] Create the `LiveTimerBloc` in `lib/logic/live_timer_bloc/live_timer_bloc.dart` to manage the state of the live timer screen (current event, timers, etc.).
+- [X] T017 [US2] Create the UI for the Live Timer screen in `lib/presentation/screens/live_timer_screen.dart`.
+- [X] T018 [US2] Implement the "Start" button on the Series list screen to navigate to the Live Timer screen and initialize the `LiveTimerBloc` with the selected series.
+- [X] T019 [US2] Implement the display of the current event's title.
+- [X] T020 [US2] Implement the countdown and count-up timers using a `Timer.periodic`.
+- [X] T021 [US2] Implement the logic for the countdown timer turning red and showing negative time when the duration is exceeded.
+- [X] T022 [US2] Implement the "NEXT" button to advance to the next event, updating the BLoC state.
+- [X] T023 [US2] Implement the summary screen when the last event is completed.
+- [X] T024 [P] [US2] Write unit tests for the `LiveTimerBloc` in `test/logic/live_timer_bloc/live_timer_bloc_test.dart`.
+- [X] T025 [P] [US2] Write widget tests for the `LiveTimerScreen` in `test/presentation/screens/live_timer_screen_test.dart` to verify UI updates.
 
 **Checkpoint**: All user stories should now be independently functional.
 
@@ -92,9 +92,9 @@ description: "Task list for ChronoSync MVP implementation"
 
 **Purpose**: Improvements that affect multiple user stories.
 
-- [ ] T026 [P] Add basic error handling and user feedback for all interactions.
-- [ ] T027 [P] Refine the UI/UX for a more polished look and feel.
-- [ ] T028 [P] Write documentation for the main BLoCs and Repositories.
+- [X] T026 [P] Add basic error handling and user feedback for all interactions.
+- [X] T027 [P] Refine the UI/UX for a more polished look and feel.
+- [X] T028 [P] Write documentation for the main BLoCs and Repositories.
 
 ---
 

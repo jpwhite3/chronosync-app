@@ -1,6 +1,8 @@
+import 'package:chronosync/data/models/event.dart';
 import 'package:chronosync/data/models/series.dart';
-import 'package:flutter/material.dart';
 import 'package:chronosync/logic/series_bloc/series_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EventListScreen extends StatelessWidget {
   final Series series;
@@ -17,8 +19,8 @@ class EventListScreen extends StatelessWidget {
           ),
           body: ListView.builder(
             itemCount: series.events.length,
-            itemBuilder: (context, index) {
-              final event = series.events[index];
+            itemBuilder: (BuildContext context, int index) {
+              final Event event = series.events[index];
               return ListTile(
                 title: Text(event.title),
                 subtitle: Text(event.duration.toString()),
@@ -37,17 +39,17 @@ class EventListScreen extends StatelessWidget {
   }
 
   void _showAddEventDialog(BuildContext context, Series series) {
-    final titleController = TextEditingController();
-    final durationController = TextEditingController();
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController durationController = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Add Event'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
+            children: <Widget>[
               TextField(
                 controller: titleController,
                 decoration: const InputDecoration(hintText: 'Event Title'),
@@ -59,7 +61,7 @@ class EventListScreen extends StatelessWidget {
               ),
             ],
           ),
-          actions: [
+          actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Cancel'),

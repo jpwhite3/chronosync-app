@@ -24,7 +24,7 @@ class SeriesRepository {
   }
 
   Future<void> addEventToSeries(int seriesKey, Event event) async {
-    final series = _seriesBox.get(seriesKey);
+    final Series? series = _seriesBox.get(seriesKey);
     if (series != null) {
       series.events.add(event);
       await series.save();

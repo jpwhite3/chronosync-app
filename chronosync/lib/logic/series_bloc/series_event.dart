@@ -4,7 +4,7 @@ abstract class SeriesEvent extends Equatable {
   const SeriesEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[];
 }
 
 class LoadSeries extends SeriesEvent {}
@@ -15,5 +15,5 @@ class AddSeries extends SeriesEvent {
   const AddSeries(this.series);
 
   @override
-  List<Object> get props => [series];
+  List<Object> get props => <Object>[series];
 }

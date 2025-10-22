@@ -15,7 +15,7 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
   }
 
   void _onLoadSeries(LoadSeries event, Emitter<SeriesState> emit) {
-    final series = _seriesRepository.getAllSeries();
+    final List<Series> series = _seriesRepository.getAllSeries();
     emit(SeriesLoaded(series));
   }
 

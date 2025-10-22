@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SeriesBloc(SeriesRepository(Hive.box('series'))),
+      create: (BuildContext context) => SeriesBloc(SeriesRepository(Hive.box('series'))),
       child: MaterialApp(
         title: 'ChronoSync',
         theme: ThemeData(
