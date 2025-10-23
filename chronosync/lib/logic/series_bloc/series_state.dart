@@ -11,11 +11,12 @@ class SeriesInitial extends SeriesState {}
 
 class SeriesLoaded extends SeriesState {
   final List<Series> series;
+  final Object _identity = Object();
 
-  const SeriesLoaded(this.series);
+  SeriesLoaded(this.series);
 
   @override
-  List<Object> get props => <Object>[series];
+  List<Object> get props => <Object>[series, _identity];
 }
 
 class SeriesDeletionPending extends SeriesState {

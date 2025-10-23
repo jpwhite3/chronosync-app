@@ -64,7 +64,11 @@ class SeriesListScreen extends StatelessWidget {
                   series: series,
                   index: index,
                   onDismissed: () {
-                    context.read<SeriesBloc>().add(
+                    // Capture the bloc reference before showing snackbar
+                    final seriesBloc = context.read<SeriesBloc>();
+                    final seriesKey = series.key;
+                    
+                    seriesBloc.add(
                       DeleteSeries(series, index),
                     );
 
@@ -76,8 +80,8 @@ class SeriesListScreen extends StatelessWidget {
                         action: SnackBarAction(
                           label: 'Undo',
                           onPressed: () {
-                            context.read<SeriesBloc>().add(
-                              UndoDeletion(series.key),
+                            seriesBloc.add(
+                              UndoDeletion(seriesKey),
                             );
                           },
                         ),

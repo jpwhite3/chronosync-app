@@ -31,12 +31,17 @@ class DismissibleEventItem extends StatelessWidget {
           key: Key(event.key.toString()),
           direction: direction.dismissDirection,
           confirmDismiss: (dismissDirection) async {
-            // Check if event is in active timer
-            final timerState = context.read<LiveTimerBloc>().state;
-            if (timerState is LiveTimerRunning &&
-                timerState.currentEvent.key == event.key) {
-              _showActiveTimerDialog(context);
-              return false;
+            // Check if event is in active timer (if LiveTimerBloc is available)
+            try {
+              final timerBloc = context.read<LiveTimerBloc>();
+              final timerState = timerBloc.state;
+              if (timerState is LiveTimerRunning &&
+                  timerState.currentEvent.key == event.key) {
+                _showActiveTimerDialog(context);
+                return false;
+              }
+            } catch (e) {
+              // LiveTimerBloc not available in context - allow deletion
             }
             return true;
           },

@@ -11,6 +11,7 @@ part 'series_state.dart';
 class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
   final SeriesRepository _seriesRepository;
   final Map<dynamic, Timer> _pendingDeletions = {};
+  final Map<dynamic, _DeletionContext> _deletionContexts = {};
 
   SeriesBloc(this._seriesRepository) : super(SeriesInitial()) {
     on<LoadSeries>(_onLoadSeries);
@@ -22,8 +23,12 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
   }
 
   void _onLoadSeries(LoadSeries event, Emitter<SeriesState> emit) {
-    final List<Series> series = _seriesRepository.getAllSeries();
-    emit(SeriesLoaded(series));
+    final List<Series> allSeries = _seriesRepository.getAllSeries();
+    // Filter out series that are pending deletion
+    final List<Series> visibleSeries = allSeries
+        .where((s) => !_pendingDeletions.containsKey(s.key))
+        .toList();
+    emit(SeriesLoaded(visibleSeries));
   }
 
   Future<void> _onAddSeries(AddSeries event, Emitter<SeriesState> emit) async {
@@ -36,6 +41,13 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
       // Cancel existing timer if present (rapid deletion handling)
       _pendingDeletions[event.event.key]?.cancel();
       
+      // Store deletion context for undo
+      _deletionContexts[event.event.key] = _DeletionContext(
+        event: event.event,
+        parentSeries: event.series,
+        index: event.index,
+      );
+      
       // Remove from series.events HiveList
       event.series.events.remove(event.event);
       await event.series.save();
@@ -46,6 +58,7 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
         () async {
           await event.event.delete();
           _pendingDeletions.remove(event.event.key);
+          _deletionContexts.remove(event.event.key);
           
           // Validate data consistency after permanent deletion
           if (!_validateDataConsistency()) {
@@ -62,6 +75,13 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
         // Cancel existing timer if present
         _pendingDeletions[event.event.key]?.cancel();
         
+        // Store deletion context for undo (in retry path too)
+        _deletionContexts[event.event.key] = _DeletionContext(
+          event: event.event,
+          parentSeries: event.series,
+          index: event.index,
+        );
+        
         event.series.events.remove(event.event);
         await event.series.save();
         
@@ -70,6 +90,7 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
           () async {
             await event.event.delete();
             _pendingDeletions.remove(event.event.key);
+            _deletionContexts.remove(event.event.key);
           },
         );
         
@@ -82,9 +103,23 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
 
   Future<void> _onUndoDeletion(UndoDeletion event, Emitter<SeriesState> emit) async {
     final timer = _pendingDeletions[event.itemKey];
-    if (timer != null) {
+    final context = _deletionContexts[event.itemKey];
+    
+    if (timer != null && context != null) {
       timer.cancel();
       _pendingDeletions.remove(event.itemKey);
+      _deletionContexts.remove(event.itemKey);
+      
+      // Restore the event to its parent series
+      if (context.event != null && context.parentSeries != null) {
+        context.parentSeries!.events.insert(context.index, context.event!);
+        await context.parentSeries!.save();
+      }
+      
+      // Restore the series (if it was a series deletion)
+      // Since we never actually deleted it, it will show up again when we reload
+      // after removing it from _pendingDeletions (which happens above)
+      
       add(LoadSeries());
     }
   }
@@ -94,14 +129,23 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
       // Cancel existing timer if present (rapid deletion handling)
       _pendingDeletions[event.series.key]?.cancel();
       
-      // Remove series from repository
-      await event.series.delete();
+      // Store deletion context for undo
+      _deletionContexts[event.series.key] = _DeletionContext(
+        series: event.series,
+        index: event.index,
+      );
+      
+      // DON'T delete immediately - wait for timer to expire or undo
+      // This allows undo to work properly
 
-      // Start undo timer
+      // Start undo timer - only permanently delete when timer expires
       _pendingDeletions[event.series.key] = Timer(
         const Duration(seconds: 8),
-        () {
+        () async {
+          // Now permanently delete the series
+          await event.series.delete();
           _pendingDeletions.remove(event.series.key);
+          _deletionContexts.remove(event.series.key);
         },
       );
 
@@ -113,12 +157,21 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
         // Cancel existing timer if present
         _pendingDeletions[event.series.key]?.cancel();
         
-        await event.series.delete();
+        // Store deletion context for undo (retry path)
+        _deletionContexts[event.series.key] = _DeletionContext(
+          series: event.series,
+          index: event.index,
+        );
+        
+        // DON'T delete immediately in retry path either
         
         _pendingDeletions[event.series.key] = Timer(
           const Duration(seconds: 8),
-          () {
+          () async {
+            // Permanently delete when timer expires
+            await event.series.delete();
             _pendingDeletions.remove(event.series.key);
+            _deletionContexts.remove(event.series.key);
           },
         );
         
@@ -183,4 +236,19 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
     }
     return super.close();
   }
+}
+
+/// Helper class to store deletion context for undo functionality
+class _DeletionContext {
+  final Event? event;
+  final Series? series;
+  final Series? parentSeries;
+  final int index;
+
+  _DeletionContext({
+    this.event,
+    this.series,
+    this.parentSeries,
+    required this.index,
+  });
 }

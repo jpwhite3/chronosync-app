@@ -73,7 +73,11 @@ class EventListScreen extends StatelessWidget {
                 series: currentSeries,
                 index: index,
                 onDismissed: () {
-                  context.read<SeriesBloc>().add(
+                  // Capture the bloc reference before showing snackbar
+                  final seriesBloc = context.read<SeriesBloc>();
+                  final eventKey = event.key;
+                  
+                  seriesBloc.add(
                     DeleteEvent(event, currentSeries, index),
                   );
 
@@ -85,8 +89,8 @@ class EventListScreen extends StatelessWidget {
                       action: SnackBarAction(
                         label: 'Undo',
                         onPressed: () {
-                          context.read<SeriesBloc>().add(
-                            UndoDeletion(event.key),
+                          seriesBloc.add(
+                            UndoDeletion(eventKey),
                           );
                         },
                       ),
@@ -138,6 +142,10 @@ class EventListScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
+                // Capture bloc and navigator references before async operations
+                final seriesBloc = context.read<SeriesBloc>();
+                final navigator = Navigator.of(context);
+                
                 final event = Event.fromDuration(
                   title: titleController.text,
                   duration: Duration(
@@ -154,10 +162,9 @@ class EventListScreen extends StatelessWidget {
                 series.events.add(event);
                 await series.save();
                 
-                if (context.mounted) {
-                  context.read<SeriesBloc>().add(LoadSeries());
-                  Navigator.pop(context);
-                }
+                // Use captured references
+                seriesBloc.add(LoadSeries());
+                navigator.pop();
               },
               child: const Text('Add'),
             ),

@@ -5,6 +5,7 @@ import 'package:chronosync/data/models/user_preferences.dart';
 import 'package:chronosync/logic/settings_cubit/settings_cubit.dart';
 import 'package:chronosync/logic/settings_cubit/settings_state.dart';
 import 'package:chronosync/presentation/widgets/deletion_confirmation_dialog.dart';
+import 'package:chronosync/presentation/screens/event_list_screen.dart';
 
 class DismissibleSeriesItem extends StatelessWidget {
   final Series series;
@@ -54,13 +55,32 @@ class DismissibleSeriesItem extends StatelessWidget {
           child: ListTile(
             title: Text(series.title),
             subtitle: Text('${series.events.length} event(s)'),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.play_arrow),
+                  onPressed: series.events.isEmpty ? null : () {
+                    // TODO: Navigate to live timer screen with this series
+                    // For now, just show a placeholder message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Timer feature coming soon!'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
             onTap: () {
               // Navigate to event list screen
-              Navigator.pushNamed(
+              Navigator.push(
                 context,
-                '/events',
-                arguments: series,
+                MaterialPageRoute(
+                  builder: (context) => EventListScreen(series: series),
+                ),
               );
             },
           ),
