@@ -17,3 +17,42 @@ class AddSeries extends SeriesEvent {
   @override
   List<Object> get props => <Object>[series];
 }
+
+class DeleteEvent extends SeriesEvent {
+  final Event event;
+  final Series series;
+  final int index;
+
+  const DeleteEvent(this.event, this.series, this.index);
+
+  @override
+  List<Object> get props => [event, series, index];
+}
+
+class UndoDeletion extends SeriesEvent {
+  final dynamic itemKey;
+
+  const UndoDeletion(this.itemKey);
+
+  @override
+  List<Object> get props => [itemKey];
+}
+
+class ConfirmPermanentDeletion extends SeriesEvent {
+  final dynamic itemKey;
+
+  const ConfirmPermanentDeletion(this.itemKey);
+
+  @override
+  List<Object> get props => [itemKey];
+}
+
+class DeleteSeries extends SeriesEvent {
+  final Series series;
+  final int index;
+
+  const DeleteSeries(this.series, this.index);
+
+  @override
+  List<Object> get props => [series, index];
+}

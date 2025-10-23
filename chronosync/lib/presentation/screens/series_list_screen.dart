@@ -1,9 +1,8 @@
 import 'package:chronosync/data/models/event.dart';
 import 'package:chronosync/data/models/series.dart';
-import 'package:chronosync/logic/live_timer_bloc/live_timer_bloc.dart';
 import 'package:chronosync/logic/series_bloc/series_bloc.dart';
-import 'package:chronosync/presentation/screens/event_list_screen.dart';
-import 'package:chronosync/presentation/screens/live_timer_screen.dart';
+import 'package:chronosync/presentation/widgets/dismissible_series_item.dart';
+import 'package:chronosync/presentation/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
@@ -16,40 +15,76 @@ class SeriesListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Series'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      body: BlocBuilder<SeriesBloc, SeriesState>(
-        builder: (BuildContext context, SeriesState state) {
-          if (state is SeriesInitial) {
-            context.read<SeriesBloc>().add(LoadSeries());
-            return const Center(child: CircularProgressIndicator());
+      body: BlocListener<SeriesBloc, SeriesState>(
+        listener: (context, state) {
+          if (state is DeletionError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                duration: const Duration(seconds: 5),
+                action: SnackBarAction(
+                  label: 'Retry',
+                  onPressed: () {
+                    // Retry deletion for all series in the error state
+                    for (final series in state.series) {
+                      context.read<SeriesBloc>().add(DeleteSeries(series, -1));
+                    }
+                  },
+                ),
+              ),
+            );
           }
-          if (state is SeriesLoaded) {
+        },
+        child: BlocBuilder<SeriesBloc, SeriesState>(
+          builder: (BuildContext context, SeriesState state) {
+            if (state is SeriesInitial) {
+              context.read<SeriesBloc>().add(LoadSeries());
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is SeriesLoaded) {
             return ListView.builder(
               itemCount: state.series.length,
               itemBuilder: (BuildContext context, int index) {
                 final Series series = state.series[index];
-                return ListTile(
-                  title: Text(series.title),
-                  subtitle: Text('${series.events.length} events'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.play_arrow),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => BlocProvider(
-                            create: (BuildContext context) => LiveTimerBloc()..add(StartTimer(series)),
-                            child: const LiveTimerScreen(),
-                          ),
+                return DismissibleSeriesItem(
+                  series: series,
+                  index: index,
+                  onDismissed: () {
+                    // Capture the bloc reference before showing snackbar
+                    final seriesBloc = context.read<SeriesBloc>();
+                    final seriesKey = series.key;
+                    
+                    seriesBloc.add(
+                      DeleteSeries(series, index),
+                    );
+
+                    // Show undo snackbar
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Series deleted'),
+                        duration: const Duration(seconds: 8),
+                        action: SnackBarAction(
+                          label: 'Undo',
+                          onPressed: () {
+                            seriesBloc.add(
+                              UndoDeletion(seriesKey),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => EventListScreen(series: series),
                       ),
                     );
                   },
@@ -59,6 +94,7 @@ class SeriesListScreen extends StatelessWidget {
           }
           return const Center(child: Text('Something went wrong.'));
         },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
