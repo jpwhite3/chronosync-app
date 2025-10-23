@@ -1,0 +1,60 @@
+# Miscellaneous
+*.class
+*.lock
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+.venv/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code related
+.classpath
+.project
+.settings/
+.vscode/*
+.ccls-cache
+
+# Flutter/Dart specific
+**/.dart_tool/
+**/.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+**/build/
+**/ios/.symlinks/
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/windows/flutter/ephemeral/
+**/linux/flutter/ephemeral/
+**/macos/flutter/ephemeral/
+**/web/flutter_service_worker.js
+**/web/index.html
+**/web/manifest.json
+**/web/favicon.png
+**/web/icons/
+**/web/assets/
+**/web/main.dart.js
+**/web/flutter.js
+**/web/version.json
+
+# Generated files (e.g., from code generation packages like Freezed, BLoC)
+**/*.g.dart
+**/*.freezed.dart
+
+# FVM (Flutter Version Management)
+.fvm/flutter_sdk
+
+# Environment variables (if used)
+.env
+.env.*
