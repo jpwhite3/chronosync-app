@@ -8,7 +8,14 @@ class Event extends HiveObject {
   String title;
 
   @HiveField(1)
-  Duration duration;
+  int durationInSeconds;
 
-  Event({required this.title, required this.duration});
+  Event({required this.title, required this.durationInSeconds});
+
+  // Helper getter to get Duration object
+  Duration get duration => Duration(seconds: durationInSeconds);
+  
+  // Helper constructor for convenience
+  Event.fromDuration({required this.title, required Duration duration})
+      : durationInSeconds = duration.inSeconds;
 }

@@ -28,18 +28,21 @@ class LiveTimerScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    _formatDuration(state.elapsedSeconds),
+                    state.isOvertime
+                        ? '00:00'
+                        : _formatDuration(state.remainingSeconds),
                     style: Theme.of(context).textTheme.displayLarge,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    state.isOvertime
-                        ? 'Overtime: ${_formatDuration(state.remainingSeconds.abs())}'
-                        : 'Remaining: ${_formatDuration(state.remainingSeconds)}',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: state.isOvertime ? Colors.red : null,
-                        ),
-                  ),
+                  if (state.isOvertime) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      'Overtime: ${_formatDuration(state.overtimeSeconds)}',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
                   const SizedBox(height: 40),
                   ElevatedButton(
                     onPressed: () {

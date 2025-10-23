@@ -18,7 +18,7 @@ class EventAdapter extends TypeAdapter<Event> {
     };
     return Event(
       title: fields[0] as String,
-      duration: fields[1] as Duration,
+      durationInSeconds: fields[1] as int,
     );
   }
 
@@ -29,7 +29,7 @@ class EventAdapter extends TypeAdapter<Event> {
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
-      ..write(obj.duration);
+      ..write(obj.durationInSeconds);
   }
 
   @override

@@ -22,9 +22,17 @@ class LiveTimerRunning extends LiveTimerState {
 
   Event get currentEvent => series.events[currentEventIndex];
 
-  int get remainingSeconds => currentEvent.duration.inSeconds - elapsedSeconds;
+  int get remainingSeconds {
+    final remaining = currentEvent.duration.inSeconds - elapsedSeconds;
+    return remaining < 0 ? 0 : remaining;
+  }
 
-  bool get isOvertime => remainingSeconds < 0;
+  int get overtimeSeconds {
+    final remaining = currentEvent.duration.inSeconds - elapsedSeconds;
+    return remaining < 0 ? -remaining : 0;
+  }
+
+  bool get isOvertime => currentEvent.duration.inSeconds - elapsedSeconds < 0;
 
   @override
   List<Object> get props => [series, currentEventIndex, elapsedSeconds];
