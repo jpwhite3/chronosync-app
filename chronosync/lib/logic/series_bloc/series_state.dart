@@ -17,3 +17,23 @@ class SeriesLoaded extends SeriesState {
   @override
   List<Object> get props => <Object>[series];
 }
+
+class SeriesDeletionPending extends SeriesState {
+  final List<Series> series;
+  final Map<dynamic, dynamic> pendingDeletions;
+
+  const SeriesDeletionPending(this.series, this.pendingDeletions);
+
+  @override
+  List<Object> get props => [series, pendingDeletions];
+}
+
+class DeletionError extends SeriesState {
+  final String message;
+  final List<Series> series;
+
+  const DeletionError(this.message, this.series);
+
+  @override
+  List<Object> get props => [message, series];
+}
