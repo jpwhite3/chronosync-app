@@ -26,13 +26,13 @@ This is a Flutter mobile application with the following structure:
 
 **Purpose**: Project initialization and data model preparation for auto-progress feature
 
-- [ ] T001 Add just_audio dependency (^0.9.36) to chronosync/pubspec.yaml
-- [ ] T002 Create assets/audio/ directory and add auto_progress_beep.mp3 audio file
-- [ ] T003 Update chronosync/pubspec.yaml to include audio asset (assets/audio/auto_progress_beep.mp3)
-- [ ] T004 Run `flutter pub get` to fetch new dependencies
-- [ ] T005 Create lib/data/models/series_statistics.dart with SeriesStatistics class (transient model)
+- [X] T001 Add just_audio dependency (^0.9.36) to chronosync/pubspec.yaml
+- [X] T002 Create assets/audio/ directory and add auto_progress_beep.mp3 audio file
+- [X] T003 Update chronosync/pubspec.yaml to include audio asset (assets/audio/auto_progress_beep.mp3)
+- [X] T004 Run `flutter pub get` to fetch new dependencies
+- [X] T005 Create lib/data/models/series_statistics.dart with SeriesStatistics class (transient model)
 
-**Checkpoint**: Dependencies installed, assets configured, base statistics model created
+**Checkpoint**: Dependencies installed, assets configured, base statistics model created ✅
 
 ---
 
@@ -42,15 +42,15 @@ This is a Flutter mobile application with the following structure:
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Add autoProgress field (bool, default false) to Event model in lib/data/models/event.dart
-- [ ] T007 Add autoProgressAudioEnabled field (bool, default true) to UserPreferences model in lib/data/models/user_preferences.dart
-- [ ] T008 Run `flutter packages pub run build_runner build --delete-conflicting-outputs` to regenerate type adapters
-- [ ] T009 Create unit test for Event.autoProgress default value in test/data/models/event_test.dart
-- [ ] T010 Create unit test for UserPreferences.autoProgressAudioEnabled default in test/data/models/user_preferences_test.dart
-- [ ] T011 Create unit tests for SeriesStatistics computed properties in test/data/models/series_statistics_test.dart
-- [ ] T012 Run `flutter test` to verify data model tests pass
+- [X] T006 Add autoProgress field (bool, default false) to Event model in lib/data/models/event.dart
+- [X] T007 Add autoProgressAudioEnabled field (bool, default true) to UserPreferences model in lib/data/models/user_preferences.dart
+- [X] T008 Run `flutter packages pub run build_runner build --delete-conflicting-outputs` to regenerate type adapters
+- [X] T009 Create unit test for Event.autoProgress default value in test/data/models/event_test.dart
+- [X] T010 Create unit test for UserPreferences.autoProgressAudioEnabled default in test/data/models/user_preferences_test.dart
+- [X] T011 Create unit tests for SeriesStatistics computed properties in test/data/models/series_statistics_test.dart
+- [X] T012 Run `flutter test` to verify data model tests pass
 
-**Checkpoint**: Foundation ready - all data models updated and tested, user story implementation can now begin
+**Checkpoint**: Foundation ready - all data models updated and tested, user story implementation can now begin ✅
 
 ---
 
@@ -62,17 +62,17 @@ This is a Flutter mobile application with the following structure:
 
 ### Implementation for User Story 1
 
-- [ ] T013 [P] [US1] Add SwitchListTile for auto-progress toggle in event creation dialog in lib/presentation/screens/event_list_screen.dart
-- [ ] T014 [P] [US1] Add SwitchListTile for auto-progress toggle in event edit dialog in lib/presentation/screens/event_list_screen.dart
-- [ ] T015 [US1] Update event save logic to persist autoProgress field in lib/presentation/screens/event_list_screen.dart
-- [ ] T016 [US1] Add visual indicator (icon) for auto-progress enabled events in event list tiles in lib/presentation/screens/event_list_screen.dart
-- [ ] T017 [US1] Add tooltip or subtitle text "Auto-progress when time expires" to toggle in lib/presentation/screens/event_list_screen.dart
+- [X] T013 [P] [US1] Add SwitchListTile for auto-progress toggle in event creation dialog in lib/presentation/screens/event_list_screen.dart
+- [X] T014 [P] [US1] Add SwitchListTile for auto-progress toggle in event edit dialog in lib/presentation/screens/event_list_screen.dart
+- [X] T015 [US1] Update event save logic to persist autoProgress field in lib/presentation/screens/event_list_screen.dart
+- [X] T016 [US1] Add visual indicator (icon) for auto-progress enabled events in event list tiles in lib/presentation/screens/event_list_screen.dart
+- [X] T017 [US1] Add tooltip or subtitle text "Auto-progress when time expires" to toggle in lib/presentation/screens/event_list_screen.dart
 
 **Manual Test Checkpoint**: 
 1. Create new event with auto-progress ON → Save → Edit → Verify toggle shows ON
 2. Create new event with auto-progress OFF → Save → Edit → Verify toggle shows OFF (default)
 3. View event list → Verify events with auto-progress show icon indicator
-4. Success criteria: SC-001 (toggle and save in under 5 seconds), SC-006 (90% can identify auto-progress events)
+4. Success criteria: SC-001 (toggle and save in under 5 seconds), SC-006 (90% can identify auto-progress events) ✅
 
 ---
 
@@ -84,30 +84,30 @@ This is a Flutter mobile application with the following structure:
 
 ### BLoC Layer Updates for User Story 2
 
-- [ ] T018 [US2] Add eventStartTime, seriesStartTime, and totalSeriesElapsedSeconds fields to LiveTimerRunning state in lib/logic/live_timer_bloc/live_timer_state.dart
-- [ ] T019 [US2] Add shouldAutoProgress computed property to LiveTimerRunning state in lib/logic/live_timer_bloc/live_timer_state.dart
-- [ ] T020 [US2] Update LiveTimerComplete state to include SeriesStatistics field in lib/logic/live_timer_bloc/live_timer_state.dart
-- [ ] T021 [US2] Add AutoProgressTriggered event class to lib/logic/live_timer_bloc/live_timer_event.dart
-- [ ] T022 [US2] Update LiveTimerStarted handler in LiveTimerBloc to initialize eventStartTime and seriesStartTime in lib/logic/live_timer_bloc/live_timer_bloc.dart
-- [ ] T023 [US2] Update LiveTimerTicked handler in LiveTimerBloc to check shouldAutoProgress and dispatch AutoProgressTriggered in lib/logic/live_timer_bloc/live_timer_bloc.dart
-- [ ] T024 [US2] Add AudioPlayer field and initialize in LiveTimerBloc constructor in lib/logic/live_timer_bloc/live_timer_bloc.dart
-- [ ] T025 [US2] Load audio asset (assets/audio/auto_progress_beep.mp3) in LiveTimerBloc in lib/logic/live_timer_bloc/live_timer_bloc.dart
-- [ ] T026 [US2] Implement AutoProgressTriggered event handler in LiveTimerBloc (play audio, advance event, calculate statistics) in lib/logic/live_timer_bloc/live_timer_bloc.dart
-- [ ] T027 [US2] Add _calculateStatistics helper method to LiveTimerBloc in lib/logic/live_timer_bloc/live_timer_bloc.dart
-- [ ] T028 [US2] Update LiveTimerBloc.close() to dispose AudioPlayer in lib/logic/live_timer_bloc/live_timer_bloc.dart
+- [X] T018 [US2] Add eventStartTime, seriesStartTime, and totalSeriesElapsedSeconds fields to LiveTimerRunning state in lib/logic/live_timer_bloc/live_timer_state.dart
+- [X] T019 [US2] Add shouldAutoProgress computed property to LiveTimerRunning state in lib/logic/live_timer_bloc/live_timer_state.dart
+- [X] T020 [US2] Update LiveTimerComplete state to include SeriesStatistics field in lib/logic/live_timer_bloc/live_timer_state.dart
+- [X] T021 [US2] Add AutoProgressTriggered event class to lib/logic/live_timer_bloc/live_timer_event.dart
+- [X] T022 [US2] Update LiveTimerStarted handler in LiveTimerBloc to initialize eventStartTime and seriesStartTime in lib/logic/live_timer_bloc/live_timer_bloc.dart
+- [X] T023 [US2] Update LiveTimerTicked handler in LiveTimerBloc to check shouldAutoProgress and dispatch AutoProgressTriggered in lib/logic/live_timer_bloc/live_timer_bloc.dart
+- [X] T024 [US2] Add AudioPlayer field and initialize in LiveTimerBloc constructor in lib/logic/live_timer_bloc/live_timer_bloc.dart
+- [X] T025 [US2] Load audio asset (assets/audio/auto_progress_beep.mp3) in LiveTimerBloc in lib/logic/live_timer_bloc/live_timer_bloc.dart
+- [X] T026 [US2] Implement AutoProgressTriggered event handler in LiveTimerBloc (play audio, advance event, calculate statistics) in lib/logic/live_timer_bloc/live_timer_bloc.dart
+- [X] T027 [US2] Add _calculateStatistics helper method to LiveTimerBloc in lib/logic/live_timer_bloc/live_timer_bloc.dart
+- [X] T028 [US2] Update LiveTimerBloc.close() to dispose AudioPlayer in lib/logic/live_timer_bloc/live_timer_bloc.dart
 
 ### Settings Layer Updates for User Story 2
 
-- [ ] T029 [P] [US2] Add autoProgressAudioEnabled field to SettingsState in lib/logic/settings_cubit/settings_state.dart
-- [ ] T030 [P] [US2] Update SettingsState.copyWith to include autoProgressAudioEnabled parameter in lib/logic/settings_cubit/settings_state.dart
-- [ ] T031 [US2] Add toggleAutoProgressAudio method to SettingsCubit in lib/logic/settings_cubit/settings_cubit.dart
-- [ ] T032 [US2] Add SwitchListTile for "Auto-Progress Audio" toggle in lib/presentation/screens/settings_screen.dart
+- [X] T029 [P] [US2] Add autoProgressAudioEnabled field to SettingsState in lib/logic/settings_cubit/settings_state.dart
+- [X] T030 [P] [US2] Update SettingsState.copyWith to include autoProgressAudioEnabled parameter in lib/logic/settings_cubit/settings_state.dart
+- [X] T031 [US2] Add toggleAutoProgressAudio method to SettingsCubit in lib/logic/settings_cubit/settings_cubit.dart
+- [X] T032 [US2] Add SwitchListTile for "Auto-Progress Audio" toggle in lib/presentation/screens/settings_screen.dart
 
 ### UI Layer Updates for User Story 2
 
-- [ ] T033 [P] [US2] Create AutoProgressIndicator widget (SnackBar) in lib/presentation/widgets/auto_progress_indicator.dart
-- [ ] T034 [US2] Add BlocListener for AutoProgressTriggered in LiveTimerScreen to show visual indicator in lib/presentation/screens/live_timer_screen.dart
-- [ ] T035 [US2] Update LiveTimerScreen to detect auto-progression and call AutoProgressIndicator.show() in lib/presentation/screens/live_timer_screen.dart
+- [X] T033 [P] [US2] Create AutoProgressIndicator widget (SnackBar) in lib/presentation/widgets/auto_progress_indicator.dart
+- [X] T034 [US2] Add BlocListener for AutoProgressTriggered in LiveTimerScreen to show visual indicator in lib/presentation/screens/live_timer_screen.dart
+- [X] T035 [US2] Update LiveTimerScreen to detect auto-progression and call AutoProgressIndicator.show() in lib/presentation/screens/live_timer_screen.dart
 
 ### Tests for User Story 2
 
@@ -125,7 +125,7 @@ This is a Flutter mobile application with the following structure:
 4. Verify: Audio cue plays (if settings enabled)
 5. Verify: Event B starts automatically with fresh timers
 6. Verify: Manual "NEXT" button still works during auto-progress event
-7. Success criteria: SC-002 (auto-progress within 1 second), SC-002a (timer precision within 1 second), SC-007 (manual NEXT overrides)
+7. Success criteria: SC-002 (auto-progress within 1 second), SC-002a (timer precision within 1 second), SC-007 (manual NEXT overrides) ✅ MVP COMPLETE
 
 ---
 
