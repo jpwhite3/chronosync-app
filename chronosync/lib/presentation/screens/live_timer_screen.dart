@@ -1,16 +1,45 @@
 import 'package:chronosync/logic/live_timer_bloc/live_timer_bloc.dart';
+import 'package:chronosync/presentation/widgets/auto_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LiveTimerScreen extends StatelessWidget {
+class LiveTimerScreen extends StatefulWidget {
   const LiveTimerScreen({super.key});
+
+  @override
+  State<LiveTimerScreen> createState() => _LiveTimerScreenState();
+}
+
+class _LiveTimerScreenState extends State<LiveTimerScreen> {
+  int? _lastEventIndex;
+  bool _wasAutoProgress = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Live Timer')),
-      body: BlocBuilder<LiveTimerBloc, LiveTimerState>(
-        builder: (context, state) {
+      body: BlocListener<LiveTimerBloc, LiveTimerState>(
+        listener: (context, state) {
+          // Detect when event changes and it was due to auto-progression
+          if (state is LiveTimerRunning) {
+            if (_lastEventIndex != null && 
+                state.currentEventIndex != _lastEventIndex &&
+                _wasAutoProgress) {
+              // Auto-progression occurred
+              AutoProgressIndicator.show(
+                context,
+                nextEventTitle: state.currentEvent.title,
+              );
+              _wasAutoProgress = false;
+            }
+            
+            // Track if current state should auto-progress
+            _wasAutoProgress = state.shouldAutoProgress;
+            _lastEventIndex = state.currentEventIndex;
+          }
+        },
+        child: BlocBuilder<LiveTimerBloc, LiveTimerState>(
+          builder: (context, state) {
           if (state is LiveTimerInitial) {
             return const Center(child: Text('Initializing...'));
           }
@@ -85,7 +114,8 @@ class LiveTimerScreen extends StatelessWidget {
           }
 
           return const Center(child: Text('Unknown state'));
-        },
+          },
+        ),
       ),
     );
   }
