@@ -19,3 +19,5 @@ class StartTimer extends LiveTimerEvent {
 class TimerTick extends LiveTimerEvent {}
 
 class NextEvent extends LiveTimerEvent {}
+
+class AutoProgressTriggered extends LiveTimerEvent {}
