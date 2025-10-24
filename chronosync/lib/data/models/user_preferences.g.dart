@@ -18,15 +18,18 @@ class UserPreferencesAdapter extends TypeAdapter<UserPreferences> {
     };
     return UserPreferences(
       swipeDirection: fields[0] as String,
+      autoProgressAudioEnabled: fields[1] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserPreferences obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.swipeDirection);
+      ..write(obj.swipeDirection)
+      ..writeByte(1)
+      ..write(obj.autoProgressAudioEnabled);
   }
 
   @override

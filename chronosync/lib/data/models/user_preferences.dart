@@ -8,7 +8,13 @@ class UserPreferences extends HiveObject {
   @HiveField(0)
   String swipeDirection; // 'ltr' or 'rtl'
 
-  UserPreferences({this.swipeDirection = 'ltr'});
+  @HiveField(1)
+  bool autoProgressAudioEnabled;
+
+  UserPreferences({
+    this.swipeDirection = 'ltr',
+    this.autoProgressAudioEnabled = true,
+  });
   
   SwipeDirection get swipeDirectionEnum =>
       swipeDirection == 'rtl' ? SwipeDirection.rtl : SwipeDirection.ltr;

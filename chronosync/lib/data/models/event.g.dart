@@ -19,17 +19,20 @@ class EventAdapter extends TypeAdapter<Event> {
     return Event(
       title: fields[0] as String,
       durationInSeconds: fields[1] as int,
+      autoProgress: fields[2] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
-      ..write(obj.durationInSeconds);
+      ..write(obj.durationInSeconds)
+      ..writeByte(2)
+      ..write(obj.autoProgress);
   }
 
   @override
