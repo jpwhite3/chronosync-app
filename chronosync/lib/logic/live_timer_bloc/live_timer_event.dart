@@ -21,3 +21,12 @@ class TimerTick extends LiveTimerEvent {}
 class NextEvent extends LiveTimerEvent {}
 
 class AutoProgressTriggered extends LiveTimerEvent {}
+
+class AppResumed extends LiveTimerEvent {
+  final DateTime resumeTime;
+
+  const AppResumed(this.resumeTime);
+
+  @override
+  List<Object> get props => [resumeTime];
+}

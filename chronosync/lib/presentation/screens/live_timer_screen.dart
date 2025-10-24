@@ -11,9 +11,30 @@ class LiveTimerScreen extends StatefulWidget {
   State<LiveTimerScreen> createState() => _LiveTimerScreenState();
 }
 
-class _LiveTimerScreenState extends State<LiveTimerScreen> {
+class _LiveTimerScreenState extends State<LiveTimerScreen> with WidgetsBindingObserver {
   int? _lastEventIndex;
   bool _wasAutoProgress = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      // Dispatch AppResumed event to the bloc
+      context.read<LiveTimerBloc>().add(AppResumed(DateTime.now()));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

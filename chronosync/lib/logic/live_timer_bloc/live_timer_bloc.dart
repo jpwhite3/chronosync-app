@@ -15,12 +15,14 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   AudioPlayer? _audioPlayer;
   bool _audioLoaded = false;
   final bool enableAudio;
+  DateTime? _lastTickTime;
 
   LiveTimerBloc({this.enableAudio = true}) : super(LiveTimerInitial()) {
     on<StartTimer>(_onStartTimer);
     on<TimerTick>(_onTimerTick);
     on<NextEvent>(_onNextEvent);
     on<AutoProgressTriggered>(_onAutoProgressTriggered);
+    on<AppResumed>(_onAppResumed);
     if (enableAudio) {
       _loadAudio();
     }
@@ -73,6 +75,9 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
       final LiveTimerRunning currentState = state as LiveTimerRunning;
       final newElapsed = currentState.elapsedSeconds + 1;
       final newTotalElapsed = currentState.totalSeriesElapsedSeconds + 1;
+      
+      // Track last tick time for background handling
+      _lastTickTime = DateTime.now();
       
       emit(LiveTimerRunning(
         series: currentState.series,
@@ -176,6 +181,42 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
       expectedTimeSeconds: expectedTimeSeconds,
       actualTimeSeconds: actualTimeSeconds,
     );
+  }
+
+  void _onAppResumed(AppResumed event, Emitter<LiveTimerState> emit) {
+    if (state is LiveTimerRunning && _lastTickTime != null) {
+      final LiveTimerRunning currentState = state as LiveTimerRunning;
+      
+      // Calculate time elapsed since last tick
+      final secondsInBackground = event.resumeTime.difference(_lastTickTime!).inSeconds;
+      
+      if (secondsInBackground > 0) {
+        // Update elapsed time based on background duration
+        final newElapsed = currentState.elapsedSeconds + secondsInBackground;
+        final newTotalElapsed = currentState.totalSeriesElapsedSeconds + secondsInBackground;
+        
+        print('📱 App resumed: ${secondsInBackground}s elapsed in background');
+        
+        emit(LiveTimerRunning(
+          series: currentState.series,
+          currentEventIndex: currentState.currentEventIndex,
+          elapsedSeconds: newElapsed,
+          eventStartTime: currentState.eventStartTime,
+          seriesStartTime: currentState.seriesStartTime,
+          totalSeriesElapsedSeconds: newTotalElapsed,
+        ));
+        
+        // Check if auto-progression should have occurred during background
+        final updatedState = state as LiveTimerRunning;
+        if (updatedState.shouldAutoProgress) {
+          print('⏭️ Auto-progression triggered after background');
+          add(AutoProgressTriggered());
+        }
+        
+        // Update last tick time
+        _lastTickTime = event.resumeTime;
+      }
+    }
   }
 
   @override
