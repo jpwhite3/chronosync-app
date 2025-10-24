@@ -158,15 +158,25 @@ class EventListScreen extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () async {
+                    // Validate duration (minimum 1 second)
+                    final duration = int.tryParse(durationController.text) ?? 0;
+                    if (duration < 1) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Event duration must be at least 1 second'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+                    
                     // Capture bloc and navigator references before async operations
                     final seriesBloc = context.read<SeriesBloc>();
                     final navigator = Navigator.of(context);
                     
                     final event = Event.fromDuration(
                       title: titleController.text,
-                      duration: Duration(
-                        seconds: int.parse(durationController.text),
-                      ),
+                      duration: Duration(seconds: duration),
                       autoProgress: autoProgress,
                     );
                     // Get the events box and add the event to it first
@@ -236,13 +246,25 @@ class EventListScreen extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () async {
+                    // Validate duration (minimum 1 second)
+                    final duration = int.tryParse(durationController.text) ?? 0;
+                    if (duration < 1) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Event duration must be at least 1 second'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+                    
                     // Capture bloc and navigator references before async operations
                     final seriesBloc = context.read<SeriesBloc>();
                     final navigator = Navigator.of(context);
                     
                     // Update event properties
                     event.title = titleController.text;
-                    event.durationInSeconds = int.parse(durationController.text);
+                    event.durationInSeconds = duration;
                     event.autoProgress = autoProgress;
                     
                     // Save the event and series

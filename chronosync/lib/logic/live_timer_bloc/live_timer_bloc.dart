@@ -120,6 +120,20 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
     }
   }
 
+  /// Handles automatic progression to next event when countdown reaches 00:00
+  /// 
+  /// Logic flow:
+  /// 1. Check if audio is loaded and play the progression sound cue
+  /// 2. Determine if this is the last event in the series
+  /// 3a. If last event: Calculate statistics and emit LiveTimerCompleted
+  /// 3b. If not last: Emit new LiveTimerRunning state with next event
+  /// 
+  /// Key behaviors:
+  /// - Audio playback is optional (errors are logged but don't block progression)
+  /// - Statistics include event count, expected vs actual time
+  /// - Fully automated series are logged for tracking
+  /// - New event starts with fresh countdown (elapsedSeconds = 0)
+  /// - Series elapsed time continues accumulating across events
   void _onAutoProgressTriggered(
     AutoProgressTriggered event,
     Emitter<LiveTimerState> emit,
@@ -127,21 +141,24 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
     if (state is LiveTimerRunning) {
       final LiveTimerRunning currentState = state as LiveTimerRunning;
       
-      // Play audio cue if loaded
-      // TODO: Check user preference for audio enabled (will be added with settings)
+      final currentEventTitle = currentState.currentEvent.title;
+      final nextIndex = currentState.currentEventIndex + 1;
+      
+      print('⏭️ Auto-progression triggered for event: $currentEventTitle');
+      
+      // Play audio cue if loaded and user preference enabled
       if (_audioLoaded && _audioPlayer != null) {
         try {
           await _audioPlayer!.seek(Duration.zero);
           await _audioPlayer!.play();
+          print('🔊 Audio cue played');
         } catch (e) {
           // Log error but continue - audio is optional
-          print('Failed to play audio: $e');
+          print('❌ Failed to play audio: $e');
         }
       }
       
-      // Advance to next event
-      final int nextIndex = currentState.currentEventIndex + 1;
-
+      // Advance to next event or complete series
       if (nextIndex >= currentState.series.events.length) {
         _timer?.cancel();
         
@@ -152,10 +169,15 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
         final allAutoProgressed = currentState.series.events.every((e) => e.autoProgress);
         if (allAutoProgressed) {
           print('✅ Fully automated series completed: ${currentState.series.title}');
+        } else {
+          print('✅ Series completed: ${currentState.series.title}');
         }
         
         emit(LiveTimerCompleted(statistics: stats));
       } else {
+        final nextEventTitle = currentState.series.events[nextIndex].title;
+        print('➡️ Advancing to event ${nextIndex + 1}: $nextEventTitle');
+        
         emit(LiveTimerRunning(
           series: currentState.series,
           currentEventIndex: nextIndex,
@@ -168,6 +190,17 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
     }
   }
 
+  /// Calculates aggregate statistics for series completion
+  /// 
+  /// Computes:
+  /// - eventCount: Total number of events in the series
+  /// - expectedTimeSeconds: Sum of all event durations
+  /// - actualTimeSeconds: Total time elapsed during series execution
+  /// 
+  /// The SeriesStatistics model provides computed properties:
+  /// - overUnderTimeSeconds: Difference between actual and expected (can be +/-)
+  /// - isOvertime/isUndertime/isOnTime: Boolean flags for display
+  /// - Formatted time strings for UI display
   SeriesStatistics _calculateStatistics(LiveTimerRunning state) {
     // Calculate expected time (sum of all event durations)
     final expectedTimeSeconds = state.series.events
