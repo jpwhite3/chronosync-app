@@ -1,0 +1,3 @@
+# Placeholder for auto_progress_beep.mp3
+# Replace this file with an actual MP3 audio file
+# Suggested: Short beep sound (0.5-1 second duration)
