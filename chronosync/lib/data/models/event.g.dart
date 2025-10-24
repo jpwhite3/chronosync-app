@@ -19,7 +19,7 @@ class EventAdapter extends TypeAdapter<Event> {
     return Event(
       title: fields[0] as String,
       durationInSeconds: fields[1] as int,
-      autoProgress: fields[2] as bool,
+      autoProgress: fields[2] as bool? ?? false,
     );
   }
 

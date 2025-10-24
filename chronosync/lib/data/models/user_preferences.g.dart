@@ -18,7 +18,7 @@ class UserPreferencesAdapter extends TypeAdapter<UserPreferences> {
     };
     return UserPreferences(
       swipeDirection: fields[0] as String,
-      autoProgressAudioEnabled: fields[1] as bool,
+      autoProgressAudioEnabled: fields[1] as bool? ?? true,
     );
   }
 
