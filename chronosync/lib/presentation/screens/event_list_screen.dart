@@ -72,6 +72,9 @@ class EventListScreen extends StatelessWidget {
                 event: event,
                 series: currentSeries,
                 index: index,
+                onEdit: () {
+                  _showEditEventDialog(context, currentSeries, event, index);
+                },
                 onDismissed: () {
                   // Capture the bloc reference before showing snackbar
                   final seriesBloc = context.read<SeriesBloc>();
@@ -115,60 +118,146 @@ class EventListScreen extends StatelessWidget {
   void _showAddEventDialog(BuildContext context, Series series) {
     final TextEditingController titleController = TextEditingController();
     final TextEditingController durationController = TextEditingController();
+    bool autoProgress = false;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add Event'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(hintText: 'Event Title'),
-              ),
-              TextField(
-                controller: durationController,
-                decoration: const InputDecoration(hintText: 'Duration (in seconds)'),
-                keyboardType: TextInputType.number,
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                // Capture bloc and navigator references before async operations
-                final seriesBloc = context.read<SeriesBloc>();
-                final navigator = Navigator.of(context);
-                
-                final event = Event.fromDuration(
-                  title: titleController.text,
-                  duration: Duration(
-                    seconds: int.parse(durationController.text),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Add Event'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextField(
+                    controller: titleController,
+                    decoration: const InputDecoration(hintText: 'Event Title'),
                   ),
-                );
-                // Get the events box and add the event to it first
-                final eventsBox = await Hive.openBox<Event>('events');
-                await eventsBox.add(event);
-                
-                // Now we can add the event to the series
-                // This is not the ideal way to do this, but it will work for now.
-                // A better solution would be to have a separate BLoC for events.
-                series.events.add(event);
-                await series.save();
-                
-                // Use captured references
-                seriesBloc.add(LoadSeries());
-                navigator.pop();
-              },
-              child: const Text('Add'),
-            ),
-          ],
+                  TextField(
+                    controller: durationController,
+                    decoration: const InputDecoration(hintText: 'Duration (in seconds)'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  SwitchListTile(
+                    title: const Text('Auto-progress'),
+                    subtitle: const Text('Auto-advance when time expires'),
+                    value: autoProgress,
+                    onChanged: (bool value) {
+                      setState(() {
+                        autoProgress = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    // Capture bloc and navigator references before async operations
+                    final seriesBloc = context.read<SeriesBloc>();
+                    final navigator = Navigator.of(context);
+                    
+                    final event = Event.fromDuration(
+                      title: titleController.text,
+                      duration: Duration(
+                        seconds: int.parse(durationController.text),
+                      ),
+                      autoProgress: autoProgress,
+                    );
+                    // Get the events box and add the event to it first
+                    final eventsBox = await Hive.openBox<Event>('events');
+                    await eventsBox.add(event);
+                    
+                    // Now we can add the event to the series
+                    // This is not the ideal way to do this, but it will work for now.
+                    // A better solution would be to have a separate BLoC for events.
+                    series.events.add(event);
+                    await series.save();
+                    
+                    // Use captured references
+                    seriesBloc.add(LoadSeries());
+                    navigator.pop();
+                  },
+                  child: const Text('Add'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showEditEventDialog(BuildContext context, Series series, Event event, int index) {
+    final TextEditingController titleController = TextEditingController(text: event.title);
+    final TextEditingController durationController = TextEditingController(text: event.durationInSeconds.toString());
+    bool autoProgress = event.autoProgress;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Edit Event'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextField(
+                    controller: titleController,
+                    decoration: const InputDecoration(hintText: 'Event Title'),
+                  ),
+                  TextField(
+                    controller: durationController,
+                    decoration: const InputDecoration(hintText: 'Duration (in seconds)'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  SwitchListTile(
+                    title: const Text('Auto-progress'),
+                    subtitle: const Text('Auto-advance when time expires'),
+                    value: autoProgress,
+                    onChanged: (bool value) {
+                      setState(() {
+                        autoProgress = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    // Capture bloc and navigator references before async operations
+                    final seriesBloc = context.read<SeriesBloc>();
+                    final navigator = Navigator.of(context);
+                    
+                    // Update event properties
+                    event.title = titleController.text;
+                    event.durationInSeconds = int.parse(durationController.text);
+                    event.autoProgress = autoProgress;
+                    
+                    // Save the event and series
+                    await event.save();
+                    await series.save();
+                    
+                    // Use captured references
+                    seriesBloc.add(LoadSeries());
+                    navigator.pop();
+                  },
+                  child: const Text('Save'),
+                ),
+              ],
+            );
+          },
         );
       },
     );

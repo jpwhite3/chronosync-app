@@ -12,6 +12,7 @@ class DismissibleEventItem extends StatelessWidget {
   final Series series;
   final int index;
   final VoidCallback onDismissed;
+  final VoidCallback? onEdit;
 
   const DismissibleEventItem({
     super.key,
@@ -19,6 +20,7 @@ class DismissibleEventItem extends StatelessWidget {
     required this.series,
     required this.index,
     required this.onDismissed,
+    this.onEdit,
   });
 
   @override
@@ -57,6 +59,13 @@ class DismissibleEventItem extends StatelessWidget {
           child: ListTile(
             title: Text(event.title),
             subtitle: Text(_formatDuration(event.duration)),
+            trailing: event.autoProgress
+                ? const Icon(
+                    Icons.play_circle_outline,
+                    color: Colors.blue,
+                  )
+                : null,
+            onTap: onEdit,
           ),
         );
       },
