@@ -7,14 +7,28 @@ class SettingsCubit extends Cubit<SettingsState> {
   final PreferencesRepository _repository;
 
   SettingsCubit(this._repository)
-      : super(SettingsLoaded(_repository.getSwipeDirection()));
+      : super(SettingsLoaded(
+          swipeDirection: _repository.getSwipeDirection(),
+          autoProgressAudioEnabled: _repository.getAutoProgressAudioEnabled(),
+        ));
 
   void setSwipeDirection(SwipeDirection direction) {
     _repository.saveSwipeDirection(direction);
-    emit(SettingsLoaded(direction));
+    final currentState = state as SettingsLoaded;
+    emit(currentState.copyWith(swipeDirection: direction));
+  }
+
+  void toggleAutoProgressAudio(bool enabled) {
+    _repository.saveAutoProgressAudioEnabled(enabled);
+    final currentState = state as SettingsLoaded;
+    emit(currentState.copyWith(autoProgressAudioEnabled: enabled));
   }
 
   SwipeDirection getSwipeDirection() {
     return (state as SettingsLoaded).swipeDirection;
+  }
+
+  bool getAutoProgressAudioEnabled() {
+    return (state as SettingsLoaded).autoProgressAudioEnabled;
   }
 }

@@ -10,9 +10,23 @@ abstract class SettingsState extends Equatable {
 
 class SettingsLoaded extends SettingsState {
   final SwipeDirection swipeDirection;
+  final bool autoProgressAudioEnabled;
 
-  const SettingsLoaded(this.swipeDirection);
+  const SettingsLoaded({
+    required this.swipeDirection,
+    this.autoProgressAudioEnabled = true,
+  });
 
   @override
-  List<Object> get props => [swipeDirection];
+  List<Object> get props => [swipeDirection, autoProgressAudioEnabled];
+  
+  SettingsLoaded copyWith({
+    SwipeDirection? swipeDirection,
+    bool? autoProgressAudioEnabled,
+  }) {
+    return SettingsLoaded(
+      swipeDirection: swipeDirection ?? this.swipeDirection,
+      autoProgressAudioEnabled: autoProgressAudioEnabled ?? this.autoProgressAudioEnabled,
+    );
+  }
 }

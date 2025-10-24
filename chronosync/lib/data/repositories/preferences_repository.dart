@@ -19,4 +19,14 @@ class PreferencesRepository {
   SwipeDirection getSwipeDirection() {
     return getPreferences().swipeDirectionEnum;
   }
+
+  Future<void> saveAutoProgressAudioEnabled(bool enabled) async {
+    final prefs = getPreferences();
+    prefs.autoProgressAudioEnabled = enabled;
+    await prefs.save();
+  }
+
+  bool getAutoProgressAudioEnabled() {
+    return getPreferences().autoProgressAudioEnabled;
+  }
 }

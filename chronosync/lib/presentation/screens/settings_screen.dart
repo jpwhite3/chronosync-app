@@ -50,6 +50,25 @@ class SettingsScreen extends StatelessWidget {
                     }
                   },
                 ),
+                const Divider(),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Auto-Progress',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SwitchListTile(
+                  title: const Text('Audio Cue'),
+                  subtitle: const Text('Play sound when auto-progressing to next event'),
+                  value: state.autoProgressAudioEnabled,
+                  onChanged: (bool value) {
+                    context.read<SettingsCubit>().toggleAutoProgressAudio(value);
+                  },
+                ),
               ],
             );
           }
