@@ -4,8 +4,10 @@ import 'package:chronosync/data/models/series.dart';
 import 'package:chronosync/data/models/user_preferences.dart';
 import 'package:chronosync/logic/settings_cubit/settings_cubit.dart';
 import 'package:chronosync/logic/settings_cubit/settings_state.dart';
+import 'package:chronosync/logic/live_timer_bloc/live_timer_bloc.dart';
 import 'package:chronosync/presentation/widgets/deletion_confirmation_dialog.dart';
 import 'package:chronosync/presentation/screens/event_list_screen.dart';
+import 'package:chronosync/presentation/screens/live_timer_screen.dart';
 
 class DismissibleSeriesItem extends StatelessWidget {
   final Series series;
@@ -60,16 +62,24 @@ class DismissibleSeriesItem extends StatelessWidget {
               children: [
                 IconButton(
                   icon: const Icon(Icons.play_arrow),
-                  onPressed: series.events.isEmpty ? null : () {
-                    // TODO: Navigate to live timer screen with this series
-                    // For now, just show a placeholder message
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Timer feature coming soon!'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  onPressed: series.events.isEmpty
+                      ? null
+                      : () {
+                          // Create LiveTimerBloc and start the timer
+                          final liveTimerBloc = LiveTimerBloc();
+                          liveTimerBloc.add(StartTimer(series));
+                          
+                          // Navigate to live timer screen with the BLoC provided
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BlocProvider.value(
+                                value: liveTimerBloc,
+                                child: const LiveTimerScreen(),
+                              ),
+                            ),
+                          );
+                        },
                 ),
                 const Icon(Icons.chevron_right),
               ],

@@ -8,9 +8,7 @@ class LiveTimerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Live Timer'),
-      ),
+      appBar: AppBar(title: const Text('Live Timer')),
       body: BlocBuilder<LiveTimerBloc, LiveTimerState>(
         builder: (context, state) {
           if (state is LiveTimerInitial) {
@@ -27,22 +25,32 @@ class LiveTimerScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 20),
+                  // Countdown Timer Section
                   Text(
-                    state.isOvertime
-                        ? '00:00'
-                        : _formatDuration(state.remainingSeconds),
-                    style: Theme.of(context).textTheme.displayLarge,
+                    'Time Remaining',
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
-                  if (state.isOvertime) ...[
-                    const SizedBox(height: 10),
-                    Text(
-                      'Overtime: ${_formatDuration(state.overtimeSeconds)}',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _formatCountdown(state),
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                      color: state.isOvertime ? Colors.red : null,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
+                  ),
+                  const SizedBox(height: 32),
+                  // Elapsed Timer Section
+                  Text(
+                    'Time Elapsed',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _formatDuration(state.elapsedSeconds),
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 40),
                   ElevatedButton(
                     onPressed: () {
@@ -92,5 +100,15 @@ class LiveTimerScreen extends StatelessWidget {
     } else {
       return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
     }
+  }
+
+  /// Formats countdown timer with negative sign when in overtime
+  String _formatCountdown(LiveTimerRunning state) {
+    if (state.isOvertime) {
+      // Show negative time using overtimeSeconds
+      return '-${_formatDuration(state.overtimeSeconds)}';
+    }
+    // Show remaining time normally
+    return _formatDuration(state.remainingSeconds);
   }
 }
