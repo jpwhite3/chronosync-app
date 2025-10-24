@@ -12,25 +12,31 @@ part 'live_timer_state.dart';
 
 class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   Timer? _timer;
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  AudioPlayer? _audioPlayer;
   bool _audioLoaded = false;
+  final bool enableAudio;
 
-  LiveTimerBloc() : super(LiveTimerInitial()) {
+  LiveTimerBloc({this.enableAudio = true}) : super(LiveTimerInitial()) {
     on<StartTimer>(_onStartTimer);
     on<TimerTick>(_onTimerTick);
     on<NextEvent>(_onNextEvent);
     on<AutoProgressTriggered>(_onAutoProgressTriggered);
-    _loadAudio();
+    if (enableAudio) {
+      _loadAudio();
+    }
   }
   
   Future<void> _loadAudio() async {
     try {
-      await _audioPlayer.setAsset('assets/audio/auto_progress_beep.mp3');
+      _audioPlayer = AudioPlayer();
+      await _audioPlayer!.setAsset('assets/audio/auto_progress_beep.mp3');
       _audioLoaded = true;
     } catch (e) {
       // Log error but don't fail - audio is optional
       print('Failed to load audio asset: $e');
       _audioLoaded = false;
+      _audioPlayer?.dispose();
+      _audioPlayer = null;
     }
   }
 
@@ -118,10 +124,10 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
       
       // Play audio cue if loaded
       // TODO: Check user preference for audio enabled (will be added with settings)
-      if (_audioLoaded) {
+      if (_audioLoaded && _audioPlayer != null) {
         try {
-          await _audioPlayer.seek(Duration.zero);
-          await _audioPlayer.play();
+          await _audioPlayer!.seek(Duration.zero);
+          await _audioPlayer!.play();
         } catch (e) {
           // Log error but continue - audio is optional
           print('Failed to play audio: $e');
@@ -168,7 +174,7 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   @override
   Future<void> close() {
     _timer?.cancel();
-    _audioPlayer.dispose();
+    _audioPlayer?.dispose();
     return super.close();
   }
 }

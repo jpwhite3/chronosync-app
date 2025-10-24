@@ -75,10 +75,14 @@ void main() {
 
   group('LiveTimerScreen - Normal State', () {
     testWidgets('displays both countdown and elapsed timers', (tester) async {
+      final now = DateTime.now();
       final state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 120, // 2 minutes elapsed
+        eventStartTime: now,
+        seriesStartTime: now,
+        totalSeriesElapsedSeconds: 120,
       );
 
       await tester.pumpWidget(createWidgetUnderTest(state));
@@ -95,10 +99,14 @@ void main() {
     });
 
     testWidgets('countdown is not red in normal state', (tester) async {
+      final now = DateTime.now();
       final state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 60, // 1 minute elapsed, 4 minutes remaining
+        eventStartTime: now,
+        seriesStartTime: now,
+        totalSeriesElapsedSeconds: 60,
       );
 
       await tester.pumpWidget(createWidgetUnderTest(state));
@@ -115,10 +123,14 @@ void main() {
 
   group('LiveTimerScreen - Overtime State', () {
     testWidgets('displays negative countdown in overtime', (tester) async {
+      final now = DateTime.now();
       final state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 360, // 6 minutes elapsed (1 min overtime)
+        eventStartTime: now,
+        seriesStartTime: now,
+        totalSeriesElapsedSeconds: 360,
       );
 
       await tester.pumpWidget(createWidgetUnderTest(state));
@@ -131,10 +143,14 @@ void main() {
     });
 
     testWidgets('countdown turns red in overtime', (tester) async {
+      final now = DateTime.now();
       final state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 330, // 5 minutes 30 seconds (30 seconds overtime)
+        eventStartTime: now,
+        seriesStartTime: now,
+        totalSeriesElapsedSeconds: 330,
       );
 
       await tester.pumpWidget(createWidgetUnderTest(state));
@@ -150,10 +166,14 @@ void main() {
     testWidgets('elapsed timer stays default color in overtime', (
       tester,
     ) async {
+      final now = DateTime.now();
       final state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 330, // 5 minutes 30 seconds elapsed
+        eventStartTime: now,
+        seriesStartTime: now,
+        totalSeriesElapsedSeconds: 330,
       );
 
       await tester.pumpWidget(createWidgetUnderTest(state));
@@ -170,10 +190,14 @@ void main() {
 
   group('LiveTimerScreen - NEXT Button', () {
     testWidgets('NEXT button is present', (tester) async {
+      final now = DateTime.now();
       final state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 60,
+        eventStartTime: now,
+        seriesStartTime: now,
+        totalSeriesElapsedSeconds: 60,
       );
 
       await tester.pumpWidget(createWidgetUnderTest(state));
