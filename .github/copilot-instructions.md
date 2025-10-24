@@ -4,6 +4,8 @@ Auto-generated from all feature plans. Last updated: 2025-10-23
 
 ## Active Technologies
 - Hive (local NoSQL database) - already implemented, no changes needed (003-restore-timer-functionality)
+- Dart 3.9.2 / Flutter SDK (latest stable) + flutter_bloc ^9.1.1, hive ^2.2.3, hive_flutter ^1.1.0, equatable ^2.0.7 (004-auto-progress-events)
+- Hive (local NoSQL database) for Event and Series persistence (004-auto-progress-events)
 
 - Dart 3.9.2 / Flutter (from pubspec.yaml) + flutter_bloc ^9.1.1, hive ^2.2.3, hive_flutter ^1.1.0, equatable ^2.0.7 (002-swipe-delete-items)
 
@@ -23,9 +25,10 @@ tests/
 Dart 3.9.2 / Flutter (from pubspec.yaml): Follow standard conventions
 
 ## Recent Changes
+- 004-auto-progress-events: Added Dart 3.9.2 / Flutter SDK (latest stable) + flutter_bloc ^9.1.1, hive ^2.2.3, hive_flutter ^1.1.0, equatable ^2.0.7
+- 004-auto-progress-events: Added Dart 3.9.2 / Flutter SDK (latest stable) + flutter_bloc ^9.1.1, hive ^2.2.3, hive_flutter ^1.1.0, equatable ^2.0.7
 - 003-restore-timer-functionality: Added Dart 3.9.2 / Flutter (from pubspec.yaml) + flutter_bloc ^9.1.1, hive ^2.2.3, hive_flutter ^1.1.0, equatable ^2.0.7
 
-- 002-swipe-delete-items: Added Dart 3.9.2 / Flutter (from pubspec.yaml) + flutter_bloc ^9.1.1, hive ^2.2.3, hive_flutter ^1.1.0, equatable ^2.0.7
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
