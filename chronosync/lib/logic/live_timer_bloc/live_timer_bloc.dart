@@ -142,6 +142,13 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
         
         // Calculate series statistics
         final stats = _calculateStatistics(currentState);
+        
+        // Log completion for fully automated series
+        final allAutoProgressed = currentState.series.events.every((e) => e.autoProgress);
+        if (allAutoProgressed) {
+          print('✅ Fully automated series completed: ${currentState.series.title}');
+        }
+        
         emit(LiveTimerCompleted(statistics: stats));
       } else {
         emit(LiveTimerRunning(
