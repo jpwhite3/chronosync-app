@@ -26,7 +26,7 @@ class DeleteEvent extends SeriesEvent {
   const DeleteEvent(this.event, this.series, this.index);
 
   @override
-  List<Object> get props => [event, series, index];
+  List<Object> get props => <Object>[event, series, index];
 }
 
 class UndoDeletion extends SeriesEvent {
@@ -35,7 +35,7 @@ class UndoDeletion extends SeriesEvent {
   const UndoDeletion(this.itemKey);
 
   @override
-  List<Object> get props => [itemKey];
+  List<Object> get props => <Object>[itemKey];
 }
 
 class ConfirmPermanentDeletion extends SeriesEvent {
@@ -44,7 +44,7 @@ class ConfirmPermanentDeletion extends SeriesEvent {
   const ConfirmPermanentDeletion(this.itemKey);
 
   @override
-  List<Object> get props => [itemKey];
+  List<Object> get props => <Object>[itemKey];
 }
 
 class DeleteSeries extends SeriesEvent {
@@ -54,5 +54,5 @@ class DeleteSeries extends SeriesEvent {
   const DeleteSeries(this.series, this.index);
 
   @override
-  List<Object> get props => [series, index];
+  List<Object> get props => <Object>[series, index];
 }

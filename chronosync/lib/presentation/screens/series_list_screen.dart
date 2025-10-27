@@ -15,14 +15,14 @@ class SeriesListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Series'),
-        actions: [
+        actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
+                  builder: (BuildContext context) => const SettingsScreen(),
                 ),
               );
             },
@@ -30,7 +30,7 @@ class SeriesListScreen extends StatelessWidget {
         ],
       ),
       body: BlocListener<SeriesBloc, SeriesState>(
-        listener: (context, state) {
+        listener: (BuildContext context, SeriesState state) {
           if (state is DeletionError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -40,7 +40,7 @@ class SeriesListScreen extends StatelessWidget {
                   label: 'Retry',
                   onPressed: () {
                     // Retry deletion for all series in the error state
-                    for (final series in state.series) {
+                    for (final Series series in state.series) {
                       context.read<SeriesBloc>().add(DeleteSeries(series, -1));
                     }
                   },
@@ -65,7 +65,7 @@ class SeriesListScreen extends StatelessWidget {
                   index: index,
                   onDismissed: () {
                     // Capture the bloc reference before showing snackbar
-                    final seriesBloc = context.read<SeriesBloc>();
+                    final SeriesBloc seriesBloc = context.read<SeriesBloc>();
                     final seriesKey = series.key;
                     
                     seriesBloc.add(

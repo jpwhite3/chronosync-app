@@ -45,7 +45,7 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   void _onStartTimer(StartTimer event, Emitter<LiveTimerState> emit) {
     if (event.series.events.isEmpty) {
       // Calculate empty series statistics
-      final stats = SeriesStatistics(
+      final SeriesStatistics stats = const SeriesStatistics(
         eventCount: 0,
         expectedTimeSeconds: 0,
         actualTimeSeconds: 0,
@@ -54,7 +54,7 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
       return;
     }
 
-    final now = DateTime.now();
+    final DateTime now = DateTime.now();
     emit(LiveTimerRunning(
       series: event.series,
       currentEventIndex: 0,
@@ -73,8 +73,8 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   void _onTimerTick(TimerTick event, Emitter<LiveTimerState> emit) {
     if (state is LiveTimerRunning) {
       final LiveTimerRunning currentState = state as LiveTimerRunning;
-      final newElapsed = currentState.elapsedSeconds + 1;
-      final newTotalElapsed = currentState.totalSeriesElapsedSeconds + 1;
+      final int newElapsed = currentState.elapsedSeconds + 1;
+      final int newTotalElapsed = currentState.totalSeriesElapsedSeconds + 1;
       
       // Track last tick time for background handling
       _lastTickTime = DateTime.now();
@@ -89,7 +89,7 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
       ));
       
       // Check if auto-progression should trigger
-      final updatedState = state as LiveTimerRunning;
+      final LiveTimerRunning updatedState = state as LiveTimerRunning;
       if (updatedState.shouldAutoProgress) {
         add(AutoProgressTriggered());
       }
@@ -105,7 +105,7 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
         _timer?.cancel();
         
         // Calculate series statistics
-        final stats = _calculateStatistics(currentState);
+        final SeriesStatistics stats = _calculateStatistics(currentState);
         emit(LiveTimerCompleted(statistics: stats));
       } else {
         emit(LiveTimerRunning(
@@ -141,8 +141,8 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
     if (state is LiveTimerRunning) {
       final LiveTimerRunning currentState = state as LiveTimerRunning;
       
-      final currentEventTitle = currentState.currentEvent.title;
-      final nextIndex = currentState.currentEventIndex + 1;
+      final String currentEventTitle = currentState.currentEvent.title;
+      final int nextIndex = currentState.currentEventIndex + 1;
       
       print('⏭️ Auto-progression triggered for event: $currentEventTitle');
       
@@ -163,10 +163,10 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
         _timer?.cancel();
         
         // Calculate series statistics
-        final stats = _calculateStatistics(currentState);
+        final SeriesStatistics stats = _calculateStatistics(currentState);
         
         // Log completion for fully automated series
-        final allAutoProgressed = currentState.series.events.every((e) => e.autoProgress);
+        final bool allAutoProgressed = currentState.series.events.every((Event e) => e.autoProgress);
         if (allAutoProgressed) {
           print('✅ Fully automated series completed: ${currentState.series.title}');
         } else {
@@ -175,7 +175,7 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
         
         emit(LiveTimerCompleted(statistics: stats));
       } else {
-        final nextEventTitle = currentState.series.events[nextIndex].title;
+        final String nextEventTitle = currentState.series.events[nextIndex].title;
         print('➡️ Advancing to event ${nextIndex + 1}: $nextEventTitle');
         
         emit(LiveTimerRunning(
@@ -203,11 +203,11 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   /// - Formatted time strings for UI display
   SeriesStatistics _calculateStatistics(LiveTimerRunning state) {
     // Calculate expected time (sum of all event durations)
-    final expectedTimeSeconds = state.series.events
-        .fold<int>(0, (sum, event) => sum + event.durationInSeconds);
+    final int expectedTimeSeconds = state.series.events
+        .fold<int>(0, (int sum, Event event) => sum + event.durationInSeconds);
     
     // Actual time is the total series elapsed time
-    final actualTimeSeconds = state.totalSeriesElapsedSeconds;
+    final int actualTimeSeconds = state.totalSeriesElapsedSeconds;
     
     return SeriesStatistics(
       eventCount: state.series.events.length,
@@ -221,12 +221,12 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
       final LiveTimerRunning currentState = state as LiveTimerRunning;
       
       // Calculate time elapsed since last tick
-      final secondsInBackground = event.resumeTime.difference(_lastTickTime!).inSeconds;
+      final int secondsInBackground = event.resumeTime.difference(_lastTickTime!).inSeconds;
       
       if (secondsInBackground > 0) {
         // Update elapsed time based on background duration
-        final newElapsed = currentState.elapsedSeconds + secondsInBackground;
-        final newTotalElapsed = currentState.totalSeriesElapsedSeconds + secondsInBackground;
+        final int newElapsed = currentState.elapsedSeconds + secondsInBackground;
+        final int newTotalElapsed = currentState.totalSeriesElapsedSeconds + secondsInBackground;
         
         print('📱 App resumed: ${secondsInBackground}s elapsed in background');
         
@@ -240,7 +240,7 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
         ));
         
         // Check if auto-progression should have occurred during background
-        final updatedState = state as LiveTimerRunning;
+        final LiveTimerRunning updatedState = state as LiveTimerRunning;
         if (updatedState.shouldAutoProgress) {
           print('⏭️ Auto-progression triggered after background');
           add(AutoProgressTriggered());

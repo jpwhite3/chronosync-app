@@ -10,7 +10,7 @@ import 'package:mockito/mockito.dart';
 
 import 'live_timer_bloc_test.mocks.dart';
 
-@GenerateMocks([Box])
+@GenerateMocks(<Type>[Box])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -46,7 +46,7 @@ void main() {
 
     test('LiveTimerRunning state has correct properties', () {
       final Series series = Series(title: 'Test Series', events: HiveList(mockEventBox));
-      final now = DateTime.now();
+      final DateTime now = DateTime.now();
       final LiveTimerRunning state = LiveTimerRunning(
         series: series,
         currentEventIndex: 0,
@@ -65,7 +65,7 @@ void main() {
     });
 
     test('LiveTimerCompleted state is correct', () {
-      final stats = SeriesStatistics(
+      final SeriesStatistics stats = const SeriesStatistics(
         eventCount: 5,
         expectedTimeSeconds: 300,
         actualTimeSeconds: 320,

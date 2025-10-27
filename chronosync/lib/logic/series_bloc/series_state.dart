@@ -26,7 +26,7 @@ class SeriesDeletionPending extends SeriesState {
   const SeriesDeletionPending(this.series, this.pendingDeletions);
 
   @override
-  List<Object> get props => [series, pendingDeletions];
+  List<Object> get props => <Object>[series, pendingDeletions];
 }
 
 class DeletionError extends SeriesState {
@@ -36,5 +36,5 @@ class DeletionError extends SeriesState {
   const DeletionError(this.message, this.series);
 
   @override
-  List<Object> get props => [message, series];
+  List<Object> get props => <Object>[message, series];
 }

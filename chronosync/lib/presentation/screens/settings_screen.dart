@@ -14,10 +14,10 @@ class SettingsScreen extends StatelessWidget {
         title: const Text('Settings'),
       ),
       body: BlocBuilder<SettingsCubit, SettingsState>(
-        builder: (context, state) {
+        builder: (BuildContext context, SettingsState state) {
           if (state is SettingsLoaded) {
             return ListView(
-              children: [
+              children: <Widget>[
                 const Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(

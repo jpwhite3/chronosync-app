@@ -12,7 +12,7 @@ import 'package:mockito/mockito.dart';
 
 import 'live_timer_screen_test.mocks.dart';
 
-@GenerateMocks([LiveTimerBloc])
+@GenerateMocks(<Type>[LiveTimerBloc])
 void main() {
   late MockLiveTimerBloc mockBloc;
   late Box<Event> eventBox;
@@ -74,9 +74,9 @@ void main() {
   }
 
   group('LiveTimerScreen - Normal State', () {
-    testWidgets('displays both countdown and elapsed timers', (tester) async {
-      final now = DateTime.now();
-      final state = LiveTimerRunning(
+    testWidgets('displays both countdown and elapsed timers', (WidgetTester tester) async {
+      final DateTime now = DateTime.now();
+      final LiveTimerRunning state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 120, // 2 minutes elapsed
@@ -98,9 +98,9 @@ void main() {
       expect(find.text('02:00'), findsOneWidget);
     });
 
-    testWidgets('countdown is not red in normal state', (tester) async {
-      final now = DateTime.now();
-      final state = LiveTimerRunning(
+    testWidgets('countdown is not red in normal state', (WidgetTester tester) async {
+      final DateTime now = DateTime.now();
+      final LiveTimerRunning state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 60, // 1 minute elapsed, 4 minutes remaining
@@ -112,19 +112,19 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(state));
 
       // Find the countdown text widget (04:00)
-      final countdownFinder = find.text('04:00');
+      final Finder countdownFinder = find.text('04:00');
       expect(countdownFinder, findsOneWidget);
 
-      final countdownWidget = tester.widget<Text>(countdownFinder);
+      final Text countdownWidget = tester.widget<Text>(countdownFinder);
       // Verify it's not red (should be null or theme default, not Colors.red)
       expect(countdownWidget.style?.color, isNot(Colors.red));
     });
   });
 
   group('LiveTimerScreen - Overtime State', () {
-    testWidgets('displays negative countdown in overtime', (tester) async {
-      final now = DateTime.now();
-      final state = LiveTimerRunning(
+    testWidgets('displays negative countdown in overtime', (WidgetTester tester) async {
+      final DateTime now = DateTime.now();
+      final LiveTimerRunning state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 360, // 6 minutes elapsed (1 min overtime)
@@ -142,9 +142,9 @@ void main() {
       expect(find.text('06:00'), findsOneWidget);
     });
 
-    testWidgets('countdown turns red in overtime', (tester) async {
-      final now = DateTime.now();
-      final state = LiveTimerRunning(
+    testWidgets('countdown turns red in overtime', (WidgetTester tester) async {
+      final DateTime now = DateTime.now();
+      final LiveTimerRunning state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 330, // 5 minutes 30 seconds (30 seconds overtime)
@@ -156,18 +156,18 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(state));
 
       // Find the negative countdown text
-      final countdownFinder = find.text('-00:30');
+      final Finder countdownFinder = find.text('-00:30');
       expect(countdownFinder, findsOneWidget);
 
-      final countdownWidget = tester.widget<Text>(countdownFinder);
+      final Text countdownWidget = tester.widget<Text>(countdownFinder);
       expect(countdownWidget.style?.color, Colors.red);
     });
 
     testWidgets('elapsed timer stays default color in overtime', (
-      tester,
+      WidgetTester tester,
     ) async {
-      final now = DateTime.now();
-      final state = LiveTimerRunning(
+      final DateTime now = DateTime.now();
+      final LiveTimerRunning state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 330, // 5 minutes 30 seconds elapsed
@@ -179,19 +179,19 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(state));
 
       // Find the elapsed timer text
-      final elapsedFinder = find.text('05:30');
+      final Finder elapsedFinder = find.text('05:30');
       expect(elapsedFinder, findsOneWidget);
 
-      final elapsedWidget = tester.widget<Text>(elapsedFinder);
+      final Text elapsedWidget = tester.widget<Text>(elapsedFinder);
       // Verify it's not red
       expect(elapsedWidget.style?.color, isNot(Colors.red));
     });
   });
 
   group('LiveTimerScreen - NEXT Button', () {
-    testWidgets('NEXT button is present', (tester) async {
-      final now = DateTime.now();
-      final state = LiveTimerRunning(
+    testWidgets('NEXT button is present', (WidgetTester tester) async {
+      final DateTime now = DateTime.now();
+      final LiveTimerRunning state = LiveTimerRunning(
         series: testSeries,
         currentEventIndex: 0,
         elapsedSeconds: 60,

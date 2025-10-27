@@ -9,6 +9,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:chronosync/data/models/event.dart';
 import 'package:chronosync/data/models/series.dart';
 import 'package:chronosync/data/models/user_preferences.dart';
+import 'package:nested/nested.dart';
 
 Future<void> main() async {
   await Hive.initFlutter();
@@ -20,7 +21,7 @@ Future<void> main() async {
   await Hive.openBox<UserPreferences>('preferences');
   
   // Initialize default preferences if not exists
-  final prefsBox = Hive.box<UserPreferences>('preferences');
+  final Box<UserPreferences> prefsBox = Hive.box<UserPreferences>('preferences');
   if (prefsBox.isEmpty) {
     await prefsBox.put('0', UserPreferences());
   }
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
+      providers: <SingleChildWidget>[
         BlocProvider(
           create: (BuildContext context) => SeriesBloc(SeriesRepository(Hive.box('series'))),
         ),

@@ -4,7 +4,7 @@ abstract class LiveTimerEvent extends Equatable {
   const LiveTimerEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[];
 }
 
 class StartTimer extends LiveTimerEvent {
@@ -13,7 +13,7 @@ class StartTimer extends LiveTimerEvent {
   const StartTimer(this.series);
 
   @override
-  List<Object> get props => [series];
+  List<Object> get props => <Object>[series];
 }
 
 class TimerTick extends LiveTimerEvent {}
@@ -28,5 +28,5 @@ class AppResumed extends LiveTimerEvent {
   const AppResumed(this.resumeTime);
 
   @override
-  List<Object> get props => [resumeTime];
+  List<Object> get props => <Object>[resumeTime];
 }

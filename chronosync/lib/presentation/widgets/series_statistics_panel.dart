@@ -20,7 +20,7 @@ class SeriesStatisticsPanel extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Text(
               'Series Statistics',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -70,7 +70,7 @@ class SeriesStatisticsPanel extends StatelessWidget {
   ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
+      children: <Widget>[
         Text(
           label,
           style: Theme.of(context).textTheme.bodyLarge,

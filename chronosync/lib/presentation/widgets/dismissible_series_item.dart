@@ -24,13 +24,13 @@ class DismissibleSeriesItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
-      builder: (context, settingsState) {
-        final direction = (settingsState as SettingsLoaded).swipeDirection;
+      builder: (BuildContext context, SettingsState settingsState) {
+        final SwipeDirection direction = (settingsState as SettingsLoaded).swipeDirection;
 
         return Dismissible(
           key: Key(series.key.toString()),
           direction: direction.dismissDirection,
-          confirmDismiss: (dismissDirection) async {
+          confirmDismiss: (DismissDirection dismissDirection) async {
             // For empty series, allow immediate dismissal
             if (series.events.isEmpty) {
               return true;
@@ -45,7 +45,7 @@ class DismissibleSeriesItem extends StatelessWidget {
             );
             return confirmed ?? false; // Treat null (dismissed) as cancel
           },
-          onDismissed: (direction) => onDismissed(),
+          onDismissed: (DismissDirection direction) => onDismissed(),
           background: Container(
             color: Colors.red,
             alignment: direction == SwipeDirection.ltr
@@ -59,21 +59,21 @@ class DismissibleSeriesItem extends StatelessWidget {
             subtitle: Text('${series.events.length} event(s)'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: <Widget>[
                 IconButton(
                   icon: const Icon(Icons.play_arrow),
                   onPressed: series.events.isEmpty
                       ? null
                       : () {
                           // Create LiveTimerBloc and start the timer
-                          final liveTimerBloc = LiveTimerBloc();
+                          final LiveTimerBloc liveTimerBloc = LiveTimerBloc();
                           liveTimerBloc.add(StartTimer(series));
                           
                           // Navigate to live timer screen with the BLoC provided
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => BlocProvider.value(
+                              builder: (BuildContext context) => BlocProvider.value(
                                 value: liveTimerBloc,
                                 child: const LiveTimerScreen(),
                               ),
@@ -89,7 +89,7 @@ class DismissibleSeriesItem extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EventListScreen(series: series),
+                  builder: (BuildContext context) => EventListScreen(series: series),
                 ),
               );
             },

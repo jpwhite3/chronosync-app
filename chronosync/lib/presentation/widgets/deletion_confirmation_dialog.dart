@@ -22,7 +22,7 @@ class DeletionConfirmationDialog extends StatelessWidget {
       content: Text(
         'This will permanently delete ${series.events.length} event(s).',
       ),
-      actions: [
+      actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.pop(context, false),
           child: const Text('Cancel'),

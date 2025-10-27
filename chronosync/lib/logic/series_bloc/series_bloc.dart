@@ -10,8 +10,8 @@ part 'series_state.dart';
 
 class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
   final SeriesRepository _seriesRepository;
-  final Map<dynamic, Timer> _pendingDeletions = {};
-  final Map<dynamic, _DeletionContext> _deletionContexts = {};
+  final Map<dynamic, Timer> _pendingDeletions = <dynamic, Timer>{};
+  final Map<dynamic, _DeletionContext> _deletionContexts = <dynamic, _DeletionContext>{};
 
   SeriesBloc(this._seriesRepository) : super(SeriesInitial()) {
     on<LoadSeries>(_onLoadSeries);
@@ -26,7 +26,7 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
     final List<Series> allSeries = _seriesRepository.getAllSeries();
     // Filter out series that are pending deletion
     final List<Series> visibleSeries = allSeries
-        .where((s) => !_pendingDeletions.containsKey(s.key))
+        .where((Series s) => !_pendingDeletions.containsKey(s.key))
         .toList();
     emit(SeriesLoaded(visibleSeries));
   }
@@ -102,8 +102,8 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
   }
 
   Future<void> _onUndoDeletion(UndoDeletion event, Emitter<SeriesState> emit) async {
-    final timer = _pendingDeletions[event.itemKey];
-    final context = _deletionContexts[event.itemKey];
+    final Timer? timer = _pendingDeletions[event.itemKey];
+    final _DeletionContext? context = _deletionContexts[event.itemKey];
     
     if (timer != null && context != null) {
       timer.cancel();
@@ -183,19 +183,19 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
   }
 
   Future<void> _onConfirmPermanentDeletion(ConfirmPermanentDeletion event, Emitter<SeriesState> emit) async {
-    final timer = _pendingDeletions[event.itemKey];
+    final Timer? timer = _pendingDeletions[event.itemKey];
     if (timer != null) {
       timer.cancel();
       _pendingDeletions.remove(event.itemKey);
       
       // If it's a series key, cascade delete all events
       try {
-        final allSeries = _seriesRepository.getAllSeries();
-        final seriesToDelete = allSeries.where((s) => s.key == event.itemKey).firstOrNull;
+        final List<Series> allSeries = _seriesRepository.getAllSeries();
+        final Series? seriesToDelete = allSeries.where((Series s) => s.key == event.itemKey).firstOrNull;
         
         if (seriesToDelete != null) {
           // Delete all events in the series
-          for (final event in seriesToDelete.events) {
+          for (final Event event in seriesToDelete.events) {
             await event.delete();
           }
           // Delete the series itself
@@ -210,11 +210,11 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
   /// Validates data consistency between series.events HiveList and events box
   bool _validateDataConsistency() {
     try {
-      final allSeries = _seriesRepository.getAllSeries();
+      final List<Series> allSeries = _seriesRepository.getAllSeries();
       
-      for (final series in allSeries) {
+      for (final Series series in allSeries) {
         // Check that all events in series.events HiveList are valid
-        for (final event in series.events) {
+        for (final Event event in series.events) {
           if (event.isInBox == false) {
             // Event in HiveList but not in box - inconsistency detected
             return false;
@@ -231,7 +231,7 @@ class SeriesBloc extends Bloc<SeriesEvent, SeriesState> {
   @override
   Future<void> close() {
     // Cancel all pending timers
-    for (final timer in _pendingDeletions.values) {
+    for (final Timer timer in _pendingDeletions.values) {
       timer.cancel();
     }
     return super.close();

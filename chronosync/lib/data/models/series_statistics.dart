@@ -38,15 +38,15 @@ class SeriesStatistics {
 
   /// Formatted over/under time string with sign prefix (+/-/none)
   String get overUnderTimeFormatted {
-    final sign = isOvertime ? '+' : (isUndertime ? '-' : '');
+    final String sign = isOvertime ? '+' : (isUndertime ? '-' : '');
     return '$sign${_formatTime(overUnderTimeSeconds.abs())}';
   }
 
   /// Format seconds into HH:MM:SS or MM:SS string
   String _formatTime(int seconds) {
-    final hours = seconds ~/ 3600;
-    final minutes = (seconds % 3600) ~/ 60;
-    final secs = seconds % 60;
+    final int hours = seconds ~/ 3600;
+    final int minutes = (seconds % 3600) ~/ 60;
+    final int secs = seconds % 60;
 
     if (hours > 0) {
       return '${hours.toString().padLeft(2, '0')}:'

@@ -41,7 +41,7 @@ class _LiveTimerScreenState extends State<LiveTimerScreen> with WidgetsBindingOb
     return Scaffold(
       appBar: AppBar(title: const Text('Live Timer')),
       body: BlocListener<LiveTimerBloc, LiveTimerState>(
-        listener: (context, state) {
+        listener: (BuildContext context, LiveTimerState state) {
           // Detect when event changes and it was due to auto-progression
           if (state is LiveTimerRunning) {
             if (_lastEventIndex != null && 
@@ -61,7 +61,7 @@ class _LiveTimerScreenState extends State<LiveTimerScreen> with WidgetsBindingOb
           }
         },
         child: BlocBuilder<LiveTimerBloc, LiveTimerState>(
-          builder: (context, state) {
+          builder: (BuildContext context, LiveTimerState state) {
           if (state is LiveTimerInitial) {
             return const Center(child: Text('Initializing...'));
           }
@@ -70,7 +70,7 @@ class _LiveTimerScreenState extends State<LiveTimerScreen> with WidgetsBindingOb
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: <Widget>[
                   Text(
                     state.currentEvent.title,
                     style: Theme.of(context).textTheme.headlineMedium,
@@ -118,7 +118,7 @@ class _LiveTimerScreenState extends State<LiveTimerScreen> with WidgetsBindingOb
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: <Widget>[
                   const Text(
                     'All events completed!',
                     style: TextStyle(fontSize: 24),

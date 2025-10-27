@@ -4,7 +4,7 @@ import 'package:chronosync/data/models/event.dart';
 void main() {
   group('Event', () {
     test('autoProgress defaults to false', () {
-      final event = Event(
+      final Event event = Event(
         title: 'Test Event',
         durationInSeconds: 60,
       );
@@ -13,7 +13,7 @@ void main() {
     });
 
     test('autoProgress can be set to true', () {
-      final event = Event(
+      final Event event = Event(
         title: 'Auto Event',
         durationInSeconds: 60,
         autoProgress: true,
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('fromDuration constructor defaults autoProgress to false', () {
-      final event = Event.fromDuration(
+      final Event event = Event.fromDuration(
         title: 'Test Event',
         duration: const Duration(seconds: 120),
       );
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('fromDuration constructor can set autoProgress to true', () {
-      final event = Event.fromDuration(
+      final Event event = Event.fromDuration(
         title: 'Auto Event',
         duration: const Duration(minutes: 2),
         autoProgress: true,
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('duration getter returns correct Duration', () {
-      final event = Event(
+      final Event event = Event(
         title: 'Test Event',
         durationInSeconds: 90,
       );

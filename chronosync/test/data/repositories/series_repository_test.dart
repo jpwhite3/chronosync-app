@@ -8,7 +8,7 @@ import 'package:mockito/mockito.dart';
 
 import 'series_repository_test.mocks.dart';
 
-@GenerateMocks([Box])
+@GenerateMocks(<Type>[Box])
 
 void main() {
   group('SeriesRepository', () {

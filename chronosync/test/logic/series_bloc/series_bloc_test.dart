@@ -10,7 +10,7 @@ import 'package:mockito/mockito.dart';
 
 import 'series_bloc_test.mocks.dart';
 
-@GenerateMocks([SeriesRepository, Box])
+@GenerateMocks(<Type>[SeriesRepository, Box])
 void main() {
   group('SeriesBloc', () {
     late SeriesBloc seriesBloc;

@@ -5,7 +5,7 @@ void main() {
   group('SeriesStatistics', () {
     group('basic properties', () {
       test('creates instance with required fields', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 5,
           expectedTimeSeconds: 300,
           actualTimeSeconds: 320,
@@ -19,7 +19,7 @@ void main() {
 
     group('computed properties', () {
       test('overUnderTimeSeconds calculates difference correctly', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 3,
           expectedTimeSeconds: 180,
           actualTimeSeconds: 200,
@@ -29,7 +29,7 @@ void main() {
       });
 
       test('isOvertime returns true when actual > expected', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 3,
           expectedTimeSeconds: 180,
           actualTimeSeconds: 200,
@@ -41,7 +41,7 @@ void main() {
       });
 
       test('isUndertime returns true when actual < expected', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 3,
           expectedTimeSeconds: 180,
           actualTimeSeconds: 150,
@@ -53,7 +53,7 @@ void main() {
       });
 
       test('isOnTime returns true when actual == expected', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 3,
           expectedTimeSeconds: 180,
           actualTimeSeconds: 180,
@@ -67,7 +67,7 @@ void main() {
 
     group('time formatting', () {
       test('formats time under 1 hour as MM:SS', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 3,
           expectedTimeSeconds: 125, // 2:05
           actualTimeSeconds: 200, // 3:20
@@ -78,7 +78,7 @@ void main() {
       });
 
       test('formats time over 1 hour as HH:MM:SS', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 10,
           expectedTimeSeconds: 3665, // 1:01:05
           actualTimeSeconds: 7384, // 2:03:04
@@ -89,7 +89,7 @@ void main() {
       });
 
       test('overUnderTimeFormatted shows + prefix for overtime', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 3,
           expectedTimeSeconds: 180,
           actualTimeSeconds: 205,
@@ -99,7 +99,7 @@ void main() {
       });
 
       test('overUnderTimeFormatted shows - prefix for undertime', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 3,
           expectedTimeSeconds: 180,
           actualTimeSeconds: 145,
@@ -109,7 +109,7 @@ void main() {
       });
 
       test('overUnderTimeFormatted shows no prefix for on-time', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 3,
           expectedTimeSeconds: 180,
           actualTimeSeconds: 180,
@@ -119,7 +119,7 @@ void main() {
       });
 
       test('handles zero time', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 0,
           expectedTimeSeconds: 0,
           actualTimeSeconds: 0,
@@ -131,7 +131,7 @@ void main() {
       });
 
       test('handles large hour values', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 50,
           expectedTimeSeconds: 36000, // 10:00:00
           actualTimeSeconds: 43265, // 12:01:05
@@ -145,12 +145,12 @@ void main() {
 
     group('equality and hashCode', () {
       test('equal instances have same values', () {
-        final stats1 = SeriesStatistics(
+        final SeriesStatistics stats1 = const SeriesStatistics(
           eventCount: 5,
           expectedTimeSeconds: 300,
           actualTimeSeconds: 320,
         );
-        final stats2 = SeriesStatistics(
+        final SeriesStatistics stats2 = const SeriesStatistics(
           eventCount: 5,
           expectedTimeSeconds: 300,
           actualTimeSeconds: 320,
@@ -161,12 +161,12 @@ void main() {
       });
 
       test('different instances are not equal', () {
-        final stats1 = SeriesStatistics(
+        final SeriesStatistics stats1 = const SeriesStatistics(
           eventCount: 5,
           expectedTimeSeconds: 300,
           actualTimeSeconds: 320,
         );
-        final stats2 = SeriesStatistics(
+        final SeriesStatistics stats2 = const SeriesStatistics(
           eventCount: 5,
           expectedTimeSeconds: 300,
           actualTimeSeconds: 310,
@@ -178,13 +178,13 @@ void main() {
 
     group('toString', () {
       test('provides readable string representation', () {
-        final stats = SeriesStatistics(
+        final SeriesStatistics stats = const SeriesStatistics(
           eventCount: 5,
           expectedTimeSeconds: 300,
           actualTimeSeconds: 320,
         );
 
-        final string = stats.toString();
+        final String string = stats.toString();
         expect(string, contains('SeriesStatistics'));
         expect(string, contains('eventCount: 5'));
         expect(string, contains('expected: 05:00'));

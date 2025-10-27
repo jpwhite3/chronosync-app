@@ -15,7 +15,7 @@ class EventListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SeriesBloc, SeriesState>(
-      listener: (context, state) {
+      listener: (BuildContext context, SeriesState state) {
         if (state is DeletionError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -25,7 +25,7 @@ class EventListScreen extends StatelessWidget {
                 label: 'Retry',
                 onPressed: () {
                   // Retry deletion for all events in the error state
-                  for (final series in state.series) {
+                  for (final Series series in state.series) {
                     context.read<SeriesBloc>().add(DeleteSeries(series, -1));
                   }
                 },
@@ -35,13 +35,13 @@ class EventListScreen extends StatelessWidget {
         }
       },
       child: BlocBuilder<SeriesBloc, SeriesState>(
-        builder: (context, state) {
+        builder: (BuildContext context, SeriesState state) {
           // Find the current series from the state to get the latest data
           Series currentSeries = series;
           if (state is SeriesLoaded) {
           // Find the series with the same key
-          final updatedSeries = state.series.firstWhere(
-            (s) => s.key == series.key,
+          final Series updatedSeries = state.series.firstWhere(
+            (Series s) => s.key == series.key,
             orElse: () => series,
           );
           currentSeries = updatedSeries;
@@ -50,14 +50,14 @@ class EventListScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: Text(currentSeries.title),
-            actions: [
+            actions: <Widget>[
               IconButton(
                 icon: const Icon(Icons.settings),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const SettingsScreen(),
+                      builder: (BuildContext context) => const SettingsScreen(),
                     ),
                   );
                 },
@@ -77,7 +77,7 @@ class EventListScreen extends StatelessWidget {
                 },
                 onDismissed: () {
                   // Capture the bloc reference before showing snackbar
-                  final seriesBloc = context.read<SeriesBloc>();
+                  final SeriesBloc seriesBloc = context.read<SeriesBloc>();
                   final eventKey = event.key;
                   
                   seriesBloc.add(
@@ -159,7 +159,7 @@ class EventListScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     // Validate duration (minimum 1 second)
-                    final duration = int.tryParse(durationController.text) ?? 0;
+                    final int duration = int.tryParse(durationController.text) ?? 0;
                     if (duration < 1) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -171,16 +171,16 @@ class EventListScreen extends StatelessWidget {
                     }
                     
                     // Capture bloc and navigator references before async operations
-                    final seriesBloc = context.read<SeriesBloc>();
-                    final navigator = Navigator.of(context);
+                    final SeriesBloc seriesBloc = context.read<SeriesBloc>();
+                    final NavigatorState navigator = Navigator.of(context);
                     
-                    final event = Event.fromDuration(
+                    final Event event = Event.fromDuration(
                       title: titleController.text,
                       duration: Duration(seconds: duration),
                       autoProgress: autoProgress,
                     );
                     // Get the events box and add the event to it first
-                    final eventsBox = await Hive.openBox<Event>('events');
+                    final Box<Event> eventsBox = await Hive.openBox<Event>('events');
                     await eventsBox.add(event);
                     
                     // Now we can add the event to the series
@@ -247,7 +247,7 @@ class EventListScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     // Validate duration (minimum 1 second)
-                    final duration = int.tryParse(durationController.text) ?? 0;
+                    final int duration = int.tryParse(durationController.text) ?? 0;
                     if (duration < 1) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -259,8 +259,8 @@ class EventListScreen extends StatelessWidget {
                     }
                     
                     // Capture bloc and navigator references before async operations
-                    final seriesBloc = context.read<SeriesBloc>();
-                    final navigator = Navigator.of(context);
+                    final SeriesBloc seriesBloc = context.read<SeriesBloc>();
+                    final NavigatorState navigator = Navigator.of(context);
                     
                     // Update event properties
                     event.title = titleController.text;

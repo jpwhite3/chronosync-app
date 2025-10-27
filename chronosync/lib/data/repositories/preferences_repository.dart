@@ -11,7 +11,7 @@ class PreferencesRepository {
   }
 
   Future<void> saveSwipeDirection(SwipeDirection direction) async {
-    final prefs = getPreferences();
+    final UserPreferences prefs = getPreferences();
     prefs.swipeDirection = direction.value;
     await prefs.save();
   }
@@ -21,7 +21,7 @@ class PreferencesRepository {
   }
 
   Future<void> saveAutoProgressAudioEnabled(bool enabled) async {
-    final prefs = getPreferences();
+    final UserPreferences prefs = getPreferences();
     prefs.autoProgressAudioEnabled = enabled;
     await prefs.save();
   }

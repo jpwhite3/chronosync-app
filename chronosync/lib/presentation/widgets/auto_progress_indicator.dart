@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 class AutoProgressIndicator {
   /// Show the auto-progress indicator using a SnackBar
   static void show(BuildContext context, {String? nextEventTitle}) {
-    final message = nextEventTitle != null
+    final String message = nextEventTitle != null
         ? 'Auto-advancing to: $nextEventTitle'
         : 'Auto-advancing...';
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
-          children: [
+          children: <Widget>[
             const Icon(
               Icons.play_circle_outline,
               color: Colors.white,

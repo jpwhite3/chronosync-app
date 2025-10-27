@@ -5,7 +5,7 @@ abstract class SettingsState extends Equatable {
   const SettingsState();
   
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[];
 }
 
 class SettingsLoaded extends SettingsState {
@@ -18,7 +18,7 @@ class SettingsLoaded extends SettingsState {
   });
 
   @override
-  List<Object> get props => [swipeDirection, autoProgressAudioEnabled];
+  List<Object> get props => <Object>[swipeDirection, autoProgressAudioEnabled];
   
   SettingsLoaded copyWith({
     SwipeDirection? swipeDirection,

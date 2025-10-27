@@ -4,7 +4,7 @@ abstract class LiveTimerState extends Equatable {
   const LiveTimerState();
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[];
 }
 
 class LiveTimerInitial extends LiveTimerState {}
@@ -29,12 +29,12 @@ class LiveTimerRunning extends LiveTimerState {
   Event get currentEvent => series.events[currentEventIndex];
 
   int get remainingSeconds {
-    final remaining = currentEvent.duration.inSeconds - elapsedSeconds;
+    final int remaining = currentEvent.duration.inSeconds - elapsedSeconds;
     return remaining < 0 ? 0 : remaining;
   }
 
   int get overtimeSeconds {
-    final remaining = currentEvent.duration.inSeconds - elapsedSeconds;
+    final int remaining = currentEvent.duration.inSeconds - elapsedSeconds;
     return remaining < 0 ? -remaining : 0;
   }
 
@@ -51,14 +51,14 @@ class LiveTimerRunning extends LiveTimerState {
     if (!currentEvent.autoProgress) return false;
     
     // Minimum 1-second display time must have elapsed
-    final minDisplayTimeElapsed = 
+    final bool minDisplayTimeElapsed = 
         DateTime.now().difference(eventStartTime).inSeconds >= 1;
     
     return minDisplayTimeElapsed;
   }
 
   @override
-  List<Object> get props => [
+  List<Object> get props => <Object>[
         series,
         currentEventIndex,
         elapsedSeconds,
@@ -74,5 +74,5 @@ class LiveTimerCompleted extends LiveTimerState {
   const LiveTimerCompleted({required this.statistics});
 
   @override
-  List<Object> get props => [statistics];
+  List<Object> get props => <Object>[statistics];
 }

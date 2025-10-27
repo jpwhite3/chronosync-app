@@ -26,17 +26,17 @@ class DismissibleEventItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
-      builder: (context, settingsState) {
-        final direction = (settingsState as SettingsLoaded).swipeDirection;
+      builder: (BuildContext context, SettingsState settingsState) {
+        final SwipeDirection direction = (settingsState as SettingsLoaded).swipeDirection;
 
         return Dismissible(
           key: Key(event.key.toString()),
           direction: direction.dismissDirection,
-          confirmDismiss: (dismissDirection) async {
+          confirmDismiss: (DismissDirection dismissDirection) async {
             // Check if event is in active timer (if LiveTimerBloc is available)
             try {
-              final timerBloc = context.read<LiveTimerBloc>();
-              final timerState = timerBloc.state;
+              final LiveTimerBloc timerBloc = context.read<LiveTimerBloc>();
+              final LiveTimerState timerState = timerBloc.state;
               if (timerState is LiveTimerRunning &&
                   timerState.currentEvent.key == event.key) {
                 _showActiveTimerDialog(context);
@@ -47,7 +47,7 @@ class DismissibleEventItem extends StatelessWidget {
             }
             return true;
           },
-          onDismissed: (direction) => onDismissed(),
+          onDismissed: (DismissDirection direction) => onDismissed(),
           background: Container(
             color: Colors.red,
             alignment: direction == SwipeDirection.ltr
@@ -74,19 +74,19 @@ class DismissibleEventItem extends StatelessWidget {
 
   String _formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String hours = twoDigits(duration.inHours);
-    String minutes = twoDigits(duration.inMinutes.remainder(60));
-    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    final String hours = twoDigits(duration.inHours);
+    final String minutes = twoDigits(duration.inMinutes.remainder(60));
+    final String seconds = twoDigits(duration.inSeconds.remainder(60));
     return '$hours:$minutes:$seconds';
   }
 
   void _showActiveTimerDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: const Text('Cannot Delete'),
         content: const Text('Event is in use. Stop the timer first.'),
-        actions: [
+        actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('OK'),

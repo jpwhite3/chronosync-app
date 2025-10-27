@@ -4,20 +4,20 @@ import 'package:chronosync/data/models/user_preferences.dart';
 void main() {
   group('UserPreferences', () {
     test('swipeDirection defaults to ltr', () {
-      final prefs = UserPreferences();
+      final UserPreferences prefs = UserPreferences();
 
       expect(prefs.swipeDirection, equals('ltr'));
       expect(prefs.swipeDirectionEnum, equals(SwipeDirection.ltr));
     });
 
     test('autoProgressAudioEnabled defaults to true', () {
-      final prefs = UserPreferences();
+      final UserPreferences prefs = UserPreferences();
 
       expect(prefs.autoProgressAudioEnabled, isTrue);
     });
 
     test('can set autoProgressAudioEnabled to false', () {
-      final prefs = UserPreferences(
+      final UserPreferences prefs = UserPreferences(
         autoProgressAudioEnabled: false,
       );
 
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('can set both swipeDirection and audioProgressAudioEnabled', () {
-      final prefs = UserPreferences(
+      final UserPreferences prefs = UserPreferences(
         swipeDirection: 'rtl',
         autoProgressAudioEnabled: false,
       );
