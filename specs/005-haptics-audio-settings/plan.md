@@ -1,44 +1,42 @@
+````markdown
 # Implementation Plan: Haptics and Audio Settings
 
-**Branch**: `005-haptics-audio-settings` | **Date**: October 24, 2025 | **Spec**: [spec.md](./spec.md)
+**Branch**: `005-haptics-audio-settings` | **Date**: 2025-10-28 | **Spec**: [spec.md](./spec.md)
 **Input**: Feature specification from `/specs/005-haptics-audio-settings/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
 ## Summary
 
-Add comprehensive audio and haptic notification settings to ChronoSync timer app. Users can configure global default audio sounds (from device built-in sounds) and haptic intensity levels (light, medium, strong). Each event can override these defaults with custom settings via a "chime" toggle. The feature includes sound preview, graceful permission handling, device capability detection, and OS notification integration for reliable notifications when app is backgrounded or device is locked.
+This feature adds comprehensive haptic and audio notification settings to ChronoSync, allowing users to configure default notification preferences globally and customize them per event. Users can select from device built-in sounds, choose haptic intensity levels (light, medium, strong), and toggle a "chime" setting at the event level to control timer completion notifications. The implementation requires integration with platform-specific audio and haptic APIs (iOS and macOS), persistent storage of settings via Hive, and graceful fallback handling for unavailable sounds or unsupported devices.
 
 ## Technical Context
 
-**Language/Version**: Dart 3.9.2 / Flutter SDK (latest stable)  
-**Primary Dependencies**: flutter_bloc ^9.1.1, hive ^2.2.3, hive_flutter ^1.1.0, just_audio ^0.9.36, vibration ^2.0.0 (NEW), flutter_local_notifications ^18.0.0 (NEW), permission_handler ^11.0.0 (NEW)  
-**Storage**: Hive (local NoSQL database) for settings persistence  
-**Testing**: flutter_test, mockito ^5.4.4, bloc_test ^10.0.0  
-**Target Platform**: iOS and Android (cross-platform mobile)
-**Project Type**: Mobile (Flutter) - feature modules within existing app structure  
-**Performance Goals**: <1 second notification delivery after timer completion, <200ms UI response for settings changes  
-**Constraints**: Must work offline, respect device permissions, graceful degradation on unsupported hardware  
-**Scale/Scope**: Single-user local app, ~3 new screens/widgets, integration with existing Event entity
-
-**Note**: All NEEDS CLARIFICATION items resolved in research.md
+**Language/Version**: Dart 3.9.2 / Flutter SDK 3.35.7 (stable channel)  
+**Primary Dependencies**: flutter_bloc ^9.1.1, hive ^2.2.3, hive_flutter ^1.1.0, just_audio ^0.10.5, vibration ^3.1.4, flutter_local_notifications ^19.5.0, permission_handler ^12.0.1, equatable ^2.0.7  
+**Storage**: Hive (local NoSQL database) for settings and event configuration persistence  
+**Testing**: flutter_test (SDK), bloc_test ^10.0.0, mockito ^5.4.4  
+**Target Platform**: iOS 13.0+, macOS 10.15+ (Flutter multi-platform: mobile + desktop)
+**Project Type**: Mobile/Desktop Flutter application - multi-platform with platform-specific audio/haptic implementations  
+**Performance Goals**: <1 second notification delivery from timer completion, <30ms haptic feedback response, <100ms sound preview playback start  
+**Constraints**: Must respect device silent/DND mode for audio while maintaining haptic functionality, must handle OS permission restrictions gracefully with retry mechanisms, offline-capable (no network required)  
+**Scale/Scope**: ~15-20 screens/dialogs (settings screens, event creation/editing), 3 haptic intensity levels, support for device built-in sound library enumeration
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- **I. Specification-Driven Development**: ✅ PASS - spec.md exists and is complete with all mandatory sections
-- **II. Template-Driven Consistency**: ✅ PASS - This plan follows the standard template structure
-- **III. Progressive Enhancement**: ✅ PASS - User stories are prioritized (P1-P3) and independently testable
-- **IV. Quality Gates**: ✅ PASS - Spec passed quality checklist validation (see checklists/requirements.md)
-- **V. Tool Integration**: ✅ PASS - Workflow supports automation via JSON output and follows template-driven approach
-
-**Gate Status**: ✅ ALL CHECKS PASSED - Proceeding to Phase 0 research
+- **I. Specification-Driven Development**: ✅ `spec.md` exists and is complete with comprehensive requirements, user stories, edge cases, and success criteria
+- **II. Template-Driven Consistency**: ✅ This plan follows the standard template structure
+- **III. Progressive Enhancement**: ✅ User stories are prioritized (P1-P3) and independently testable as defined in spec.md
+- **IV. Quality Gates**: ✅ Spec has passed quality checklist review with comprehensive enhancements documented
+- **V. Tool Integration**: ✅ Workflow supports automation via bash scripts and JSON output
 
 ## Project Structure
 
 ### Documentation (this feature)
 
+```text
 ```text
 specs/005-haptics-audio-settings/
 ├── plan.md              # This file (/speckit.plan command output)
@@ -46,7 +44,6 @@ specs/005-haptics-audio-settings/
 ├── data-model.md        # Phase 1 output (/speckit.plan command)
 ├── quickstart.md        # Phase 1 output (/speckit.plan command)
 ├── contracts/           # Phase 1 output (/speckit.plan command)
-│   └── notification_settings_contract.md
 └── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
 ```
 
@@ -55,105 +52,122 @@ specs/005-haptics-audio-settings/
 ```text
 chronosync/
 ├── lib/
+│   ├── main.dart
 │   ├── data/
 │   │   ├── models/
-│   │   │   ├── global_notification_settings.dart       # NEW: Global settings model
-│   │   │   ├── event_notification_settings.dart        # NEW: Event-level settings model
-│   │   │   └── device_sound.dart                       # NEW: Device sound reference model
-│   │   └── repositories/
-│   │       ├── notification_settings_repository.dart   # NEW: Settings persistence
-│   │       └── device_audio_repository.dart            # NEW: Device sound/haptic access
+│   │   │   ├── event.dart (existing - extend with notification settings)
+│   │   │   ├── global_settings.dart (NEW - notification defaults)
+│   │   │   └── device_sound.dart (NEW - sound reference model)
+│   │   ├── repositories/
+│   │   │   ├── settings_repository.dart (NEW - Hive persistence)
+│   │   │   └── sound_repository.dart (NEW - platform sound access)
+│   │   └── datasources/
+│   │       ├── hive_settings_datasource.dart (NEW)
+│   │       └── platform_sound_datasource.dart (NEW - platform channels)
 │   ├── logic/
-│   │   └── blocs/
-│   │       ├── notification_settings_bloc/             # NEW: Settings state management
-│   │       │   ├── notification_settings_bloc.dart
-│   │       │   ├── notification_settings_event.dart
-│   │       │   └── notification_settings_state.dart
-│   │       └── timer_notification_bloc/                # NEW: Timer completion notifications
-│   │           ├── timer_notification_bloc.dart
-│   │           ├── timer_notification_event.dart
-│   │           └── timer_notification_state.dart
+│   │   ├── blocs/
+│   │   │   ├── settings_bloc/ (NEW - global settings state management)
+│   │   │   ├── event_bloc/ (existing - extend for notification settings)
+│   │   │   └── sound_picker_bloc/ (NEW - sound selection state)
+│   │   └── services/
+│   │       ├── notification_service.dart (NEW - audio + haptic orchestration)
+│   │       ├── audio_service.dart (NEW - just_audio wrapper)
+│   │       └── haptic_service.dart (NEW - vibration wrapper)
 │   └── presentation/
 │       ├── screens/
-│       │   └── settings/
-│       │       ├── notification_settings_screen.dart   # NEW: Global settings UI
-│       │       └── widgets/
-│       │           ├── sound_picker_widget.dart        # NEW: Sound selection
-│       │           ├── haptic_intensity_picker.dart    # NEW: Haptic intensity selector
-│       │           └── sound_preview_button.dart       # NEW: Sound preview
+│       │   ├── settings_screen.dart (existing - extend with notification section)
+│       │   ├── event_form_screen.dart (existing - extend with chime toggle)
+│       │   └── sound_picker_screen.dart (NEW)
 │       └── widgets/
-│           └── event_form/
-│               └── chime_settings_widget.dart          # NEW: Event chime toggle & custom settings
-└── test/
-    ├── data/
-    │   ├── models/
-    │   │   ├── global_notification_settings_test.dart
-    │   │   ├── event_notification_settings_test.dart
-    │   │   └── device_sound_test.dart
-    │   └── repositories/
-    │       ├── notification_settings_repository_test.dart
-    │       └── device_audio_repository_test.dart
-    ├── logic/
-    │   └── blocs/
-    │       ├── notification_settings_bloc_test.dart
-    │       └── timer_notification_bloc_test.dart
-    └── presentation/
-        └── widgets/
-            ├── sound_picker_widget_test.dart
-            ├── haptic_intensity_picker_test.dart
-            └── chime_settings_widget_test.dart
+│           ├── haptic_intensity_selector.dart (NEW)
+│           ├── sound_preview_button.dart (NEW)
+│           └── chime_toggle.dart (NEW)
+├── test/
+│   ├── data/
+│   │   ├── models/
+│   │   ├── repositories/
+│   │   └── datasources/
+│   ├── logic/
+│   │   ├── blocs/
+│   │   └── services/
+│   └── presentation/
+│       ├── screens/
+│       └── widgets/
+├── ios/ (platform-specific configuration)
+│   ├── Podfile (updated with iOS 13.0+ platform)
+│   └── Runner/
+│       └── Info.plist (updated with audio background mode + permissions)
+├── macos/ (platform-specific configuration)
+│   └── Podfile (existing - macOS 10.15+)
+└── assets/
+    └── audio/
+        ├── auto_progress_beep.mp3 (existing fallback sound)
+        └── preview_beep.mp3 (NEW - sound preview fallback)
 ```
 
-**Structure Decision**: Flutter mobile app with BLoC pattern architecture. Following existing project structure with separation of concerns: data layer (models, repositories), logic layer (BLoCs for state management), and presentation layer (screens, widgets). Hive for local persistence, existing pattern established in the app.
+**Structure Decision**: Mobile + Desktop Flutter application structure selected. The project follows Flutter's standard architecture with separation of concerns: `data/` for models and persistence (Hive), `logic/` for business logic (BLoC pattern), and `presentation/` for UI. Platform-specific implementations use platform channels for iOS/macOS audio and haptic APIs. This structure supports the multi-platform nature of the application while maintaining code reusability through shared Dart logic.
 
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-No constitutional violations - all quality gates passed. No additional complexity introduced beyond standard Flutter/BLoC architecture patterns already established in the project.
+*No constitutional violations identified. All gates passed.*
 
----
+````
+```
 
-## Phase Completion Status
+### Source Code (repository root)
+<!--
+  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
+  for this feature. Delete unused options and expand the chosen structure with
+  real paths (e.g., apps/admin, packages/something). The delivered plan must
+  not include Option labels.
+-->
 
-### Phase 0: Research ✅ COMPLETE
-**Output**: `research.md` - 8 research questions resolved
-- Audio picker approach: Platform channels (no package solution)
-- Vibration package: vibration ^2.0.0 with intensity mapping
-- Notification integration: flutter_local_notifications ^18.0.0
-- Sound preview: just_audio ^0.9.36
-- Hive models: Type adapters with typeId 3-5
-- Permission handling: permission_handler ^11.0.0 with retry logic
-- BLoC architecture: Two separate BLoCs (settings vs notifications)
-- UI patterns: Material Design 3 with ExpansionTile, bottom sheets
+```text
+# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
+src/
+├── models/
+├── services/
+├── cli/
+└── lib/
 
-### Phase 1: Design & Contracts ✅ COMPLETE
-**Outputs**:
-- `data-model.md` - 5 entities defined with validation rules and relationships
-- `contracts/notification_settings_contract.md` - 9 interfaces (repositories, BLoCs, widgets, platform channels)
-- `quickstart.md` - Developer guide with 5 implementation phases, testing strategy, troubleshooting
-- Agent context updated via `update-agent-context.sh copilot`
+tests/
+├── contract/
+├── integration/
+└── unit/
 
-**Re-evaluation**: Constitution Check remains PASSED after design phase completion.
+# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
+backend/
+├── src/
+│   ├── models/
+│   ├── services/
+│   └── api/
+└── tests/
 
-### Phase 2: Task Generation ⏳ PENDING
-**Instruction**: Run separate command `/speckit.tasks` to generate tasks.md
+frontend/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   └── services/
+└── tests/
 
-**Rationale**: Per workflow design, task generation is intentionally separated from planning to allow review of research, data models, and contracts before committing to specific implementation tasks. This gate ensures architectural decisions are validated before breaking down into granular work items.
+# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
+api/
+└── [same as backend above]
 
----
+ios/ or android/
+└── [platform-specific structure: feature modules, UI flows, platform tests]
+```
 
-## Next Steps
+**Structure Decision**: [Document the selected structure and reference the real
+directories captured above]
 
-1. ✅ Phase 0 Research completed
-2. ✅ Phase 1 Design artifacts completed
-3. ⏳ **ACTION REQUIRED**: Review the following artifacts before proceeding:
-   - `research.md` - Validate technology decisions
-   - `data-model.md` - Validate entity structure and validation rules
-   - `contracts/notification_settings_contract.md` - Validate interface contracts
-   - `quickstart.md` - Validate implementation approach
-4. ⏳ **NEXT COMMAND**: Run `/speckit.tasks` to generate implementation tasks (Phase 2)
-5. ⏳ Begin implementation following quickstart.md phases
-6. ⏳ Use generated tasks.md for progress tracking
+## Complexity Tracking
 
-**Current Status**: ✅ Phase 1 complete - ready for task generation
+> **Fill ONLY if Constitution Check has violations that must be justified**
+
+| Violation | Why Needed | Simpler Alternative Rejected Because |
+|-----------|------------|-------------------------------------|
+| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |

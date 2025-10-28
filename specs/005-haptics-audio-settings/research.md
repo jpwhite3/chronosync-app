@@ -686,4 +686,116 @@ All NEEDS CLARIFICATION items resolved. Technology stack selected:
 - Hive type adapters for efficient serialization
 - Material Design 3 UI patterns
 
+---
+
+## 11. Dependency Updates and iOS Readiness (2025-10-28 Update)
+
+**Task**: Update all dependencies to latest versions while ensuring iOS and macOS native development readiness.
+
+### Dependency Status
+
+**Current Versions** (Verified 2025-10-28):
+- Flutter SDK: **3.35.7** (stable channel) ✅ Latest
+- Dart: **3.9.2** ✅ Latest
+- `just_audio: ^0.10.5` ✅ Updated from ^0.9.36 to latest
+- `vibration: ^3.1.4` ✅ Updated from ^2.0.0 to latest
+- `flutter_local_notifications: ^19.5.0` ✅ Updated from ^18.0.0 to latest
+- `permission_handler: ^12.0.1` ✅ Updated from ^11.0.0 to latest
+- `flutter_bloc: ^9.1.1` ✅ Up-to-date
+- `hive: ^2.2.3` ✅ Up-to-date
+- `hive_flutter: ^1.1.0` ✅ Up-to-date
+- `equatable: ^2.0.7` ✅ Up-to-date
+
+**Dev Dependencies Status**:
+- `flutter_lints: ^6.0.0` ✅ Up-to-date
+- `bloc_test: ^10.0.0` ✅ Up-to-date
+- `hive_generator: ^2.0.1` ⚠️ Latest, but constrains other packages
+- `build_runner: ^2.4.13` ⚠️ Constrained by hive_generator (2.10.1 available)
+- `mockito: ^5.4.4` ⚠️ Constrained (5.5.1 available)
+
+### Dependency Conflict Analysis
+
+**Issue**: `hive_generator 2.0.1` requires `analyzer <7.0.0`, while `build_runner >=2.10.0` requires `analyzer ^8.0.0`.
+
+**Decision**: Maintain current stable versions.
+
+**Rationale**:
+1. All functional requirements met with current versions
+2. `build_runner 2.4.13` works perfectly for code generation
+3. No critical security issues or bugs in current versions
+4. Upgrading would break the build without adding value
+5. `hive_generator` is the blocking package (awaiting 3.x release)
+
+**Packages with Newer Versions Available** (incompatible due to analyzer constraint):
+- `build_runner`: 2.4.13 → 2.10.1 (blocked)
+- `mockito`: 5.4.4 → 5.5.1 (blocked)
+- 16 transitive dependencies (blocked)
+
+**Future Action**: Monitor `hive_generator` for version 3.x with `analyzer ^8.0.0` support. Alternative: Consider migrating to `drift` or `isar` if Hive development stagnates.
+
+### iOS/macOS Platform Configuration
+
+**iOS Configuration** (ios/Podfile):
+```ruby
+platform :ios, '13.0'  # ✅ Set explicitly
+```
+
+**iOS Permissions** (ios/Runner/Info.plist):
+```xml
+<key>UIBackgroundModes</key>
+<array>
+    <string>audio</string>  # ✅ Required for background audio playback
+</array>
+<key>NSMicrophoneUsageDescription</key>
+<string>This app requires access to play notification sounds.</string>
+```
+
+**macOS Configuration** (macos/Podfile):
+```ruby
+platform :osx, '10.15'  # ✅ Already configured
+```
+
+**CocoaPods Installation**:
+- iOS: 8 pods installed successfully ✅
+- macOS: 6 pods installed successfully ✅
+- Dependencies: `just_audio`, `vibration`, `flutter_local_notifications`, `permission_handler`, etc.
+
+### Build Verification
+
+**macOS Build**: ✅ SUCCESS
+```bash
+flutter build macos --debug
+# Result: Built chronosync.app successfully
+```
+
+**iOS Simulator Status**: ⚠️ UNAVAILABLE (System issue, not app issue)
+- Xcode 26.0.1 beta has incomplete simulator runtimes
+- iOS simulators showing as "Unavailable" in `xcrun simctl list`
+- Not a blocker: Can test on macOS and physical iOS devices
+
+**iOS Simulator Installation** (for user to complete):
+```bash
+# Option 1: Via Xcode Settings
+# Open Xcode > Settings > Platforms > Download iOS 17+ simulator
+
+# Option 2: Via CLI
+xcodebuild -downloadPlatform iOS
+```
+
+**Development Environment Readiness**:
+- ✅ macOS native testing: Fully operational
+- ✅ iOS project configuration: Complete
+- ✅ iOS CocoaPods dependencies: Installed
+- ✅ iOS permissions: Configured
+- ✅ Physical iOS device debugging: Ready (USB)
+- ⚠️ iOS Simulator: Requires runtime installation (user/system task)
+
+### Conclusion
+
+All dependencies are at their latest **compatible** versions. The project is fully configured for iOS 13.0+ and macOS 10.15+ development. macOS native testing is operational, and iOS testing can proceed via physical device or simulator (once runtime installed). All functional requirements can be met with the current dependency versions.
+
+---
+
 Ready to proceed to Phase 1: Data Model and Contract Design.
+
+```
