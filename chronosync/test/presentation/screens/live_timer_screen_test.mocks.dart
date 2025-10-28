@@ -42,6 +42,12 @@ class MockLiveTimerBloc extends _i1.Mock implements _i2.LiveTimerBloc {
   }
 
   @override
+  bool get enableAudio => (super.noSuchMethod(
+        Invocation.getter(#enableAudio),
+        returnValue: false,
+      ) as bool);
+
+  @override
   _i2.LiveTimerState get state => (super.noSuchMethod(
         Invocation.getter(#state),
         returnValue: _FakeLiveTimerState_0(

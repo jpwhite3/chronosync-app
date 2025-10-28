@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chronosync/data/models/user_preferences.dart';
+import 'package:chronosync/data/repositories/notification_settings_repository.dart';
+import 'package:chronosync/logic/notification_settings_bloc/notification_settings_bloc.dart';
+import 'package:chronosync/logic/notification_settings_bloc/notification_settings_event.dart';
 import 'package:chronosync/logic/settings_cubit/settings_cubit.dart';
 import 'package:chronosync/logic/settings_cubit/settings_state.dart';
+import 'package:chronosync/presentation/screens/notification_settings_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -18,6 +22,35 @@ class SettingsScreen extends StatelessWidget {
           if (state is SettingsLoaded) {
             return ListView(
               children: <Widget>[
+                // Notifications & Haptics Section
+                ListTile(
+                  leading: const Icon(Icons.notifications_active),
+                  title: const Text('Notifications & Haptics'),
+                  subtitle: const Text('Configure event completion alerts'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    // Initialize notification settings repository
+                    final notificationSettingsRepo = NotificationSettingsRepository();
+                    await notificationSettingsRepo.init();
+                    
+                    if (context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BlocProvider(
+                            create: (context) => NotificationSettingsBloc(
+                              repository: notificationSettingsRepo,
+                            )..add(const LoadGlobalSettingsEvent()),
+                            child: const NotificationSettingsScreen(),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                const Divider(),
+                
+                // Existing settings
                 const Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chronosync/data/models/series.dart';
 import 'package:chronosync/data/models/user_preferences.dart';
+import 'package:chronosync/data/repositories/notification_settings_repository.dart';
+import 'package:chronosync/data/services/notification_service.dart';
 import 'package:chronosync/logic/settings_cubit/settings_cubit.dart';
 import 'package:chronosync/logic/settings_cubit/settings_state.dart';
 import 'package:chronosync/logic/live_timer_bloc/live_timer_bloc.dart';
@@ -64,21 +66,33 @@ class DismissibleSeriesItem extends StatelessWidget {
                   icon: const Icon(Icons.play_arrow),
                   onPressed: series.events.isEmpty
                       ? null
-                      : () {
-                          // Create LiveTimerBloc and start the timer
-                          final LiveTimerBloc liveTimerBloc = LiveTimerBloc();
+                      : () async {
+                          // Create notification service
+                          final notificationSettingsRepo = NotificationSettingsRepository();
+                          await notificationSettingsRepo.init();
+                          final notificationService = NotificationService(
+                            settingsRepository: notificationSettingsRepo,
+                          );
+                          await notificationService.init();
+                          
+                          // Create LiveTimerBloc with notification support and start the timer
+                          final LiveTimerBloc liveTimerBloc = LiveTimerBloc(
+                            notificationService: notificationService,
+                          );
                           liveTimerBloc.add(StartTimer(series));
                           
                           // Navigate to live timer screen with the BLoC provided
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => BlocProvider.value(
-                                value: liveTimerBloc,
-                                child: const LiveTimerScreen(),
+                          if (context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) => BlocProvider.value(
+                                  value: liveTimerBloc,
+                                  child: const LiveTimerScreen(),
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          }
                         },
                 ),
                 const Icon(Icons.chevron_right),

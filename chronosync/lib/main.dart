@@ -9,6 +9,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:chronosync/data/models/event.dart';
 import 'package:chronosync/data/models/series.dart';
 import 'package:chronosync/data/models/user_preferences.dart';
+import 'package:chronosync/data/models/haptic_intensity.dart';
+import 'package:chronosync/data/models/global_notification_settings.dart';
+import 'package:chronosync/data/models/event_notification_settings.dart';
 import 'package:nested/nested.dart';
 
 Future<void> main() async {
@@ -16,6 +19,9 @@ Future<void> main() async {
   Hive.registerAdapter(SeriesAdapter());
   Hive.registerAdapter(EventAdapter());
   Hive.registerAdapter(UserPreferencesAdapter());
+  Hive.registerAdapter(HapticIntensityAdapter());
+  Hive.registerAdapter(GlobalNotificationSettingsAdapter());
+  Hive.registerAdapter(EventNotificationSettingsAdapter());
   await Hive.openBox<Series>('series');
   await Hive.openBox<Event>('events');
   await Hive.openBox<UserPreferences>('preferences');

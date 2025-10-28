@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'event_notification_settings.dart';
 
 part 'event.g.dart';
 
@@ -13,10 +14,14 @@ class Event extends HiveObject {
   @HiveField(2)
   bool autoProgress;
 
+  @HiveField(3)
+  EventNotificationSettings? notificationSettings;
+
   Event({
     required this.title,
     required this.durationInSeconds,
     this.autoProgress = false,
+    this.notificationSettings,
   });
 
   // Helper getter to get Duration object
@@ -27,5 +32,6 @@ class Event extends HiveObject {
     required this.title,
     required Duration duration,
     this.autoProgress = false,
+    this.notificationSettings,
   }) : durationInSeconds = duration.inSeconds;
 }

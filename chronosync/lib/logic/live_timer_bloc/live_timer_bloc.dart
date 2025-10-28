@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:chronosync/data/models/event.dart';
 import 'package:chronosync/data/models/series.dart';
 import 'package:chronosync/data/models/series_statistics.dart';
+import 'package:chronosync/data/services/notification_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -15,9 +16,14 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   AudioPlayer? _audioPlayer;
   bool _audioLoaded = false;
   final bool enableAudio;
+  final NotificationService? _notificationService;
   DateTime? _lastTickTime;
 
-  LiveTimerBloc({this.enableAudio = true}) : super(LiveTimerInitial()) {
+  LiveTimerBloc({
+    this.enableAudio = true,
+    NotificationService? notificationService,
+  })  : _notificationService = notificationService,
+        super(LiveTimerInitial()) {
     on<StartTimer>(_onStartTimer);
     on<TimerTick>(_onTimerTick);
     on<NextEvent>(_onNextEvent);
@@ -145,6 +151,11 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
       final int nextIndex = currentState.currentEventIndex + 1;
       
       print('⏭️ Auto-progression triggered for event: $currentEventTitle');
+      
+      // Trigger event completion notifications/haptics
+      if (_notificationService != null) {
+        await _notificationService.onEventComplete(currentState.currentEvent);
+      }
       
       // Play audio cue if loaded and user preference enabled
       if (_audioLoaded && _audioPlayer != null) {

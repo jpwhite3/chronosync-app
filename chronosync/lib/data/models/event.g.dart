@@ -19,20 +19,23 @@ class EventAdapter extends TypeAdapter<Event> {
     return Event(
       title: fields[0] as String,
       durationInSeconds: fields[1] as int,
-      autoProgress: fields[2] as bool? ?? false,
+      autoProgress: fields[2] as bool,
+      notificationSettings: fields[3] as EventNotificationSettings?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
       ..write(obj.durationInSeconds)
       ..writeByte(2)
-      ..write(obj.autoProgress);
+      ..write(obj.autoProgress)
+      ..writeByte(3)
+      ..write(obj.notificationSettings);
   }
 
   @override
