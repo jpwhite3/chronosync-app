@@ -14,11 +14,11 @@ class HapticService {
 
     try {
       // Check if device has vibrator
-      final hasVibrator = await Vibration.hasVibrator();
+      final bool hasVibrator = await Vibration.hasVibrator();
       if (!hasVibrator) return;
 
       // Check if custom vibration is supported (Android)
-      final hasCustom = await Vibration.hasCustomVibrationsSupport();
+      final bool hasCustom = await Vibration.hasCustomVibrationsSupport();
 
       if (hasCustom && Platform.isAndroid) {
         // Android: Use amplitude-based vibration
@@ -29,7 +29,7 @@ class HapticService {
       } else {
         // iOS or fallback: Use simple vibration with pattern
         // iOS doesn't support custom amplitude, so we use duration patterns
-        final pattern = _getVibrationPattern(intensity);
+        final List<int> pattern = _getVibrationPattern(intensity);
         await Vibration.vibrate(
           pattern: pattern,
           intensities: _getIntensities(intensity, pattern.length ~/ 2),
@@ -45,19 +45,19 @@ class HapticService {
   List<int> _getVibrationPattern(HapticIntensity intensity) {
     switch (intensity) {
       case HapticIntensity.none:
-        return [0];
+        return <int>[0];
       case HapticIntensity.light:
-        return [0, 100]; // Single short buzz
+        return <int>[0, 100]; // Single short buzz
       case HapticIntensity.medium:
-        return [0, 200]; // Single medium buzz
+        return <int>[0, 200]; // Single medium buzz
       case HapticIntensity.strong:
-        return [0, 100, 50, 100]; // Double buzz pattern
+        return <int>[0, 100, 50, 100]; // Double buzz pattern
     }
   }
 
   /// Get intensities array for vibration pattern
   List<int> _getIntensities(HapticIntensity intensity, int patternCount) {
-    final amplitude = intensity.amplitude;
+    final int amplitude = intensity.amplitude;
     return List.filled(patternCount, amplitude);
   }
 

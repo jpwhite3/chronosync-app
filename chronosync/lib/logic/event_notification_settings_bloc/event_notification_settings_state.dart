@@ -7,7 +7,7 @@ abstract class EventNotificationSettingsState extends Equatable {
   const EventNotificationSettingsState();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }
 
 /// Initial state
@@ -31,7 +31,7 @@ class EventNotificationSettingsLoaded extends EventNotificationSettingsState {
   });
 
   @override
-  List<Object?> get props => [event, settings];
+  List<Object?> get props => <Object?>[event, settings];
 
   EventNotificationSettingsLoaded copyWith({
     Event? event,
@@ -51,5 +51,5 @@ class EventNotificationSettingsError extends EventNotificationSettingsState {
   const EventNotificationSettingsError(this.message);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => <Object?>[message];
 }

@@ -24,7 +24,7 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     emit(const EventNotificationSettingsLoading());
     try {
-      final settings =
+      final EventNotificationSettings settings =
           event.event.notificationSettings ?? EventNotificationSettings.useGlobal();
       emit(EventNotificationSettingsLoaded(
         event: event.event,
@@ -41,8 +41,8 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final currentState = state as EventNotificationSettingsLoaded;
-    final updatedSettings = currentState.settings.copyWith(
+    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings updatedSettings = currentState.settings.copyWith(
       notificationsEnabled: event.enabled,
     );
 
@@ -55,8 +55,8 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final currentState = state as EventNotificationSettingsLoaded;
-    final updatedSettings = currentState.settings.copyWith(
+    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings updatedSettings = currentState.settings.copyWith(
       hapticEnabled: event.enabled,
     );
 
@@ -69,8 +69,8 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final currentState = state as EventNotificationSettingsLoaded;
-    final updatedSettings = currentState.settings.copyWith(
+    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings updatedSettings = currentState.settings.copyWith(
       hapticIntensity: event.intensity,
     );
 
@@ -83,8 +83,8 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final currentState = state as EventNotificationSettingsLoaded;
-    final updatedSettings = currentState.settings.copyWith(
+    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings updatedSettings = currentState.settings.copyWith(
       soundEnabled: event.enabled,
     );
 
@@ -97,8 +97,8 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final currentState = state as EventNotificationSettingsLoaded;
-    final updatedSettings = currentState.settings.copyWith(
+    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings updatedSettings = currentState.settings.copyWith(
       customSoundPath: event.soundPath,
     );
 
@@ -111,8 +111,8 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final currentState = state as EventNotificationSettingsLoaded;
-    final clearedSettings = EventNotificationSettings.useGlobal();
+    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings clearedSettings = EventNotificationSettings.useGlobal();
 
     emit(currentState.copyWith(settings: clearedSettings));
   }
@@ -123,7 +123,7 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final currentState = state as EventNotificationSettingsLoaded;
+    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
 
     try {
       // Update the event's notification settings

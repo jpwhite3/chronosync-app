@@ -22,14 +22,14 @@ class IosDeviceAudioChannel {
       }).toList();
     } on PlatformException {
       // If platform method fails, return system default only
-      return [DeviceSound.systemDefault()];
+      return <DeviceSound>[DeviceSound.systemDefault()];
     }
   }
 
   /// Preview a sound by its file path
   Future<void> previewSound(String filePath) async {
     try {
-      await _channel.invokeMethod('previewSound', {'filePath': filePath});
+      await _channel.invokeMethod('previewSound', <String, String>{'filePath': filePath});
     } on PlatformException catch (e) {
       // Silently fail preview
       print('Failed to preview sound: ${e.message}');

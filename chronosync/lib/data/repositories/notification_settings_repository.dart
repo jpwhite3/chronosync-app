@@ -37,7 +37,7 @@ class NotificationSettingsRepository {
     yield await getGlobalSettings();
     
     // Then emit updates
-    await for (final _ in _box!.watch(key: _globalSettingsKey)) {
+    await for (final BoxEvent _ in _box!.watch(key: _globalSettingsKey)) {
       yield await getGlobalSettings();
     }
   }

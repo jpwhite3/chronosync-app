@@ -25,5 +25,5 @@ class DeviceSound extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, displayName, filePath, isSystemSound];
+  List<Object?> get props => <Object?>[id, displayName, filePath, isSystemSound];
 }

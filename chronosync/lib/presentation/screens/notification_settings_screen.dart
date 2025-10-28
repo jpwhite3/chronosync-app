@@ -18,7 +18,7 @@ class NotificationSettingsScreen extends StatelessWidget {
         title: const Text('Notification Settings'),
       ),
       body: BlocBuilder<NotificationSettingsBloc, NotificationSettingsState>(
-        builder: (context, state) {
+        builder: (BuildContext context, NotificationSettingsState state) {
           if (state is NotificationSettingsLoading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -27,7 +27,7 @@ class NotificationSettingsScreen extends StatelessWidget {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: <Widget>[
                   const Icon(Icons.error_outline, size: 48, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(state.message),
@@ -47,7 +47,7 @@ class NotificationSettingsScreen extends StatelessWidget {
 
           if (state is NotificationSettingsLoaded) {
             return ListView(
-              children: [
+              children: <Widget>[
                 // Permission banner if needed
                 if (!state.hasNotificationPermission)
                   _buildPermissionBanner(context),
@@ -61,7 +61,7 @@ class NotificationSettingsScreen extends StatelessWidget {
                     subtitle: const Text(
                         'Receive notifications when events complete'),
                     value: state.settings.notificationsEnabled,
-                    onChanged: (value) {
+                    onChanged: (bool value) {
                       context
                           .read<NotificationSettingsBloc>()
                           .add(ToggleNotificationsEvent(value));
@@ -78,7 +78,7 @@ class NotificationSettingsScreen extends StatelessWidget {
                     title: const Text('Enable Haptic Feedback'),
                     subtitle: const Text('Vibrate when events complete'),
                     value: state.settings.hapticEnabled,
-                    onChanged: (value) {
+                    onChanged: (bool value) {
                       context
                           .read<NotificationSettingsBloc>()
                           .add(ToggleHapticEvent(value));
@@ -97,7 +97,7 @@ class NotificationSettingsScreen extends StatelessWidget {
                     title: const Text('Enable Sound'),
                     subtitle: const Text('Play sound when events complete'),
                     value: state.settings.soundEnabled,
-                    onChanged: (value) {
+                    onChanged: (bool value) {
                       context
                           .read<NotificationSettingsBloc>()
                           .add(ToggleSoundEvent(value));
@@ -112,9 +112,9 @@ class NotificationSettingsScreen extends StatelessWidget {
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () async {
-                      final selectedSound = await Navigator.of(context).push<String>(
+                      final String? selectedSound = await Navigator.of(context).push<String>(
                         MaterialPageRoute(
-                          builder: (context) => SoundPickerScreen(
+                          builder: (BuildContext context) => SoundPickerScreen(
                             currentSoundPath: state.settings.customSoundPath,
                           ),
                         ),
@@ -143,19 +143,19 @@ class NotificationSettingsScreen extends StatelessWidget {
       color: Colors.orange.shade100,
       padding: const EdgeInsets.all(16),
       child: Row(
-        children: [
+        children: <Widget>[
           const Icon(Icons.warning, color: Colors.orange),
           const SizedBox(width: 16),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
+              children: <Widget>[
+                Text(
                   'Notification Permission Required',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 4),
-                const Text(
+                SizedBox(height: 4),
+                Text(
                   'Grant permission to receive event notifications',
                   style: TextStyle(fontSize: 12),
                 ),
@@ -191,15 +191,15 @@ class NotificationSettingsScreen extends StatelessWidget {
 
   Widget _buildHapticIntensitySelector(
       BuildContext context, NotificationSettingsLoaded state) {
-    final hapticService = HapticService();
+    final HapticService hapticService = HapticService();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Row(
-            children: [
+            children: <Widget>[
               const Text(
                 'Haptic Intensity',
                 style: TextStyle(fontSize: 16),
@@ -218,13 +218,13 @@ class NotificationSettingsScreen extends StatelessWidget {
           Wrap(
             spacing: 8,
             children: HapticIntensity.values
-                .where((intensity) => intensity != HapticIntensity.none)
-                .map((intensity) {
-              final isSelected = state.settings.hapticIntensity == intensity;
+                .where((HapticIntensity intensity) => intensity != HapticIntensity.none)
+                .map((HapticIntensity intensity) {
+              final bool isSelected = state.settings.hapticIntensity == intensity;
               return ChoiceChip(
                 label: Text(intensity.displayName),
                 selected: isSelected,
-                onSelected: (selected) {
+                onSelected: (bool selected) {
                   if (selected) {
                     context
                         .read<NotificationSettingsBloc>()

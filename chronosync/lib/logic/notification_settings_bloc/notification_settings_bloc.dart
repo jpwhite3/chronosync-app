@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chronosync/data/models/global_notification_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -30,8 +31,8 @@ class NotificationSettingsBloc
   ) async {
     emit(const NotificationSettingsLoading());
     try {
-      final settings = await _repository.getGlobalSettings();
-      final hasPermission = await _checkNotificationPermission();
+      final GlobalNotificationSettings settings = await _repository.getGlobalSettings();
+      final bool hasPermission = await _checkNotificationPermission();
       emit(NotificationSettingsLoaded(
         settings: settings,
         hasNotificationPermission: hasPermission,
@@ -47,8 +48,8 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final currentState = state as NotificationSettingsLoaded;
-    final updatedSettings =
+    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
+    final GlobalNotificationSettings updatedSettings =
         currentState.settings.copyWith(notificationsEnabled: event.enabled);
 
     try {
@@ -65,8 +66,8 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final currentState = state as NotificationSettingsLoaded;
-    final updatedSettings =
+    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
+    final GlobalNotificationSettings updatedSettings =
         currentState.settings.copyWith(hapticEnabled: event.enabled);
 
     try {
@@ -83,8 +84,8 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final currentState = state as NotificationSettingsLoaded;
-    final updatedSettings =
+    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
+    final GlobalNotificationSettings updatedSettings =
         currentState.settings.copyWith(hapticIntensity: event.intensity);
 
     try {
@@ -101,8 +102,8 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final currentState = state as NotificationSettingsLoaded;
-    final updatedSettings =
+    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
+    final GlobalNotificationSettings updatedSettings =
         currentState.settings.copyWith(soundEnabled: event.enabled);
 
     try {
@@ -119,8 +120,8 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final currentState = state as NotificationSettingsLoaded;
-    final updatedSettings =
+    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
+    final GlobalNotificationSettings updatedSettings =
         currentState.settings.copyWith(customSoundPath: event.soundPath);
 
     try {
@@ -137,9 +138,9 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final hasPermission = await _requestNotificationPermission();
+    final bool hasPermission = await _requestNotificationPermission();
 
-    final currentState = state as NotificationSettingsLoaded;
+    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
     emit(currentState.copyWith(hasNotificationPermission: hasPermission));
   }
 
@@ -151,7 +152,7 @@ class NotificationSettingsBloc
     }
 
     try {
-      final status = await Permission.notification.status;
+      final PermissionStatus status = await Permission.notification.status;
       return status.isGranted;
     } catch (e) {
       // If permission check fails, assume granted (graceful degradation)
@@ -168,7 +169,7 @@ class NotificationSettingsBloc
     }
 
     try {
-      final status = await Permission.notification.request();
+      final PermissionStatus status = await Permission.notification.request();
       return status.isGranted;
     } catch (e) {
       // If permission request fails, assume granted (graceful degradation)

@@ -30,15 +30,15 @@ class SettingsScreen extends StatelessWidget {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () async {
                     // Initialize notification settings repository
-                    final notificationSettingsRepo = NotificationSettingsRepository();
+                    final NotificationSettingsRepository notificationSettingsRepo = NotificationSettingsRepository();
                     await notificationSettingsRepo.init();
                     
                     if (context.mounted) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BlocProvider(
-                            create: (context) => NotificationSettingsBloc(
+                          builder: (BuildContext context) => BlocProvider(
+                            create: (BuildContext context) => NotificationSettingsBloc(
                               repository: notificationSettingsRepo,
                             )..add(const LoadGlobalSettingsEvent()),
                             child: const NotificationSettingsScreen(),

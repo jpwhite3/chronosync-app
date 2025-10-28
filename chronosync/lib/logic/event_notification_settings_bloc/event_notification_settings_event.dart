@@ -7,7 +7,7 @@ abstract class EventNotificationSettingsEvent extends Equatable {
   const EventNotificationSettingsEvent();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }
 
 /// Load event notification settings
@@ -17,7 +17,7 @@ class LoadEventSettingsEvent extends EventNotificationSettingsEvent {
   const LoadEventSettingsEvent(this.event);
 
   @override
-  List<Object?> get props => [event];
+  List<Object?> get props => <Object?>[event];
 }
 
 /// Toggle event-level notification override
@@ -27,7 +27,7 @@ class ToggleEventNotificationsEvent extends EventNotificationSettingsEvent {
   const ToggleEventNotificationsEvent(this.enabled);
 
   @override
-  List<Object?> get props => [enabled];
+  List<Object?> get props => <Object?>[enabled];
 }
 
 /// Toggle event-level haptic override
@@ -37,7 +37,7 @@ class ToggleEventHapticEvent extends EventNotificationSettingsEvent {
   const ToggleEventHapticEvent(this.enabled);
 
   @override
-  List<Object?> get props => [enabled];
+  List<Object?> get props => <Object?>[enabled];
 }
 
 /// Change event-level haptic intensity override
@@ -47,7 +47,7 @@ class ChangeEventHapticIntensityEvent extends EventNotificationSettingsEvent {
   const ChangeEventHapticIntensityEvent(this.intensity);
 
   @override
-  List<Object?> get props => [intensity];
+  List<Object?> get props => <Object?>[intensity];
 }
 
 /// Toggle event-level sound override
@@ -57,7 +57,7 @@ class ToggleEventSoundEvent extends EventNotificationSettingsEvent {
   const ToggleEventSoundEvent(this.enabled);
 
   @override
-  List<Object?> get props => [enabled];
+  List<Object?> get props => <Object?>[enabled];
 }
 
 /// Change event-level custom sound override
@@ -67,7 +67,7 @@ class ChangeEventCustomSoundEvent extends EventNotificationSettingsEvent {
   const ChangeEventCustomSoundEvent(this.soundPath);
 
   @override
-  List<Object?> get props => [soundPath];
+  List<Object?> get props => <Object?>[soundPath];
 }
 
 /// Clear all event-level overrides (revert to global)

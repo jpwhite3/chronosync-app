@@ -13,7 +13,7 @@ class DeviceAudioRepository {
   Future<List<DeviceSound>> getAvailableSounds() async {
     if (kIsWeb) {
       // Web not supported yet
-      return [DeviceSound.systemDefault()];
+      return <DeviceSound>[DeviceSound.systemDefault()];
     }
 
     if (Platform.isIOS) {
@@ -24,7 +24,7 @@ class DeviceAudioRepository {
 
     // Fallback for desktop platforms - return mock sounds for testing
     if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
-      return [
+      return <DeviceSound>[
         DeviceSound.systemDefault(),
         const DeviceSound(
           id: 'beep',
@@ -36,7 +36,7 @@ class DeviceAudioRepository {
     }
 
     // Fallback for unsupported platforms
-    return [DeviceSound.systemDefault()];
+    return <DeviceSound>[DeviceSound.systemDefault()];
   }
 
   /// Preview a notification sound

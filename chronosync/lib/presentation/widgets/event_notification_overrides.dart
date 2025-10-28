@@ -19,11 +19,11 @@ class EventNotificationOverrides extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => EventNotificationSettingsBloc()
+      create: (BuildContext context) => EventNotificationSettingsBloc()
         ..add(LoadEventSettingsEvent(event)),
       child: BlocBuilder<EventNotificationSettingsBloc,
           EventNotificationSettingsState>(
-        builder: (context, state) {
+        builder: (BuildContext context, EventNotificationSettingsState state) {
           if (state is EventNotificationSettingsLoading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -33,15 +33,15 @@ class EventNotificationOverrides extends StatelessWidget {
           }
 
           if (state is EventNotificationSettingsLoaded) {
-            final hasOverrides = state.settings.hasOverrides;
+            final bool hasOverrides = state.settings.hasOverrides;
 
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 // Header with "Use Global" / "Clear Overrides" button
                 Row(
-                  children: [
+                  children: <Widget>[
                     const Text(
                       'Notification Overrides',
                       style: TextStyle(
@@ -77,7 +77,7 @@ class EventNotificationOverrides extends StatelessWidget {
                   context,
                   title: 'Notifications',
                   value: state.settings.notificationsEnabled,
-                  onChanged: (value) {
+                  onChanged: (bool? value) {
                     context
                         .read<EventNotificationSettingsBloc>()
                         .add(ToggleEventNotificationsEvent(value));
@@ -89,7 +89,7 @@ class EventNotificationOverrides extends StatelessWidget {
                   context,
                   title: 'Haptic Feedback',
                   value: state.settings.hapticEnabled,
-                  onChanged: (value) {
+                  onChanged: (bool? value) {
                     context
                         .read<EventNotificationSettingsBloc>()
                         .add(ToggleEventHapticEvent(value));
@@ -109,7 +109,7 @@ class EventNotificationOverrides extends StatelessWidget {
                   context,
                   title: 'Sound',
                   value: state.settings.soundEnabled,
-                  onChanged: (value) {
+                  onChanged: (bool? value) {
                     context
                         .read<EventNotificationSettingsBloc>()
                         .add(ToggleEventSoundEvent(value));
@@ -122,7 +122,7 @@ class EventNotificationOverrides extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 16, top: 4),
                     child: Row(
-                      children: [
+                      children: <Widget>[
                         Text(
                           'Sound: ${state.settings.customSoundPath ?? "System Default"}',
                           style: const TextStyle(fontSize: 12),
@@ -130,9 +130,9 @@ class EventNotificationOverrides extends StatelessWidget {
                         const Spacer(),
                         TextButton(
                           onPressed: () async {
-                            final selectedSound = await Navigator.of(context).push<String>(
+                            final String? selectedSound = await Navigator.of(context).push<String>(
                               MaterialPageRoute(
-                                builder: (context) => SoundPickerScreen(
+                                builder: (BuildContext context) => SoundPickerScreen(
                                   currentSoundPath: state.settings.customSoundPath,
                                 ),
                               ),
@@ -189,11 +189,11 @@ class EventNotificationOverrides extends StatelessWidget {
     required ValueChanged<bool?> onChanged,
   }) {
     return Row(
-      children: [
+      children: <Widget>[
         Expanded(child: Text(title)),
         DropdownButton<bool?>(
           value: value,
-          items: const [
+          items: const <DropdownMenuItem<bool?>>[
             DropdownMenuItem(value: null, child: Text('Global')),
             DropdownMenuItem(value: true, child: Text('On')),
             DropdownMenuItem(value: false, child: Text('Off')),
@@ -208,7 +208,7 @@ class EventNotificationOverrides extends StatelessWidget {
       BuildContext context, EventNotificationSettingsLoaded state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         const Text(
           'Haptic Intensity',
           style: TextStyle(fontSize: 12),
@@ -217,18 +217,18 @@ class EventNotificationOverrides extends StatelessWidget {
         DropdownButton<HapticIntensity?>(
           value: state.settings.hapticIntensity,
           isExpanded: true,
-          items: [
+          items: <DropdownMenuItem<HapticIntensity?>>[
             const DropdownMenuItem(value: null, child: Text('Global')),
             ...HapticIntensity.values
-                .where((i) => i != HapticIntensity.none)
+                .where((HapticIntensity i) => i != HapticIntensity.none)
                 .map(
-                  (intensity) => DropdownMenuItem(
+                  (HapticIntensity intensity) => DropdownMenuItem(
                     value: intensity,
                     child: Text(intensity.displayName),
                   ),
                 ),
           ],
-          onChanged: (value) {
+          onChanged: (HapticIntensity? value) {
             context
                 .read<EventNotificationSettingsBloc>()
                 .add(ChangeEventHapticIntensityEvent(value));

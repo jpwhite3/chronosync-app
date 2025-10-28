@@ -6,7 +6,7 @@ abstract class NotificationSettingsState extends Equatable {
   const NotificationSettingsState();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }
 
 /// Initial state (before any settings loaded)
@@ -30,7 +30,7 @@ class NotificationSettingsLoaded extends NotificationSettingsState {
   });
 
   @override
-  List<Object?> get props => [settings, hasNotificationPermission];
+  List<Object?> get props => <Object?>[settings, hasNotificationPermission];
 
   NotificationSettingsLoaded copyWith({
     GlobalNotificationSettings? settings,
@@ -51,5 +51,5 @@ class NotificationSettingsError extends NotificationSettingsState {
   const NotificationSettingsError(this.message);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => <Object?>[message];
 }

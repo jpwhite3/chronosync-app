@@ -22,14 +22,14 @@ class AndroidDeviceAudioChannel {
       }).toList();
     } on PlatformException {
       // If platform method fails, return system default only
-      return [DeviceSound.systemDefault()];
+      return <DeviceSound>[DeviceSound.systemDefault()];
     }
   }
 
   /// Preview a sound by its URI
   Future<void> previewSound(String soundUri) async {
     try {
-      await _channel.invokeMethod('previewSound', {'soundUri': soundUri});
+      await _channel.invokeMethod('previewSound', <String, String>{'soundUri': soundUri});
     } on PlatformException catch (e) {
       // Silently fail preview
       print('Failed to preview sound: ${e.message}');

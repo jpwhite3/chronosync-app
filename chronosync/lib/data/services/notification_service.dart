@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:chronosync/data/models/event_notification_settings.dart';
+import 'package:chronosync/data/models/global_notification_settings.dart';
+import 'package:chronosync/data/models/haptic_intensity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../models/event.dart';
@@ -55,16 +58,16 @@ class NotificationService {
   Future<void> onEventComplete(Event event) async {
     try {
       // Get effective settings (event override or global)
-      final globalSettings = await _settingsRepository.getGlobalSettings();
-      final eventSettings = event.notificationSettings;
+      final GlobalNotificationSettings globalSettings = await _settingsRepository.getGlobalSettings();
+      final EventNotificationSettings? eventSettings = event.notificationSettings;
 
       // Determine effective values
-      final notificationsEnabled =
+      final bool notificationsEnabled =
           eventSettings?.notificationsEnabled ?? globalSettings.notificationsEnabled;
-      final hapticEnabled = eventSettings?.hapticEnabled ?? globalSettings.hapticEnabled;
-      final hapticIntensity =
+      final bool hapticEnabled = eventSettings?.hapticEnabled ?? globalSettings.hapticEnabled;
+      final HapticIntensity hapticIntensity =
           eventSettings?.hapticIntensity ?? globalSettings.hapticIntensity;
-      final soundEnabled = eventSettings?.soundEnabled ?? globalSettings.soundEnabled;
+      final bool soundEnabled = eventSettings?.soundEnabled ?? globalSettings.soundEnabled;
 
       // Trigger haptic feedback if enabled
       if (hapticEnabled) {
@@ -99,7 +102,7 @@ class NotificationService {
     }
 
     try {
-      AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
         'event_completion',
         'Event Completions',
         channelDescription: 'Notifications when events complete',
@@ -109,13 +112,13 @@ class NotificationService {
         enableVibration: true,
       );
 
-      DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
         presentAlert: true,
         presentBadge: true,
         presentSound: soundEnabled,
       );
 
-      NotificationDetails details = NotificationDetails(
+      final NotificationDetails details = NotificationDetails(
         android: androidDetails,
         iOS: iosDetails,
       );

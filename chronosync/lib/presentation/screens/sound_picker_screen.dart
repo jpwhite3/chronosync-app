@@ -36,8 +36,8 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
     });
 
     try {
-      final repository = DeviceAudioRepository();
-      final sounds = await repository.getAvailableSounds();
+      final DeviceAudioRepository repository = DeviceAudioRepository();
+      final List<DeviceSound> sounds = await repository.getAvailableSounds();
       
       if (mounted) {
         setState(() {
@@ -56,7 +56,7 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
   }
 
   Future<void> _previewSound(DeviceSound sound) async {
-    final repository = DeviceAudioRepository();
+    final DeviceAudioRepository repository = DeviceAudioRepository();
     
     // Check if we're on a desktop platform
     if (!kIsWeb && (Platform.isMacOS || Platform.isLinux || Platform.isWindows)) {
@@ -94,7 +94,7 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
   }
 
   Future<void> _stopPreview() async {
-    final repository = DeviceAudioRepository();
+    final DeviceAudioRepository repository = DeviceAudioRepository();
     await repository.stopPreview();
     if (mounted) {
       setState(() {
@@ -106,7 +106,7 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
   @override
   void dispose() {
     // Stop any playing sound when leaving screen (but don't call setState)
-    final repository = DeviceAudioRepository();
+    final DeviceAudioRepository repository = DeviceAudioRepository();
     repository.stopPreview(); // Call without await to avoid issues
     super.dispose();
   }
@@ -118,7 +118,7 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
         title: const Text('Choose Sound'),
       ),
       body: Builder(
-        builder: (context) {
+        builder: (BuildContext context) {
           if (_isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -127,7 +127,7 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: <Widget>[
                   const Icon(Icons.error_outline, size: 48, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(_error!),
@@ -149,10 +149,10 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
 
           return ListView.builder(
             itemCount: _sounds!.length,
-            itemBuilder: (context, index) {
-              final sound = _sounds![index];
-              final isSelected = sound.filePath == widget.currentSoundPath;
-              final isPlaying = _playingSound == sound.id;
+            itemBuilder: (BuildContext context, int index) {
+              final DeviceSound sound = _sounds![index];
+              final bool isSelected = sound.filePath == widget.currentSoundPath;
+              final bool isPlaying = _playingSound == sound.id;
 
               return ListTile(
                 leading: Icon(
@@ -167,7 +167,7 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
+                  children: <Widget>[
                     IconButton(
                       icon: Icon(
                         isPlaying ? Icons.stop : Icons.play_arrow,

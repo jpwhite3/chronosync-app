@@ -6,7 +6,7 @@ abstract class NotificationSettingsEvent extends Equatable {
   const NotificationSettingsEvent();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }
 
 /// Load global settings from repository
@@ -21,7 +21,7 @@ class ToggleNotificationsEvent extends NotificationSettingsEvent {
   const ToggleNotificationsEvent(this.enabled);
 
   @override
-  List<Object?> get props => [enabled];
+  List<Object?> get props => <Object?>[enabled];
 }
 
 /// Toggle haptic feedback on/off
@@ -31,7 +31,7 @@ class ToggleHapticEvent extends NotificationSettingsEvent {
   const ToggleHapticEvent(this.enabled);
 
   @override
-  List<Object?> get props => [enabled];
+  List<Object?> get props => <Object?>[enabled];
 }
 
 /// Change haptic intensity
@@ -41,7 +41,7 @@ class ChangeHapticIntensityEvent extends NotificationSettingsEvent {
   const ChangeHapticIntensityEvent(this.intensity);
 
   @override
-  List<Object?> get props => [intensity];
+  List<Object?> get props => <Object?>[intensity];
 }
 
 /// Toggle notification sound on/off
@@ -51,7 +51,7 @@ class ToggleSoundEvent extends NotificationSettingsEvent {
   const ToggleSoundEvent(this.enabled);
 
   @override
-  List<Object?> get props => [enabled];
+  List<Object?> get props => <Object?>[enabled];
 }
 
 /// Change custom notification sound
@@ -61,7 +61,7 @@ class ChangeCustomSoundEvent extends NotificationSettingsEvent {
   const ChangeCustomSoundEvent(this.soundPath);
 
   @override
-  List<Object?> get props => [soundPath];
+  List<Object?> get props => <Object?>[soundPath];
 }
 
 /// Request notification permission (triggers permission dialog)

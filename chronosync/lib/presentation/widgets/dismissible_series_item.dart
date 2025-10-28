@@ -68,9 +68,9 @@ class DismissibleSeriesItem extends StatelessWidget {
                       ? null
                       : () async {
                           // Create notification service
-                          final notificationSettingsRepo = NotificationSettingsRepository();
+                          final NotificationSettingsRepository notificationSettingsRepo = NotificationSettingsRepository();
                           await notificationSettingsRepo.init();
-                          final notificationService = NotificationService(
+                          final NotificationService notificationService = NotificationService(
                             settingsRepository: notificationSettingsRepo,
                           );
                           await notificationService.init();
