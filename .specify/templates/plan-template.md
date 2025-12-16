@@ -31,11 +31,7 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- **I. Specification-Driven Development**: Does the `spec.md` exist and is it complete?
-- **II. Template-Driven Consistency**: Is this plan following the standard template?
-- **III. Progressive Enhancement**: Are user stories prioritized and independently testable?
-- **IV. Quality Gates**: Has the spec passed its quality checklist?
-- **V. Tool Integration**: Does the proposed workflow support automation?
+[Gates determined based on constitution file]
 
 ## Project Structure
 
