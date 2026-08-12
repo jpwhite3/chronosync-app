@@ -13,16 +13,16 @@ runs:
       id: flutter-cache
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
-        path: ${{ runner.tool_cache }}/flutter/3.35.7
-        key: flutter-${{ runner.os }}-${{ runner.arch }}-3.35.7-adc901062556672b4138e18a4dc62a4be8f4b3c2
+        path: ${{ runner.tool_cache }}/flutter/3.41.9
+        key: flutter-${{ runner.os }}-${{ runner.arch }}-3.41.9-00b0c91f06209d9e4a41f71b7a512d6eb3b9c694
 
     - name: Install pinned Flutter SDK
       if: ${{ steps.flutter-cache.outputs.cache-hit != 'true' }}
       shell: bash
       env:
-        FLUTTER_REVISION: adc901062556672b4138e18a4dc62a4be8f4b3c2
-        FLUTTER_ROOT: ${{ runner.tool_cache }}/flutter/3.35.7
-        FLUTTER_VERSION: 3.35.7
+        FLUTTER_REVISION: 00b0c91f06209d9e4a41f71b7a512d6eb3b9c694
+        FLUTTER_ROOT: ${{ runner.tool_cache }}/flutter/3.41.9
+        FLUTTER_VERSION: 3.41.9
       run: |
         mkdir -p "$(dirname "$FLUTTER_ROOT")"
         git init --quiet "$FLUTTER_ROOT"
@@ -35,8 +35,8 @@ runs:
     - name: Configure pinned Flutter SDK
       shell: bash
       env:
-        FLUTTER_REVISION: adc901062556672b4138e18a4dc62a4be8f4b3c2
-        FLUTTER_ROOT: ${{ runner.tool_cache }}/flutter/3.35.7
+        FLUTTER_REVISION: 00b0c91f06209d9e4a41f71b7a512d6eb3b9c694
+        FLUTTER_ROOT: ${{ runner.tool_cache }}/flutter/3.41.9
         PUB_CACHE: ${{ runner.tool_cache }}/pub-cache
         TARGET: ${{ inputs.target }}
       run: |

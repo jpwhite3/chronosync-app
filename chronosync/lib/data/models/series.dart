@@ -1,3 +1,7 @@
+// HiveList remains experimental in Hive 2.x, but it is the persisted
+// relationship type used by the legacy data model.
+// ignore_for_file: experimental_member_use
+
 import 'package:chronosync/data/models/event.dart';
 import 'package:hive/hive.dart';
 

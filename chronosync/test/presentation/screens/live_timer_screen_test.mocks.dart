@@ -22,6 +22,7 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakeLiveTimerState_0 extends _i1.SmartFake
     implements _i2.LiveTimerState {
@@ -43,6 +44,11 @@ class MockLiveTimerBloc extends _i1.Mock implements _i2.LiveTimerBloc {
           as bool);
 
   @override
+  bool get isClosed =>
+      (super.noSuchMethod(Invocation.getter(#isClosed), returnValue: false)
+          as bool);
+
+  @override
   _i2.LiveTimerState get state =>
       (super.noSuchMethod(
             Invocation.getter(#state),
@@ -57,11 +63,6 @@ class MockLiveTimerBloc extends _i1.Mock implements _i2.LiveTimerBloc {
             returnValue: _i3.Stream<_i2.LiveTimerState>.empty(),
           )
           as _i3.Stream<_i2.LiveTimerState>);
-
-  @override
-  bool get isClosed =>
-      (super.noSuchMethod(Invocation.getter(#isClosed), returnValue: false)
-          as bool);
 
   @override
   _i3.Future<void> close() =>
