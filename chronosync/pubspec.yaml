@@ -40,7 +40,7 @@ dependencies:
   equatable: ^2.1.0
   file_picker: ^11.0.3
   flutter_bloc: ^9.1.1
-  flutter_local_notifications: ^19.5.0
+  flutter_local_notifications: ^22.3.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   http: ^1.6.0
