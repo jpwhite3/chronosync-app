@@ -14,26 +14,28 @@ runs:
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ${{ runner.tool_cache }}/flutter/3.35.7
-        key: flutter-${{ runner.os }}-${{ runner.arch }}-3.35.7-9f455d2486bcb28cad87b062475f42edc959f636
+        key: flutter-${{ runner.os }}-${{ runner.arch }}-3.35.7-adc901062556672b4138e18a4dc62a4be8f4b3c2
 
     - name: Install pinned Flutter SDK
       if: ${{ steps.flutter-cache.outputs.cache-hit != 'true' }}
       shell: bash
       env:
-        FLUTTER_REVISION: 9f455d2486bcb28cad87b062475f42edc959f636
+        FLUTTER_REVISION: adc901062556672b4138e18a4dc62a4be8f4b3c2
         FLUTTER_ROOT: ${{ runner.tool_cache }}/flutter/3.35.7
+        FLUTTER_VERSION: 3.35.7
       run: |
         mkdir -p "$(dirname "$FLUTTER_ROOT")"
         git init --quiet "$FLUTTER_ROOT"
         git -C "$FLUTTER_ROOT" remote add origin https://github.com/flutter/flutter.git
-        git -C "$FLUTTER_ROOT" fetch --depth=1 origin "$FLUTTER_REVISION"
+        git -C "$FLUTTER_ROOT" fetch --depth=1 origin \
+          "refs/tags/$FLUTTER_VERSION:refs/tags/$FLUTTER_VERSION"
         git -C "$FLUTTER_ROOT" -c advice.detachedHead=false \
-          checkout --detach FETCH_HEAD
+          checkout --detach "refs/tags/$FLUTTER_VERSION"
 
     - name: Configure pinned Flutter SDK
       shell: bash
       env:
-        FLUTTER_REVISION: 9f455d2486bcb28cad87b062475f42edc959f636
+        FLUTTER_REVISION: adc901062556672b4138e18a4dc62a4be8f4b3c2
         FLUTTER_ROOT: ${{ runner.tool_cache }}/flutter/3.35.7
         PUB_CACHE: ${{ runner.tool_cache }}/pub-cache
         TARGET: ${{ inputs.target }}
