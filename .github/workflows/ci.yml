@@ -2,41 +2,78 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
+  merge_group:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env:
+  FLUTTER_VERSION: 3.35.7
+  NODE_VERSION: 22
+
 jobs:
+  repository:
+    name: Repository checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Reject whitespace errors
+        env:
+          EVENT_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+        run: |
+          base_sha="$EVENT_BASE_SHA"
+          if [[ -z "$base_sha" || "$base_sha" =~ ^0+$ ]]; then
+            base_sha="$(git rev-parse HEAD^ 2>/dev/null || git hash-object -t tree /dev/null)"
+          fi
+          git diff --check "$base_sha" "$GITHUB_SHA"
+
+      - name: Validate repository automation
+        run: make repository-check
+
   flutter:
     name: Flutter checks
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     defaults:
       run:
         working-directory: chronosync
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
-          flutter-version: 3.35.7
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 
-      - name: Install Flutter dependencies
-        run: flutter pub get
+      - name: Install locked Flutter dependencies
+        run: flutter pub get --enforce-lockfile
 
       - name: Generate Dart sources
         run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Verify generated sources are current
+        run: test -z "$(git status --porcelain --untracked-files=all)"
 
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed lib test tool
@@ -60,8 +97,17 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
-      - name: Test
-        run: flutter test --reporter compact
+      - name: Test with coverage
+        run: flutter test --coverage --reporter compact
+
+      - name: Upload Flutter coverage
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: flutter-coverage
+          path: chronosync/coverage/lcov.info
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Test browser archive safety
         run: >-
@@ -80,104 +126,74 @@ jobs:
       - name: Verify web release artifacts
         run: dart run tool/release/release_artifact_verifier.dart build/web
 
-  macos:
-    name: Native Mac release build
-    runs-on: macos-15
-    timeout-minutes: 30
+  relay:
+    name: Relay checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
-        working-directory: chronosync
+        working-directory: relay
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          flutter-version: 3.35.7
-          channel: stable
-          cache: true
+          persist-credentials: false
 
-      - name: Install Flutter dependencies
-        run: flutter pub get
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: relay/package-lock.json
 
-      - name: Generate Dart sources
-        run: dart run build_runner build --delete-conflicting-outputs
+      - name: Install locked relay dependencies
+        run: npm ci
 
-      - name: Configure native Mac dependencies
-        run: flutter build macos --debug --config-only
+      - name: Audit relay dependencies
+        run: npm run audit
 
-      - name: Run native Mac tests
-        run: >-
-          xcodebuild test
-          -workspace macos/Runner.xcworkspace
-          -scheme Runner
-          -configuration Debug
-          -destination 'platform=macOS'
-          CODE_SIGNING_ALLOWED=NO
+      - name: Type-check relay
+        run: npm run typecheck
 
-      - name: Build native Mac release
-        run: >-
-          flutter build macos --release
-          --dart-define=CHRONOSYNC_RELAY_URL=https://relay.example.com
-          --dart-define=CHRONOSYNC_WEB_URL=https://app.example.com
-
-      - name: Verify sandboxed release capabilities
-        run: |
-          test "$(/usr/libexec/PlistBuddy -c \
-            'Print :com.apple.security.app-sandbox' \
-            macos/Runner/Release.entitlements)" = "true"
-          test "$(/usr/libexec/PlistBuddy -c \
-            'Print :com.apple.security.network.client' \
-            macos/Runner/Release.entitlements)" = "true"
-          test "$(/usr/libexec/PlistBuddy -c \
-            'Print :com.apple.security.files.user-selected.read-write' \
-            macos/Runner/Release.entitlements)" = "true"
-          plutil -extract NSLocalNetworkUsageDescription raw \
-            macos/Runner/Info.plist
-          codesign --verify --deep --strict \
-            build/macos/Build/Products/Release/ChronoSync.app
-          codesign --display --entitlements - --xml \
-            build/macos/Build/Products/Release/ChronoSync.app \
-            > "$RUNNER_TEMP/chronosync-entitlements.plist"
-          test "$(/usr/libexec/PlistBuddy -c \
-            'Print :com.apple.security.app-sandbox' \
-            "$RUNNER_TEMP/chronosync-entitlements.plist")" = "true"
-          test "$(/usr/libexec/PlistBuddy -c \
-            'Print :com.apple.security.network.client' \
-            "$RUNNER_TEMP/chronosync-entitlements.plist")" = "true"
-          test "$(/usr/libexec/PlistBuddy -c \
-            'Print :com.apple.security.files.user-selected.read-write' \
-            "$RUNNER_TEMP/chronosync-entitlements.plist")" = "true"
+      - name: Test relay
+        run: npm test
 
   ios:
     name: Native iOS simulator build and tests
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 60
     defaults:
       run:
         working-directory: chronosync
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
-          flutter-version: 3.35.7
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 
-      - name: Install Flutter dependencies
-        run: flutter pub get
+      - name: Record Apple toolchain
+        run: xcodebuild -version
+
+      - name: Install locked Flutter dependencies
+        run: flutter pub get --enforce-lockfile
 
       - name: Generate Dart sources
         run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Build native iOS simulator app
-        run: flutter build ios --debug --simulator
+        run: >-
+          flutter build ios --debug --simulator
+          --dart-define=CHRONOSYNC_RELAY_URL=https://relay.example.com
+          --dart-define=CHRONOSYNC_WEB_URL=https://app.example.com
 
       - name: Select an available iPhone simulator
         id: simulator
@@ -192,42 +208,117 @@ jobs:
           echo "id=$simulator_id" >> "$GITHUB_OUTPUT"
 
       - name: Run native iOS tests
-        run: >-
-          xcodebuild test -quiet
-          -workspace ios/Runner.xcworkspace
-          -scheme Runner
-          -configuration Debug
-          -destination
-          'platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}'
-          CODE_SIGNING_ALLOWED=NO
+        run: |
+          rm -rf "$RUNNER_TEMP/ios-tests.xcresult"
+          xcodebuild test -quiet \
+            -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Debug \
+            -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}' \
+            -resultBundlePath "$RUNNER_TEMP/ios-tests.xcresult" \
+            CODE_SIGNING_ALLOWED=NO
 
-  relay:
-    name: Relay checks
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+      - name: Upload failed iOS test results
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ios-test-results
+          path: ${{ runner.temp }}/ios-tests.xcresult
+          if-no-files-found: ignore
+          retention-days: 7
+
+  macos:
+    name: Native Mac release build
+    runs-on: macos-15
+    timeout-minutes: 60
     defaults:
       run:
-        working-directory: relay
+        working-directory: chronosync
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: relay/package-lock.json
+          persist-credentials: false
 
-      - name: Install relay dependencies
-        run: npm ci
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
 
-      - name: Audit relay dependencies
-        run: npm run audit
+      - name: Record Apple toolchain
+        run: xcodebuild -version
 
-      - name: Type-check relay
-        run: npm run typecheck
+      - name: Install locked Flutter dependencies
+        run: flutter pub get --enforce-lockfile
 
-      - name: Test relay
-        run: npm test
+      - name: Generate Dart sources
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Install branding verification tools
+        run: |
+          if ! command -v magick >/dev/null || ! command -v rsvg-convert >/dev/null; then
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install imagemagick librsvg
+          fi
+
+      - name: Verify branding assets
+        run: make -C .. branding-assets-check
+
+      - name: Configure native Mac dependencies
+        run: >-
+          flutter build macos --debug --config-only
+          --dart-define=CHRONOSYNC_RELAY_URL=https://relay.example.com
+          --dart-define=CHRONOSYNC_WEB_URL=https://app.example.com
+
+      - name: Run native Mac tests
+        run: |
+          rm -rf "$RUNNER_TEMP/macos-tests.xcresult"
+          xcodebuild test \
+            -workspace macos/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Debug \
+            -destination 'platform=macOS' \
+            -resultBundlePath "$RUNNER_TEMP/macos-tests.xcresult" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload failed Mac test results
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: macos-test-results
+          path: ${{ runner.temp }}/macos-tests.xcresult
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Build native Mac release
+        run: >-
+          flutter build macos --release
+          --dart-define=CHRONOSYNC_RELAY_URL=https://relay.example.com
+          --dart-define=CHRONOSYNC_WEB_URL=https://app.example.com
+
+      - name: Verify sandboxed release capabilities
+        run: make -C .. verify-macos-release
+
+  required:
+    name: CI required
+    if: ${{ always() }}
+    needs: [repository, flutter, relay, ios, macos]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Verify every required job passed
+        env:
+          REPOSITORY_RESULT: ${{ needs.repository.result }}
+          FLUTTER_RESULT: ${{ needs.flutter.result }}
+          RELAY_RESULT: ${{ needs.relay.result }}
+          IOS_RESULT: ${{ needs.ios.result }}
+          MACOS_RESULT: ${{ needs.macos.result }}
+        run: |
+          test "$REPOSITORY_RESULT" = success
+          test "$FLUTTER_RESULT" = success
+          test "$RELAY_RESULT" = success
+          test "$IOS_RESULT" = success
+          test "$MACOS_RESULT" = success

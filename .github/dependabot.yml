@@ -1,0 +1,40 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: America/New_York
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns: ['*']
+
+  - package-ecosystem: pub
+    directory: /chronosync
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:15'
+      timezone: America/New_York
+    open-pull-requests-limit: 5
+    groups:
+      flutter-minor-and-patch:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /relay
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:30'
+      timezone: America/New_York
+    open-pull-requests-limit: 5
+    versioning-strategy: increase
+    groups:
+      relay-minor-and-patch:
+        patterns: ['*']
+        update-types: [minor, patch]

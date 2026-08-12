@@ -94,6 +94,10 @@ During development, run the narrowest useful test. Before review, run:
 make check
 ```
 
+This includes `make workflow-check`, which lints Actions YAML and rejects
+mutable action tags. GitHub's `CI required` check must pass before `main` can be
+updated; do not bypass or weaken a gate to merge a change.
+
 On a Mac with Xcode and an iOS Simulator, also run:
 
 ```sh

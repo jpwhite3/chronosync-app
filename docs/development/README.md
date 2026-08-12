@@ -15,6 +15,8 @@ says otherwise.
 4. [Testing](testing.md) — the required TDD cycle and complete test matrix.
 5. [Architecture](architecture.md) — layers, domain contracts, persistence,
    synchronization, and security boundaries.
+6. [Continuous integration](continuous-integration.md) — GitHub Actions jobs,
+   security automation, artifacts, permissions, and failure diagnosis.
 
 ## Operate and Ship
 

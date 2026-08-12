@@ -113,9 +113,11 @@ On a configured Mac, run the native gate too:
 make ci-native
 ```
 
-`make ci` installs locked dependencies, runs normal checks, and verifies a web
-release. CI separately runs Flutter checks on Linux, Apple builds/tests on
-macOS, and relay checks with Node.js 22.
+`make ci` installs locked dependencies, lints the GitHub Actions workflows,
+runs normal checks, and verifies a web release. CI separately runs Flutter
+checks on Linux, Apple builds/tests on macOS, and relay checks with Node.js 22.
+See [Continuous Integration](continuous-integration.md) for the complete job,
+artifact, security, and branch-protection contract.
 
 There is no numeric coverage threshold. That is not permission to leave new
 behavior untested: coverage should follow risk, branches, and contracts.
