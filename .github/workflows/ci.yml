@@ -16,7 +16,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: 3.35.7
   NODE_VERSION: 22
 
 jobs:
@@ -60,11 +59,9 @@ jobs:
           persist-credentials: false
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        uses: ./.github/actions/setup-flutter
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
+          target: web
 
       - name: Install locked Flutter dependencies
         run: flutter pub get --enforce-lockfile
@@ -174,11 +171,9 @@ jobs:
           persist-credentials: false
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        uses: ./.github/actions/setup-flutter
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
+          target: ios
 
       - name: Record Apple toolchain
         run: xcodebuild -version
@@ -242,11 +237,9 @@ jobs:
           persist-credentials: false
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        uses: ./.github/actions/setup-flutter
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
+          target: macos
 
       - name: Record Apple toolchain
         run: xcodebuild -version

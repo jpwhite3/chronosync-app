@@ -59,8 +59,10 @@ diff; locally, `make test-coverage` produces the equivalent coverage file.
 
 Verification workflows have read-only repository access. The CodeQL job alone
 can upload security results. Checkout credentials are not persisted, and the
-repository permits only GitHub-owned actions plus the pinned Flutter setup
-action. No CI secrets are required.
+repository permits only GitHub-owned actions with repository-wide full-SHA
+enforcement. A local composite action installs the exact Flutter revision from
+`chronosync/.metadata`; its GitHub-owned cache dependency is also SHA-pinned.
+No CI secrets are required.
 
 Keep Cloudflare credentials and Apple signing material out of these workflows.
 When deployment is ready, use separate workflows with protected GitHub
