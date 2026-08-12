@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/jpwhite3/chronosync-app/blob/main/SECURITY.md
+    about: Establish a private channel before disclosing vulnerability details.
+  - name: Usage and development help
+    url: https://github.com/jpwhite3/chronosync-app/blob/main/SUPPORT.md
+    about: Read the support guide and troubleshooting paths first.

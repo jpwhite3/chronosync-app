@@ -37,10 +37,10 @@ class NotificationService {
 
       const DarwinInitializationSettings iosSettings =
           DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-      );
+            requestAlertPermission: true,
+            requestBadgePermission: true,
+            requestSoundPermission: true,
+          );
 
       const InitializationSettings settings = InitializationSettings(
         android: androidSettings,
@@ -49,8 +49,8 @@ class NotificationService {
 
       await _notificationsPlugin.initialize(settings);
       _initialized = true;
-    } catch (e) {
-      debugPrint('Failed to initialize notifications: $e');
+    } on Object {
+      debugPrint('Notifications could not be initialized.');
     }
   }
 
@@ -58,16 +58,21 @@ class NotificationService {
   Future<void> onEventComplete(Event event) async {
     try {
       // Get effective settings (event override or global)
-      final GlobalNotificationSettings globalSettings = await _settingsRepository.getGlobalSettings();
-      final EventNotificationSettings? eventSettings = event.notificationSettings;
+      final GlobalNotificationSettings globalSettings =
+          await _settingsRepository.getGlobalSettings();
+      final EventNotificationSettings? eventSettings =
+          event.notificationSettings;
 
       // Determine effective values
       final bool notificationsEnabled =
-          eventSettings?.notificationsEnabled ?? globalSettings.notificationsEnabled;
-      final bool hapticEnabled = eventSettings?.hapticEnabled ?? globalSettings.hapticEnabled;
+          eventSettings?.notificationsEnabled ??
+          globalSettings.notificationsEnabled;
+      final bool hapticEnabled =
+          eventSettings?.hapticEnabled ?? globalSettings.hapticEnabled;
       final HapticIntensity hapticIntensity =
           eventSettings?.hapticIntensity ?? globalSettings.hapticIntensity;
-      final bool soundEnabled = eventSettings?.soundEnabled ?? globalSettings.soundEnabled;
+      final bool soundEnabled =
+          eventSettings?.soundEnabled ?? globalSettings.soundEnabled;
 
       // Trigger haptic feedback if enabled
       if (hapticEnabled) {
@@ -82,8 +87,8 @@ class NotificationService {
           soundEnabled: soundEnabled,
         );
       }
-    } catch (e) {
-      debugPrint('Error handling event completion: $e');
+    } on Object {
+      debugPrint('Event completion feedback could not be delivered.');
     }
   }
 
@@ -97,20 +102,21 @@ class NotificationService {
 
     // Skip showing notifications on desktop platforms
     if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
-      debugPrint('Notification skipped on desktop: $title - $body');
+      debugPrint('Notification delivery is unavailable on desktop.');
       return;
     }
 
     try {
-      final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        'event_completion',
-        'Event Completions',
-        channelDescription: 'Notifications when events complete',
-        importance: Importance.high,
-        priority: Priority.high,
-        playSound: soundEnabled,
-        enableVibration: true,
-      );
+      final AndroidNotificationDetails androidDetails =
+          AndroidNotificationDetails(
+            'event_completion',
+            'Event Completions',
+            channelDescription: 'Notifications when events complete',
+            importance: Importance.high,
+            priority: Priority.high,
+            playSound: soundEnabled,
+            enableVibration: true,
+          );
 
       final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
         presentAlert: true,
@@ -129,8 +135,8 @@ class NotificationService {
         body,
         details,
       );
-    } catch (e) {
-      debugPrint('Failed to show notification: $e');
+    } on Object {
+      debugPrint('A notification could not be shown.');
     }
   }
 }

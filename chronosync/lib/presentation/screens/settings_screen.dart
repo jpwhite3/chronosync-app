@@ -14,9 +14,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
+      appBar: AppBar(title: const Text('Settings')),
       body: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (BuildContext context, SettingsState state) {
           if (state is SettingsLoaded) {
@@ -30,76 +28,77 @@ class SettingsScreen extends StatelessWidget {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () async {
                     // Initialize notification settings repository
-                    final NotificationSettingsRepository notificationSettingsRepo = NotificationSettingsRepository();
+                    final NotificationSettingsRepository
+                    notificationSettingsRepo = NotificationSettingsRepository();
                     await notificationSettingsRepo.init();
-                    
+
                     if (context.mounted) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => BlocProvider(
-                            create: (BuildContext context) => NotificationSettingsBloc(
-                              repository: notificationSettingsRepo,
-                            )..add(const LoadGlobalSettingsEvent()),
-                            child: const NotificationSettingsScreen(),
-                          ),
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              BlocProvider<NotificationSettingsBloc>(
+                                create: (BuildContext context) =>
+                                    NotificationSettingsBloc(
+                                      repository: notificationSettingsRepo,
+                                    )..add(const LoadGlobalSettingsEvent()),
+                                child: const NotificationSettingsScreen(),
+                              ),
                         ),
                       );
                     }
                   },
                 ),
                 const Divider(),
-                
+
                 // Existing settings
                 const Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(
                     'Swipe Direction',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-                RadioListTile<SwipeDirection>(
-                  title: const Text('Left-to-right'),
-                  subtitle: const Text('Swipe from left to right to delete'),
-                  value: SwipeDirection.ltr,
+                RadioGroup<SwipeDirection>(
                   groupValue: state.swipeDirection,
                   onChanged: (SwipeDirection? value) {
                     if (value != null) {
                       context.read<SettingsCubit>().setSwipeDirection(value);
                     }
                   },
-                ),
-                RadioListTile<SwipeDirection>(
-                  title: const Text('Right-to-left'),
-                  subtitle: const Text('Swipe from right to left to delete'),
-                  value: SwipeDirection.rtl,
-                  groupValue: state.swipeDirection,
-                  onChanged: (SwipeDirection? value) {
-                    if (value != null) {
-                      context.read<SettingsCubit>().setSwipeDirection(value);
-                    }
-                  },
+                  child: const Column(
+                    children: <Widget>[
+                      RadioListTile<SwipeDirection>(
+                        title: Text('Left-to-right'),
+                        subtitle: Text('Swipe from left to right to delete'),
+                        value: SwipeDirection.ltr,
+                      ),
+                      RadioListTile<SwipeDirection>(
+                        title: Text('Right-to-left'),
+                        subtitle: Text('Swipe from right to left to delete'),
+                        value: SwipeDirection.rtl,
+                      ),
+                    ],
+                  ),
                 ),
                 const Divider(),
                 const Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(
                     'Auto-Progress',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SwitchListTile(
                   title: const Text('Audio Cue'),
-                  subtitle: const Text('Play sound when auto-progressing to next event'),
+                  subtitle: const Text(
+                    'Play sound when auto-progressing to next event',
+                  ),
                   value: state.autoProgressAudioEnabled,
                   onChanged: (bool value) {
-                    context.read<SettingsCubit>().toggleAutoProgressAudio(value);
+                    context.read<SettingsCubit>().toggleAutoProgressAudio(
+                      value,
+                    );
                   },
                 ),
               ],

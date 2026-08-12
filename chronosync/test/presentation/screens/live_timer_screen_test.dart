@@ -44,10 +44,15 @@ void main() {
     await eventBox.add(testEvent);
 
     // Create series with real HiveList
-    testSeries = Series(title: 'Test Series', events: HiveList(eventBox));
+    testSeries = Series(
+      title: 'Test Series',
+      events: HiveList<Event>(eventBox),
+    );
     testSeries.events.add(testEvent);
 
-    when(mockBloc.stream).thenAnswer((_) => const Stream.empty());
+    when(
+      mockBloc.stream,
+    ).thenAnswer((Invocation _) => const Stream<LiveTimerState>.empty());
   });
 
   tearDown(() async {
@@ -62,10 +67,16 @@ void main() {
     }
   });
 
-  Widget createWidgetUnderTest(LiveTimerState state) {
+  Widget createWidgetUnderTest(LiveTimerState state, {double textScale = 1}) {
     when(mockBloc.state).thenReturn(state);
 
     return MaterialApp(
+      builder: (BuildContext context, Widget? child) => MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(textScale)),
+        child: child!,
+      ),
       home: BlocProvider<LiveTimerBloc>.value(
         value: mockBloc,
         child: const LiveTimerScreen(),
@@ -74,7 +85,9 @@ void main() {
   }
 
   group('LiveTimerScreen - Normal State', () {
-    testWidgets('displays both countdown and elapsed timers', (WidgetTester tester) async {
+    testWidgets('displays both countdown and elapsed timers', (
+      WidgetTester tester,
+    ) async {
       final DateTime now = DateTime.now();
       final LiveTimerRunning state = LiveTimerRunning(
         series: testSeries,
@@ -98,7 +111,9 @@ void main() {
       expect(find.text('02:00'), findsOneWidget);
     });
 
-    testWidgets('countdown is not red in normal state', (WidgetTester tester) async {
+    testWidgets('countdown is not red in normal state', (
+      WidgetTester tester,
+    ) async {
       final DateTime now = DateTime.now();
       final LiveTimerRunning state = LiveTimerRunning(
         series: testSeries,
@@ -122,7 +137,9 @@ void main() {
   });
 
   group('LiveTimerScreen - Overtime State', () {
-    testWidgets('displays negative countdown in overtime', (WidgetTester tester) async {
+    testWidgets('displays negative countdown in overtime', (
+      WidgetTester tester,
+    ) async {
       final DateTime now = DateTime.now();
       final LiveTimerRunning state = LiveTimerRunning(
         series: testSeries,
@@ -204,5 +221,29 @@ void main() {
 
       expect(find.widgetWithText(ElevatedButton, 'NEXT'), findsOneWidget);
     });
+  });
+
+  testWidgets('running timer is usable at 200 percent text scale', (
+    WidgetTester tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 568);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    final DateTime now = DateTime.now();
+    final LiveTimerRunning state = LiveTimerRunning(
+      series: testSeries,
+      currentEventIndex: 0,
+      elapsedSeconds: 60,
+      eventStartTime: now,
+      seriesStartTime: now,
+      totalSeriesElapsedSeconds: 60,
+    );
+
+    await tester.pumpWidget(createWidgetUnderTest(state, textScale: 2));
+
+    expect(find.text('Test Event'), findsOneWidget);
+    expect(find.text('NEXT'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

@@ -21,7 +21,7 @@ void main() {
       mockRepository = MockSeriesRepository();
       mockEventBox = MockBox<Event>();
       seriesBloc = SeriesBloc(mockRepository);
-      
+
       // Stub the name property for mockEventBox
       when(mockEventBox.name).thenReturn('events');
     });
@@ -38,8 +38,8 @@ void main() {
       'emits [SeriesLoaded] when LoadSeries is added',
       build: () {
         final List<Series> seriesList = <Series>[
-          Series(title: 'Test Series 1', events: HiveList(mockEventBox)),
-          Series(title: 'Test Series 2', events: HiveList(mockEventBox)),
+          Series(title: 'Test Series 1', events: HiveList<Event>(mockEventBox)),
+          Series(title: 'Test Series 2', events: HiveList<Event>(mockEventBox)),
         ];
         when(mockRepository.getAllSeries()).thenReturn(seriesList);
         return seriesBloc;
@@ -48,8 +48,16 @@ void main() {
       expect: () => <Matcher>[
         isA<SeriesLoaded>()
             .having((SeriesLoaded s) => s.series.length, 'series length', 2)
-            .having((SeriesLoaded s) => s.series[0].title, 'first series title', 'Test Series 1')
-            .having((SeriesLoaded s) => s.series[1].title, 'second series title', 'Test Series 2'),
+            .having(
+              (SeriesLoaded s) => s.series[0].title,
+              'first series title',
+              'Test Series 1',
+            )
+            .having(
+              (SeriesLoaded s) => s.series[1].title,
+              'second series title',
+              'Test Series 2',
+            ),
       ],
     );
 
@@ -61,11 +69,16 @@ void main() {
         return seriesBloc;
       },
       act: (SeriesBloc bloc) => bloc.add(
-        AddSeries(Series(title: 'New Series', events: HiveList(mockEventBox))),
+        AddSeries(
+          Series(title: 'New Series', events: HiveList<Event>(mockEventBox)),
+        ),
       ),
       expect: () => <Matcher>[
-        isA<SeriesLoaded>()
-            .having((SeriesLoaded s) => s.series.length, 'series length', 0),
+        isA<SeriesLoaded>().having(
+          (SeriesLoaded s) => s.series.length,
+          'series length',
+          0,
+        ),
       ],
     );
   });

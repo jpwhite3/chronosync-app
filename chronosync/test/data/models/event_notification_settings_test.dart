@@ -5,7 +5,8 @@ import 'package:chronosync/data/models/haptic_intensity.dart';
 void main() {
   group('EventNotificationSettings', () {
     test('useGlobal factory creates settings with no overrides', () {
-      final EventNotificationSettings settings = EventNotificationSettings.useGlobal();
+      final EventNotificationSettings settings =
+          EventNotificationSettings.useGlobal();
 
       expect(settings.notificationsEnabled, null);
       expect(settings.hapticEnabled, null);
@@ -15,14 +16,20 @@ void main() {
     });
 
     test('hasOverrides returns false when all fields are null', () {
-      final EventNotificationSettings settings = EventNotificationSettings.useGlobal();
+      final EventNotificationSettings settings =
+          EventNotificationSettings.useGlobal();
       expect(settings.hasOverrides, false);
     });
 
     test('hasOverrides returns true when any field is set', () {
-      final EventNotificationSettings settings1 = const EventNotificationSettings(notificationsEnabled: true);
-      final EventNotificationSettings settings2 = const EventNotificationSettings(hapticIntensity: HapticIntensity.strong);
-      final EventNotificationSettings settings3 = const EventNotificationSettings(customSoundPath: 'sound.mp3');
+      final EventNotificationSettings settings1 =
+          const EventNotificationSettings(notificationsEnabled: true);
+      final EventNotificationSettings settings2 =
+          const EventNotificationSettings(
+            hapticIntensity: HapticIntensity.strong,
+          );
+      final EventNotificationSettings settings3 =
+          const EventNotificationSettings(customSoundPath: 'sound.mp3');
 
       expect(settings1.hasOverrides, true);
       expect(settings2.hasOverrides, true);
@@ -30,11 +37,12 @@ void main() {
     });
 
     test('clearOverrides returns settings with no overrides', () {
-      final EventNotificationSettings settings = const EventNotificationSettings(
-        notificationsEnabled: false,
-        hapticEnabled: true,
-        hapticIntensity: HapticIntensity.strong,
-      );
+      final EventNotificationSettings settings =
+          const EventNotificationSettings(
+            notificationsEnabled: false,
+            hapticEnabled: true,
+            hapticIntensity: HapticIntensity.strong,
+          );
 
       final EventNotificationSettings cleared = settings.clearOverrides();
 
@@ -45,12 +53,15 @@ void main() {
     });
 
     test('copyWith preserves unspecified overrides', () {
-      final EventNotificationSettings original = const EventNotificationSettings(
-        notificationsEnabled: true,
-        hapticEnabled: false,
-      );
+      final EventNotificationSettings original =
+          const EventNotificationSettings(
+            notificationsEnabled: true,
+            hapticEnabled: false,
+          );
 
-      final EventNotificationSettings updated = original.copyWith(hapticIntensity: HapticIntensity.light);
+      final EventNotificationSettings updated = original.copyWith(
+        hapticIntensity: HapticIntensity.light,
+      );
 
       expect(updated.notificationsEnabled, true);
       expect(updated.hapticEnabled, false);

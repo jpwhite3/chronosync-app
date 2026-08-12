@@ -10,28 +10,21 @@ class AutoProgressIndicator {
     final String message = nextEventTitle != null
         ? 'Auto-advancing to: $nextEventTitle'
         : 'Auto-advancing...';
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: <Widget>[
-            const Icon(
-              Icons.play_circle_outline,
-              color: Colors.white,
-            ),
+            const Icon(Icons.play_circle_outline, color: Colors.white),
             const SizedBox(width: 12),
-            Expanded(
-              child: Text(message),
-            ),
+            Expanded(child: Text(message)),
           ],
         ),
         duration: const Duration(seconds: 2),
         backgroundColor: Colors.blue,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }

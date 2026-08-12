@@ -1,0 +1,101 @@
+name: Bug report
+description: Report a reproducible problem in ChronoSync
+title: "bug: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve ChronoSync. Search existing issues first.
+
+        **Do not attach invitation URLs, capabilities, room secrets, raw device IDs, sensitive plan content, or unredacted logs.** For a suspected vulnerability, follow the [Security Policy](https://github.com/jpwhite3/chronosync-app/blob/main/SECURITY.md) and establish a private channel before sharing details.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Provide the commit SHA, branch, or app version.
+      placeholder: e.g. main at abc1234
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - iPhone
+        - macOS
+        - Web/PWA
+        - Relay
+        - Multiple platforms
+        - Developer tooling/documentation
+        - Other/unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include OS/device, browser, Flutter version, and network type when relevant.
+      placeholder: macOS 15, Chrome 140, Flutter 3.35.7, local Wi-Fi
+    validations:
+      required: true
+
+  - type: dropdown
+    id: session
+    attributes:
+      label: Session type
+      options:
+        - Not session-related
+        - Solo
+        - Nearby
+        - Online
+        - Multiple/unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Give the smallest reliable sequence using fictional data.
+      placeholder: |
+        1. Create a Plan with ...
+        2. Start ...
+        3. Select ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include sanitized screenshots or logs if they help.
+    validations:
+      required: true
+
+  - type: textarea
+    id: regression
+    attributes:
+      label: Regression information
+      description: Did this work before? If known, identify the last working commit or version.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety checks
+      options:
+        - label: I searched existing issues and the troubleshooting documentation.
+          required: true
+        - label: I removed invitations, capabilities, secrets, identifiers, and sensitive plan data.
+          required: true
+        - label: This report does not describe a security vulnerability.
+          required: true

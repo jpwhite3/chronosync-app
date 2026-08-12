@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Chronosync</string>
+	<string>ChronoSync</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,12 +45,17 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<key>UIBackgroundModes</key>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>ChronoSync uses your local network to let nearby teammates join a live session when the Internet is unavailable.</string>
+	<key>NSBonjourServices</key>
 	<array>
-		<string>audio</string>
+		<string>_chronosync._tcp</string>
 	</array>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires access to play notification sounds.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
 </dict>

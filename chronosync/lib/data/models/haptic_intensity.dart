@@ -1,7 +1,5 @@
 import 'package:hive/hive.dart';
 
-part 'haptic_intensity.g.dart';
-
 /// Haptic feedback intensity levels
 @HiveType(typeId: 10)
 enum HapticIntensity {
@@ -45,5 +43,21 @@ extension HapticIntensityExtension on HapticIntensity {
       case HapticIntensity.strong:
         return 255;
     }
+  }
+}
+
+/// Frozen adapter retained for the one-release Hive migration window.
+final class HapticIntensityAdapter extends TypeAdapter<HapticIntensity> {
+  @override
+  int get typeId => 10;
+
+  @override
+  HapticIntensity read(BinaryReader reader) {
+    return HapticIntensity.values[reader.readByte()];
+  }
+
+  @override
+  void write(BinaryWriter writer, HapticIntensity object) {
+    writer.writeByte(object.index);
   }
 }

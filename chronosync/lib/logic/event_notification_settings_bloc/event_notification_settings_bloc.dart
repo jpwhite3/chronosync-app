@@ -4,10 +4,11 @@ import 'event_notification_settings_event.dart';
 import 'event_notification_settings_state.dart';
 
 /// BLoC for managing event-level notification settings overrides
-class EventNotificationSettingsBloc extends Bloc<
-    EventNotificationSettingsEvent, EventNotificationSettingsState> {
+class EventNotificationSettingsBloc
+    extends
+        Bloc<EventNotificationSettingsEvent, EventNotificationSettingsState> {
   EventNotificationSettingsBloc()
-      : super(const EventNotificationSettingsInitial()) {
+    : super(const EventNotificationSettingsInitial()) {
     on<LoadEventSettingsEvent>(_onLoadEventSettings);
     on<ToggleEventNotificationsEvent>(_onToggleEventNotifications);
     on<ToggleEventHapticEvent>(_onToggleEventHaptic);
@@ -25,11 +26,11 @@ class EventNotificationSettingsBloc extends Bloc<
     emit(const EventNotificationSettingsLoading());
     try {
       final EventNotificationSettings settings =
-          event.event.notificationSettings ?? EventNotificationSettings.useGlobal();
-      emit(EventNotificationSettingsLoaded(
-        event: event.event,
-        settings: settings,
-      ));
+          event.event.notificationSettings ??
+          EventNotificationSettings.useGlobal();
+      emit(
+        EventNotificationSettingsLoaded(event: event.event, settings: settings),
+      );
     } catch (e) {
       emit(EventNotificationSettingsError('Failed to load settings: $e'));
     }
@@ -41,10 +42,10 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
-    final EventNotificationSettings updatedSettings = currentState.settings.copyWith(
-      notificationsEnabled: event.enabled,
-    );
+    final EventNotificationSettingsLoaded currentState =
+        state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings updatedSettings = currentState.settings
+        .copyWith(notificationsEnabled: event.enabled);
 
     emit(currentState.copyWith(settings: updatedSettings));
   }
@@ -55,10 +56,10 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
-    final EventNotificationSettings updatedSettings = currentState.settings.copyWith(
-      hapticEnabled: event.enabled,
-    );
+    final EventNotificationSettingsLoaded currentState =
+        state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings updatedSettings = currentState.settings
+        .copyWith(hapticEnabled: event.enabled);
 
     emit(currentState.copyWith(settings: updatedSettings));
   }
@@ -69,10 +70,10 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
-    final EventNotificationSettings updatedSettings = currentState.settings.copyWith(
-      hapticIntensity: event.intensity,
-    );
+    final EventNotificationSettingsLoaded currentState =
+        state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings updatedSettings = currentState.settings
+        .copyWith(hapticIntensity: event.intensity);
 
     emit(currentState.copyWith(settings: updatedSettings));
   }
@@ -83,10 +84,10 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
-    final EventNotificationSettings updatedSettings = currentState.settings.copyWith(
-      soundEnabled: event.enabled,
-    );
+    final EventNotificationSettingsLoaded currentState =
+        state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings updatedSettings = currentState.settings
+        .copyWith(soundEnabled: event.enabled);
 
     emit(currentState.copyWith(settings: updatedSettings));
   }
@@ -97,10 +98,10 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
-    final EventNotificationSettings updatedSettings = currentState.settings.copyWith(
-      customSoundPath: event.soundPath,
-    );
+    final EventNotificationSettingsLoaded currentState =
+        state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings updatedSettings = currentState.settings
+        .copyWith(customSoundPath: event.soundPath);
 
     emit(currentState.copyWith(settings: updatedSettings));
   }
@@ -111,8 +112,10 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
-    final EventNotificationSettings clearedSettings = EventNotificationSettings.useGlobal();
+    final EventNotificationSettingsLoaded currentState =
+        state as EventNotificationSettingsLoaded;
+    final EventNotificationSettings clearedSettings =
+        EventNotificationSettings.useGlobal();
 
     emit(currentState.copyWith(settings: clearedSettings));
   }
@@ -123,13 +126,13 @@ class EventNotificationSettingsBloc extends Bloc<
   ) async {
     if (state is! EventNotificationSettingsLoaded) return;
 
-    final EventNotificationSettingsLoaded currentState = state as EventNotificationSettingsLoaded;
+    final EventNotificationSettingsLoaded currentState =
+        state as EventNotificationSettingsLoaded;
 
     try {
       // Update the event's notification settings
-      currentState.event.notificationSettings = currentState.settings.hasOverrides
-          ? currentState.settings
-          : null;
+      currentState.event.notificationSettings =
+          currentState.settings.hasOverrides ? currentState.settings : null;
 
       // Save the event to Hive
       await currentState.event.save();

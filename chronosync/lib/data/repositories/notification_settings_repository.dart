@@ -32,10 +32,10 @@ class NotificationSettingsRepository {
   /// Watch for changes to global settings
   Stream<GlobalNotificationSettings> watchGlobalSettings() async* {
     await init();
-    
+
     // Emit current value first
     yield await getGlobalSettings();
-    
+
     // Then emit updates
     await for (final BoxEvent _ in _box!.watch(key: _globalSettingsKey)) {
       yield await getGlobalSettings();

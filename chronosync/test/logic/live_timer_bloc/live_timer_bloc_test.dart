@@ -36,16 +36,20 @@ void main() {
       'emits [LiveTimerCompleted] when StartTimer is added with empty series',
       build: () => LiveTimerBloc(enableAudio: false),
       act: (LiveTimerBloc bloc) {
-        final Series series = Series(title: 'Empty Series', events: HiveList(mockEventBox));
+        final Series series = Series(
+          title: 'Empty Series',
+          events: HiveList<Event>(mockEventBox),
+        );
         bloc.add(StartTimer(series));
       },
-      expect: () => <Matcher>[
-        isA<LiveTimerCompleted>(),
-      ],
+      expect: () => <Matcher>[isA<LiveTimerCompleted>()],
     );
 
     test('LiveTimerRunning state has correct properties', () {
-      final Series series = Series(title: 'Test Series', events: HiveList(mockEventBox));
+      final Series series = Series(
+        title: 'Test Series',
+        events: HiveList<Event>(mockEventBox),
+      );
       final DateTime now = DateTime.now();
       final LiveTimerRunning state = LiveTimerRunning(
         series: series,

@@ -14,9 +14,7 @@ class NotificationSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notification Settings'),
-      ),
+      appBar: AppBar(title: const Text('Notification Settings')),
       body: BlocBuilder<NotificationSettingsBloc, NotificationSettingsState>(
         builder: (BuildContext context, NotificationSettingsState state) {
           if (state is NotificationSettingsLoading) {
@@ -30,13 +28,15 @@ class NotificationSettingsScreen extends StatelessWidget {
                 children: <Widget>[
                   const Icon(Icons.error_outline, size: 48, color: Colors.red),
                   const SizedBox(height: 16),
-                  Text(state.message),
+                  const Text(
+                    'Could not load notification settings. Try again.',
+                  ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      context
-                          .read<NotificationSettingsBloc>()
-                          .add(const LoadGlobalSettingsEvent());
+                      context.read<NotificationSettingsBloc>().add(
+                        const LoadGlobalSettingsEvent(),
+                      );
                     },
                     child: const Text('Retry'),
                   ),
@@ -59,12 +59,13 @@ class NotificationSettingsScreen extends StatelessWidget {
                   child: SwitchListTile(
                     title: const Text('Enable Notifications'),
                     subtitle: const Text(
-                        'Receive notifications when events complete'),
+                      'Receive notifications when events complete',
+                    ),
                     value: state.settings.notificationsEnabled,
                     onChanged: (bool value) {
-                      context
-                          .read<NotificationSettingsBloc>()
-                          .add(ToggleNotificationsEvent(value));
+                      context.read<NotificationSettingsBloc>().add(
+                        ToggleNotificationsEvent(value),
+                      );
                     },
                   ),
                 ),
@@ -79,9 +80,9 @@ class NotificationSettingsScreen extends StatelessWidget {
                     subtitle: const Text('Vibrate when events complete'),
                     value: state.settings.hapticEnabled,
                     onChanged: (bool value) {
-                      context
-                          .read<NotificationSettingsBloc>()
-                          .add(ToggleHapticEvent(value));
+                      context.read<NotificationSettingsBloc>().add(
+                        ToggleHapticEvent(value),
+                      );
                     },
                   ),
                 ),
@@ -98,9 +99,9 @@ class NotificationSettingsScreen extends StatelessWidget {
                     subtitle: const Text('Play sound when events complete'),
                     value: state.settings.soundEnabled,
                     onChanged: (bool value) {
-                      context
-                          .read<NotificationSettingsBloc>()
-                          .add(ToggleSoundEvent(value));
+                      context.read<NotificationSettingsBloc>().add(
+                        ToggleSoundEvent(value),
+                      );
                     },
                   ),
                 ),
@@ -112,18 +113,21 @@ class NotificationSettingsScreen extends StatelessWidget {
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () async {
-                      final String? selectedSound = await Navigator.of(context).push<String>(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => SoundPickerScreen(
-                            currentSoundPath: state.settings.customSoundPath,
-                          ),
-                        ),
-                      );
-                      
+                      final String? selectedSound = await Navigator.of(context)
+                          .push<String>(
+                            MaterialPageRoute<String>(
+                              builder: (BuildContext context) =>
+                                  SoundPickerScreen(
+                                    currentSoundPath:
+                                        state.settings.customSoundPath,
+                                  ),
+                            ),
+                          );
+
                       if (selectedSound != null && context.mounted) {
-                        context
-                            .read<NotificationSettingsBloc>()
-                            .add(ChangeCustomSoundEvent(selectedSound));
+                        context.read<NotificationSettingsBloc>().add(
+                          ChangeCustomSoundEvent(selectedSound),
+                        );
                       }
                     },
                   ),
@@ -164,9 +168,9 @@ class NotificationSettingsScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              context
-                  .read<NotificationSettingsBloc>()
-                  .add(const RequestNotificationPermissionEvent());
+              context.read<NotificationSettingsBloc>().add(
+                const RequestNotificationPermissionEvent(),
+              );
             },
             child: const Text('Grant'),
           ),
@@ -190,7 +194,9 @@ class NotificationSettingsScreen extends StatelessWidget {
   }
 
   Widget _buildHapticIntensitySelector(
-      BuildContext context, NotificationSettingsLoaded state) {
+    BuildContext context,
+    NotificationSettingsLoaded state,
+  ) {
     final HapticService hapticService = HapticService();
 
     return Padding(
@@ -200,10 +206,7 @@ class NotificationSettingsScreen extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              const Text(
-                'Haptic Intensity',
-                style: TextStyle(fontSize: 16),
-              ),
+              const Text('Haptic Intensity', style: TextStyle(fontSize: 16)),
               const Spacer(),
               TextButton.icon(
                 onPressed: () {
@@ -218,23 +221,28 @@ class NotificationSettingsScreen extends StatelessWidget {
           Wrap(
             spacing: 8,
             children: HapticIntensity.values
-                .where((HapticIntensity intensity) => intensity != HapticIntensity.none)
+                .where(
+                  (HapticIntensity intensity) =>
+                      intensity != HapticIntensity.none,
+                )
                 .map((HapticIntensity intensity) {
-              final bool isSelected = state.settings.hapticIntensity == intensity;
-              return ChoiceChip(
-                label: Text(intensity.displayName),
-                selected: isSelected,
-                onSelected: (bool selected) {
-                  if (selected) {
-                    context
-                        .read<NotificationSettingsBloc>()
-                        .add(ChangeHapticIntensityEvent(intensity));
-                    // Trigger haptic feedback to preview the intensity
-                    hapticService.triggerHaptic(intensity);
-                  }
-                },
-              );
-            }).toList(),
+                  final bool isSelected =
+                      state.settings.hapticIntensity == intensity;
+                  return ChoiceChip(
+                    label: Text(intensity.displayName),
+                    selected: isSelected,
+                    onSelected: (bool selected) {
+                      if (selected) {
+                        context.read<NotificationSettingsBloc>().add(
+                          ChangeHapticIntensityEvent(intensity),
+                        );
+                        // Trigger haptic feedback to preview the intensity
+                        hapticService.triggerHaptic(intensity);
+                      }
+                    },
+                  );
+                })
+                .toList(),
           ),
         ],
       ),

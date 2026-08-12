@@ -27,7 +27,8 @@ class DismissibleEventItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (BuildContext context, SettingsState settingsState) {
-        final SwipeDirection direction = (settingsState as SettingsLoaded).swipeDirection;
+        final SwipeDirection direction =
+            (settingsState as SettingsLoaded).swipeDirection;
 
         return Dismissible(
           key: Key(event.key.toString()),
@@ -60,10 +61,7 @@ class DismissibleEventItem extends StatelessWidget {
             title: Text(event.title),
             subtitle: Text(_formatDuration(event.duration)),
             trailing: event.autoProgress
-                ? const Icon(
-                    Icons.play_circle_outline,
-                    color: Colors.blue,
-                  )
+                ? const Icon(Icons.play_circle_outline, color: Colors.blue)
                 : null,
             onTap: onEdit,
           ),
@@ -90,14 +88,6 @@ class DismissibleEventItem extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('OK'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: Navigate to timer screen
-              // Navigator.pushNamed(context, '/timer');
-            },
-            child: const Text('Go to Timer'),
           ),
         ],
       ),

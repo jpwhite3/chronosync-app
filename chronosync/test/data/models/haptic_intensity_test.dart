@@ -18,8 +18,14 @@ void main() {
     });
 
     test('amplitude increases with intensity', () {
-      expect(HapticIntensity.light.amplitude < HapticIntensity.medium.amplitude, true);
-      expect(HapticIntensity.medium.amplitude < HapticIntensity.strong.amplitude, true);
+      expect(
+        HapticIntensity.light.amplitude < HapticIntensity.medium.amplitude,
+        true,
+      );
+      expect(
+        HapticIntensity.medium.amplitude < HapticIntensity.strong.amplitude,
+        true,
+      );
     });
   });
 }

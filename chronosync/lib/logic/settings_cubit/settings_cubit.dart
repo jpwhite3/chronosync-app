@@ -7,10 +7,12 @@ class SettingsCubit extends Cubit<SettingsState> {
   final PreferencesRepository _repository;
 
   SettingsCubit(this._repository)
-      : super(SettingsLoaded(
+    : super(
+        SettingsLoaded(
           swipeDirection: _repository.getSwipeDirection(),
           autoProgressAudioEnabled: _repository.getAutoProgressAudioEnabled(),
-        ));
+        ),
+      );
 
   void setSwipeDirection(SwipeDirection direction) {
     _repository.saveSwipeDirection(direction);

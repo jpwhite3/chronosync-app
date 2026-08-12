@@ -1,0 +1,74 @@
+name: Feature request
+description: Propose an outcome or workflow improvement for ChronoSync
+title: "feat: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the user problem before the proposed implementation. Search existing issues and `specs/` first.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Who is affected, in what situation, and why is the current workflow insufficient?
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: Describe the observable result without prescribing architecture unless necessary.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Platforms
+      options:
+        - label: iPhone
+        - label: macOS
+        - label: Web/PWA
+        - label: Relay/online sessions
+        - label: Nearby sessions
+
+  - type: checkboxes
+    id: roles
+    attributes:
+      label: Live-session roles
+      options:
+        - label: Host
+        - label: Controller
+        - label: Participant
+        - label: Display
+        - label: Not role-specific
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Note workarounds, rejected approaches, or related products.
+
+  - type: textarea
+    id: quality
+    attributes:
+      label: Accessibility, privacy, and offline behavior
+      description: Explain any keyboard, screen-reader, visual, data-handling, or connectivity requirements.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add fictional examples, sketches, or links without including active invitations or private data.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and feature specifications.
+          required: true
+        - label: I did not include invitations, capabilities, secrets, identifiers, or sensitive plan data.
+          required: true

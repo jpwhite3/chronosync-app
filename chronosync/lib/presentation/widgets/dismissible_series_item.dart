@@ -27,7 +27,8 @@ class DismissibleSeriesItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (BuildContext context, SettingsState settingsState) {
-        final SwipeDirection direction = (settingsState as SettingsLoaded).swipeDirection;
+        final SwipeDirection direction =
+            (settingsState as SettingsLoaded).swipeDirection;
 
         return Dismissible(
           key: Key(series.key.toString()),
@@ -68,28 +69,32 @@ class DismissibleSeriesItem extends StatelessWidget {
                       ? null
                       : () async {
                           // Create notification service
-                          final NotificationSettingsRepository notificationSettingsRepo = NotificationSettingsRepository();
+                          final NotificationSettingsRepository
+                          notificationSettingsRepo =
+                              NotificationSettingsRepository();
                           await notificationSettingsRepo.init();
-                          final NotificationService notificationService = NotificationService(
-                            settingsRepository: notificationSettingsRepo,
-                          );
+                          final NotificationService notificationService =
+                              NotificationService(
+                                settingsRepository: notificationSettingsRepo,
+                              );
                           await notificationService.init();
-                          
+
                           // Create LiveTimerBloc with notification support and start the timer
                           final LiveTimerBloc liveTimerBloc = LiveTimerBloc(
                             notificationService: notificationService,
                           );
                           liveTimerBloc.add(StartTimer(series));
-                          
+
                           // Navigate to live timer screen with the BLoC provided
                           if (context.mounted) {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) => BlocProvider.value(
-                                  value: liveTimerBloc,
-                                  child: const LiveTimerScreen(),
-                                ),
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    BlocProvider<LiveTimerBloc>.value(
+                                      value: liveTimerBloc,
+                                      child: const LiveTimerScreen(),
+                                    ),
                               ),
                             );
                           }
@@ -102,8 +107,9 @@ class DismissibleSeriesItem extends StatelessWidget {
               // Navigate to event list screen
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => EventListScreen(series: series),
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) =>
+                      EventListScreen(series: series),
                 ),
               );
             },

@@ -1,0 +1,233 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter:
+    name: Flutter checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: chronosync
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.35.7
+          channel: stable
+          cache: true
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Generate Dart sources
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed lib test tool
+
+      - name: Verify packaged nearby client
+        run: |
+          mkdir -p "$RUNNER_TEMP/nearby-client"
+          dart compile js tool/nearby_client/main.dart -O4 --no-source-maps \
+            -o "$RUNNER_TEMP/nearby-client/client.js"
+          cmp "$RUNNER_TEMP/nearby-client/client.js" \
+            assets/nearby_client/client.js
+
+      - name: Verify packaged Drift worker
+        run: |
+          mkdir -p "$RUNNER_TEMP/drift-worker"
+          dart compile js web/drift_worker.dart --no-source-maps \
+            -o "$RUNNER_TEMP/drift-worker/drift_worker.js"
+          cmp "$RUNNER_TEMP/drift-worker/drift_worker.js" \
+            web/drift_worker.js
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test --reporter compact
+
+      - name: Test browser archive safety
+        run: >-
+          flutter test --platform chrome
+          test/data/portability/bounded_zip_entry_decoder_test.dart
+          test/data/portability/portability_file_service_test.dart
+          test/data/portability/plan_archive_service_test.dart
+          test/core/platform/display_fullscreen_web_test.dart
+
+      - name: Build web release
+        run: flutter build web --release
+
+      - name: Sanitize web release artifacts
+        run: dart run tool/release/release_artifact_verifier.dart --sanitize build/web
+
+      - name: Verify web release artifacts
+        run: dart run tool/release/release_artifact_verifier.dart build/web
+
+  macos:
+    name: Native Mac release build
+    runs-on: macos-15
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: chronosync
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.35.7
+          channel: stable
+          cache: true
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Generate Dart sources
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Configure native Mac dependencies
+        run: flutter build macos --debug --config-only
+
+      - name: Run native Mac tests
+        run: >-
+          xcodebuild test
+          -workspace macos/Runner.xcworkspace
+          -scheme Runner
+          -configuration Debug
+          -destination 'platform=macOS'
+          CODE_SIGNING_ALLOWED=NO
+
+      - name: Build native Mac release
+        run: >-
+          flutter build macos --release
+          --dart-define=CHRONOSYNC_RELAY_URL=https://relay.example.com
+          --dart-define=CHRONOSYNC_WEB_URL=https://app.example.com
+
+      - name: Verify sandboxed release capabilities
+        run: |
+          test "$(/usr/libexec/PlistBuddy -c \
+            'Print :com.apple.security.app-sandbox' \
+            macos/Runner/Release.entitlements)" = "true"
+          test "$(/usr/libexec/PlistBuddy -c \
+            'Print :com.apple.security.network.client' \
+            macos/Runner/Release.entitlements)" = "true"
+          test "$(/usr/libexec/PlistBuddy -c \
+            'Print :com.apple.security.files.user-selected.read-write' \
+            macos/Runner/Release.entitlements)" = "true"
+          plutil -extract NSLocalNetworkUsageDescription raw \
+            macos/Runner/Info.plist
+          codesign --verify --deep --strict \
+            build/macos/Build/Products/Release/ChronoSync.app
+          codesign --display --entitlements - --xml \
+            build/macos/Build/Products/Release/ChronoSync.app \
+            > "$RUNNER_TEMP/chronosync-entitlements.plist"
+          test "$(/usr/libexec/PlistBuddy -c \
+            'Print :com.apple.security.app-sandbox' \
+            "$RUNNER_TEMP/chronosync-entitlements.plist")" = "true"
+          test "$(/usr/libexec/PlistBuddy -c \
+            'Print :com.apple.security.network.client' \
+            "$RUNNER_TEMP/chronosync-entitlements.plist")" = "true"
+          test "$(/usr/libexec/PlistBuddy -c \
+            'Print :com.apple.security.files.user-selected.read-write' \
+            "$RUNNER_TEMP/chronosync-entitlements.plist")" = "true"
+
+  ios:
+    name: Native iOS simulator build and tests
+    runs-on: macos-15
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: chronosync
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.35.7
+          channel: stable
+          cache: true
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Generate Dart sources
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build native iOS simulator app
+        run: flutter build ios --debug --simulator
+
+      - name: Select an available iPhone simulator
+        id: simulator
+        shell: bash
+        run: |
+          simulator_id="$(
+            xcrun simctl list devices available |
+              awk -F '[()]' \
+                '/^[[:space:]]+iPhone/ && !found { print $2; found = 1 }'
+          )"
+          test -n "$simulator_id"
+          echo "id=$simulator_id" >> "$GITHUB_OUTPUT"
+
+      - name: Run native iOS tests
+        run: >-
+          xcodebuild test -quiet
+          -workspace ios/Runner.xcworkspace
+          -scheme Runner
+          -configuration Debug
+          -destination
+          'platform=iOS Simulator,id=${{ steps.simulator.outputs.id }}'
+          CODE_SIGNING_ALLOWED=NO
+
+  relay:
+    name: Relay checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: relay
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: relay/package-lock.json
+
+      - name: Install relay dependencies
+        run: npm ci
+
+      - name: Audit relay dependencies
+        run: npm run audit
+
+      - name: Type-check relay
+        run: npm run typecheck
+
+      - name: Test relay
+        run: npm test

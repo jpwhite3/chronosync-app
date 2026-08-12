@@ -4,10 +4,7 @@ import 'package:chronosync/data/models/series.dart';
 class DeletionConfirmationDialog extends StatelessWidget {
   final Series series;
 
-  const DeletionConfirmationDialog({
-    super.key,
-    required this.series,
-  });
+  const DeletionConfirmationDialog({super.key, required this.series});
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +26,7 @@ class DeletionConfirmationDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, true),
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.red,
-          ),
+          style: TextButton.styleFrom(foregroundColor: Colors.red),
           child: const Text('Delete'),
         ),
       ],

@@ -1,6 +1,5 @@
 # Miscellaneous
 *.class
-*.lock
 *.log
 *.pyc
 *.swp
@@ -38,15 +37,6 @@
 **/windows/flutter/ephemeral/
 **/linux/flutter/ephemeral/
 **/macos/flutter/ephemeral/
-**/web/flutter_service_worker.js
-**/web/index.html
-**/web/manifest.json
-**/web/favicon.png
-**/web/icons/
-**/web/assets/
-**/web/main.dart.js
-**/web/flutter.js
-**/web/version.json
 
 # Generated files (e.g., from code generation packages like Freezed, BLoC)
 **/*.g.dart
@@ -58,3 +48,5 @@
 # Environment variables (if used)
 .env
 .env.*
+!.env.example
+!.env.*.example

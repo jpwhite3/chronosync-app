@@ -19,7 +19,7 @@ class EventListScreen extends StatelessWidget {
         if (state is DeletionError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: const Text('Could not delete the event. Try again.'),
               duration: const Duration(seconds: 5),
               action: SnackBarAction(
                 label: 'Retry',
@@ -39,78 +39,75 @@ class EventListScreen extends StatelessWidget {
           // Find the current series from the state to get the latest data
           Series currentSeries = series;
           if (state is SeriesLoaded) {
-          // Find the series with the same key
-          final Series updatedSeries = state.series.firstWhere(
-            (Series s) => s.key == series.key,
-            orElse: () => series,
-          );
-          currentSeries = updatedSeries;
-        }
-        
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(currentSeries.title),
-            actions: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => const SettingsScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          body: ListView.builder(
-            itemCount: currentSeries.events.length,
-            itemBuilder: (BuildContext context, int index) {
-              final Event event = currentSeries.events[index];
-              return DismissibleEventItem(
-                event: event,
-                series: currentSeries,
-                index: index,
-                onEdit: () {
-                  _showEditEventDialog(context, currentSeries, event, index);
-                },
-                onDismissed: () {
-                  // Capture the bloc reference before showing snackbar
-                  final SeriesBloc seriesBloc = context.read<SeriesBloc>();
-                  final eventKey = event.key;
-                  
-                  seriesBloc.add(
-                    DeleteEvent(event, currentSeries, index),
-                  );
+            // Find the series with the same key
+            final Series updatedSeries = state.series.firstWhere(
+              (Series s) => s.key == series.key,
+              orElse: () => series,
+            );
+            currentSeries = updatedSeries;
+          }
 
-                  // Show undo snackbar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text('Event deleted'),
-                      duration: const Duration(seconds: 8),
-                      action: SnackBarAction(
-                        label: 'Undo',
-                        onPressed: () {
-                          seriesBloc.add(
-                            UndoDeletion(eventKey),
-                          );
-                        },
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(currentSeries.title),
+              actions: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            const SettingsScreen(),
                       ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              _showAddEventDialog(context, currentSeries);
-            },
-            child: const Icon(Icons.add),
-          ),
-        );
-      },
+                    );
+                  },
+                ),
+              ],
+            ),
+            body: ListView.builder(
+              itemCount: currentSeries.events.length,
+              itemBuilder: (BuildContext context, int index) {
+                final Event event = currentSeries.events[index];
+                return DismissibleEventItem(
+                  event: event,
+                  series: currentSeries,
+                  index: index,
+                  onEdit: () {
+                    _showEditEventDialog(context, currentSeries, event, index);
+                  },
+                  onDismissed: () {
+                    // Capture the bloc reference before showing snackbar
+                    final SeriesBloc seriesBloc = context.read<SeriesBloc>();
+                    final dynamic eventKey = event.key;
+
+                    seriesBloc.add(DeleteEvent(event, currentSeries, index));
+
+                    // Show undo snackbar
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Event deleted'),
+                        duration: const Duration(seconds: 8),
+                        action: SnackBarAction(
+                          label: 'Undo',
+                          onPressed: () {
+                            seriesBloc.add(UndoDeletion(eventKey));
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                _showAddEventDialog(context, currentSeries);
+              },
+              child: const Icon(Icons.add),
+            ),
+          );
+        },
       ),
     );
   }
@@ -136,7 +133,9 @@ class EventListScreen extends StatelessWidget {
                   ),
                   TextField(
                     controller: durationController,
-                    decoration: const InputDecoration(hintText: 'Duration (in seconds)'),
+                    decoration: const InputDecoration(
+                      hintText: 'Duration (in seconds)',
+                    ),
                     keyboardType: TextInputType.number,
                   ),
                   SwitchListTile(
@@ -159,36 +158,41 @@ class EventListScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     // Validate duration (minimum 1 second)
-                    final int duration = int.tryParse(durationController.text) ?? 0;
+                    final int duration =
+                        int.tryParse(durationController.text) ?? 0;
                     if (duration < 1) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Event duration must be at least 1 second'),
+                          content: Text(
+                            'Event duration must be at least 1 second',
+                          ),
                           backgroundColor: Colors.red,
                         ),
                       );
                       return;
                     }
-                    
+
                     // Capture bloc and navigator references before async operations
                     final SeriesBloc seriesBloc = context.read<SeriesBloc>();
                     final NavigatorState navigator = Navigator.of(context);
-                    
+
                     final Event event = Event.fromDuration(
                       title: titleController.text,
                       duration: Duration(seconds: duration),
                       autoProgress: autoProgress,
                     );
                     // Get the events box and add the event to it first
-                    final Box<Event> eventsBox = await Hive.openBox<Event>('events');
+                    final Box<Event> eventsBox = await Hive.openBox<Event>(
+                      'events',
+                    );
                     await eventsBox.add(event);
-                    
+
                     // Now we can add the event to the series
                     // This is not the ideal way to do this, but it will work for now.
                     // A better solution would be to have a separate BLoC for events.
                     series.events.add(event);
                     await series.save();
-                    
+
                     // Use captured references
                     seriesBloc.add(LoadSeries());
                     navigator.pop();
@@ -203,9 +207,18 @@ class EventListScreen extends StatelessWidget {
     );
   }
 
-  void _showEditEventDialog(BuildContext context, Series series, Event event, int index) {
-    final TextEditingController titleController = TextEditingController(text: event.title);
-    final TextEditingController durationController = TextEditingController(text: event.durationInSeconds.toString());
+  void _showEditEventDialog(
+    BuildContext context,
+    Series series,
+    Event event,
+    int index,
+  ) {
+    final TextEditingController titleController = TextEditingController(
+      text: event.title,
+    );
+    final TextEditingController durationController = TextEditingController(
+      text: event.durationInSeconds.toString(),
+    );
     bool autoProgress = event.autoProgress;
 
     showDialog(
@@ -224,7 +237,9 @@ class EventListScreen extends StatelessWidget {
                   ),
                   TextField(
                     controller: durationController,
-                    decoration: const InputDecoration(hintText: 'Duration (in seconds)'),
+                    decoration: const InputDecoration(
+                      hintText: 'Duration (in seconds)',
+                    ),
                     keyboardType: TextInputType.number,
                   ),
                   SwitchListTile(
@@ -247,30 +262,33 @@ class EventListScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     // Validate duration (minimum 1 second)
-                    final int duration = int.tryParse(durationController.text) ?? 0;
+                    final int duration =
+                        int.tryParse(durationController.text) ?? 0;
                     if (duration < 1) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Event duration must be at least 1 second'),
+                          content: Text(
+                            'Event duration must be at least 1 second',
+                          ),
                           backgroundColor: Colors.red,
                         ),
                       );
                       return;
                     }
-                    
+
                     // Capture bloc and navigator references before async operations
                     final SeriesBloc seriesBloc = context.read<SeriesBloc>();
                     final NavigatorState navigator = Navigator.of(context);
-                    
+
                     // Update event properties
                     event.title = titleController.text;
                     event.durationInSeconds = duration;
                     event.autoProgress = autoProgress;
-                    
+
                     // Save the event and series
                     await event.save();
                     await series.save();
-                    
+
                     // Use captured references
                     seriesBloc.add(LoadSeries());
                     navigator.pop();

@@ -21,7 +21,7 @@ class SeriesListScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (BuildContext context) => const SettingsScreen(),
                 ),
               );
@@ -34,7 +34,7 @@ class SeriesListScreen extends StatelessWidget {
           if (state is DeletionError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: const Text('Could not delete the series. Try again.'),
                 duration: const Duration(seconds: 5),
                 action: SnackBarAction(
                   label: 'Retry',
@@ -56,44 +56,40 @@ class SeriesListScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             if (state is SeriesLoaded) {
-            return ListView.builder(
-              itemCount: state.series.length,
-              itemBuilder: (BuildContext context, int index) {
-                final Series series = state.series[index];
-                return DismissibleSeriesItem(
-                  series: series,
-                  index: index,
-                  onDismissed: () {
-                    // Capture the bloc reference before showing snackbar
-                    final SeriesBloc seriesBloc = context.read<SeriesBloc>();
-                    final seriesKey = series.key;
-                    
-                    seriesBloc.add(
-                      DeleteSeries(series, index),
-                    );
+              return ListView.builder(
+                itemCount: state.series.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final Series series = state.series[index];
+                  return DismissibleSeriesItem(
+                    series: series,
+                    index: index,
+                    onDismissed: () {
+                      // Capture the bloc reference before showing snackbar
+                      final SeriesBloc seriesBloc = context.read<SeriesBloc>();
+                      final dynamic seriesKey = series.key;
 
-                    // Show undo snackbar
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Series deleted'),
-                        duration: const Duration(seconds: 8),
-                        action: SnackBarAction(
-                          label: 'Undo',
-                          onPressed: () {
-                            seriesBloc.add(
-                              UndoDeletion(seriesKey),
-                            );
-                          },
+                      seriesBloc.add(DeleteSeries(series, index));
+
+                      // Show undo snackbar
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Series deleted'),
+                          duration: const Duration(seconds: 8),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              seriesBloc.add(UndoDeletion(seriesKey));
+                            },
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
-            );
-          }
-          return const Center(child: Text('Something went wrong.'));
-        },
+                      );
+                    },
+                  );
+                },
+              );
+            }
+            return const Center(child: Text('Something went wrong.'));
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -125,7 +121,7 @@ class SeriesListScreen extends StatelessWidget {
               onPressed: () {
                 final Series series = Series(
                   title: titleController.text,
-                  events: HiveList(Hive.box<Event>('events')),
+                  events: HiveList<Event>(Hive.box<Event>('events')),
                 );
                 context.read<SeriesBloc>().add(AddSeries(series));
                 Navigator.pop(context);

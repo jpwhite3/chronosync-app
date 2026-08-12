@@ -6,10 +6,7 @@ import 'package:flutter/material.dart';
 class SeriesStatisticsPanel extends StatelessWidget {
   final SeriesStatistics statistics;
 
-  const SeriesStatisticsPanel({
-    super.key,
-    required this.statistics,
-  });
+  const SeriesStatisticsPanel({super.key, required this.statistics});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +20,9 @@ class SeriesStatisticsPanel extends StatelessWidget {
           children: <Widget>[
             Text(
               'Series Statistics',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             _buildStatRow(
@@ -51,7 +48,11 @@ class SeriesStatisticsPanel extends StatelessWidget {
             const SizedBox(height: 8),
             _buildStatRow(
               context,
-              statistics.isOvertime ? 'Overtime' : statistics.isUndertime ? 'Undertime' : 'On Time',
+              statistics.isOvertime
+                  ? 'Overtime'
+                  : statistics.isUndertime
+                  ? 'Undertime'
+                  : 'On Time',
               statistics.overUnderTimeFormatted,
               _getOverUnderColor(statistics),
             ),
@@ -71,16 +72,13 @@ class SeriesStatisticsPanel extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
+        Text(label, style: Theme.of(context).textTheme.bodyLarge),
         Text(
           value,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: valueColor,
-              ),
+            fontWeight: FontWeight.bold,
+            color: valueColor,
+          ),
         ),
       ],
     );

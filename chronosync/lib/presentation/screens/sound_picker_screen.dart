@@ -8,10 +8,7 @@ import '../../data/repositories/device_audio_repository.dart';
 class SoundPickerScreen extends StatefulWidget {
   final String? currentSoundPath;
 
-  const SoundPickerScreen({
-    super.key,
-    this.currentSoundPath,
-  });
+  const SoundPickerScreen({super.key, this.currentSoundPath});
 
   @override
   State<SoundPickerScreen> createState() => _SoundPickerScreenState();
@@ -38,17 +35,17 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
     try {
       final DeviceAudioRepository repository = DeviceAudioRepository();
       final List<DeviceSound> sounds = await repository.getAvailableSounds();
-      
+
       if (mounted) {
         setState(() {
           _sounds = sounds;
           _isLoading = false;
         });
       }
-    } catch (e) {
+    } on Object {
       if (mounted) {
         setState(() {
-          _error = 'Failed to load sounds: $e';
+          _error = 'Could not load sounds. Try again.';
           _isLoading = false;
         });
       }
@@ -57,9 +54,10 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
 
   Future<void> _previewSound(DeviceSound sound) async {
     final DeviceAudioRepository repository = DeviceAudioRepository();
-    
+
     // Check if we're on a desktop platform
-    if (!kIsWeb && (Platform.isMacOS || Platform.isLinux || Platform.isWindows)) {
+    if (!kIsWeb &&
+        (Platform.isMacOS || Platform.isLinux || Platform.isWindows)) {
       // Show a snackbar message on desktop
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -72,19 +70,19 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
       }
       return;
     }
-    
+
     // Stop any currently playing sound
     await repository.stopPreview();
-    
+
     // Play the selected sound
     setState(() {
       _playingSound = sound.id;
     });
-    
+
     await repository.previewSound(sound.filePath);
-    
+
     // Auto-stop after a brief delay (simulating preview)
-    Future.delayed(const Duration(seconds: 2), () {
+    Future<void>.delayed(const Duration(seconds: 2), () {
       if (mounted && _playingSound == sound.id) {
         setState(() {
           _playingSound = null;
@@ -114,9 +112,7 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Choose Sound'),
-      ),
+      appBar: AppBar(title: const Text('Choose Sound')),
       body: Builder(
         builder: (BuildContext context) {
           if (_isLoading) {
@@ -142,9 +138,7 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
           }
 
           if (_sounds == null || _sounds!.isEmpty) {
-            return const Center(
-              child: Text('No sounds available'),
-            );
+            return const Center(child: Text('No sounds available'));
           }
 
           return ListView.builder(
@@ -162,7 +156,9 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
                 title: Text(
                   sound.displayName,
                   style: TextStyle(
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
                 trailing: Row(

@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#174e3a">
+  <meta name="color-scheme" content="light">
+  <title>ChronoSync Live Session</title>
+  <style>
+    :root {
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #18332a;
+      background: #f7f3ea;
+      font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background:
+        radial-gradient(circle at 88% 4%, rgba(235, 190, 104, .20), transparent 28rem),
+        #f7f3ea;
+      color: #18332a;
+    }
+    button, input { font: inherit; }
+    button { min-height: 52px; touch-action: manipulation; }
+    .page {
+      width: min(100%, 1180px);
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0 auto;
+      padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right))
+        max(24px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+      display: flex;
+      flex-direction: column;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: white;
+      background: #174e3a;
+      font-size: 22px;
+      box-shadow: 0 9px 24px rgba(23, 78, 58, .18);
+    }
+    .entry-wrap, .fatal-wrap {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 32px 0 60px;
+    }
+    .card {
+      width: min(100%, 480px);
+      border: 1px solid rgba(24, 51, 42, .08);
+      border-radius: 28px;
+      padding: clamp(24px, 6vw, 36px);
+      background: rgba(255, 255, 255, .94);
+      box-shadow: 0 24px 70px rgba(24, 51, 42, .12);
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #2d7b5b;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 9vw, 46px);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+    .lede {
+      margin: 16px 0 28px;
+      color: #5a6d66;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    label {
+      display: block;
+      margin: 0 0 9px;
+      font-weight: 750;
+    }
+    input {
+      width: 100%;
+      min-height: 54px;
+      padding: 0 16px;
+      border: 1.5px solid #7a877f;
+      border-radius: 15px;
+      color: #18332a;
+      background: #fff;
+      font-size: 17px;
+      outline: none;
+    }
+    input:focus {
+      border-color: #174e3a;
+      box-shadow: 0 0 0 4px rgba(23, 78, 58, .12);
+    }
+    .primary {
+      width: 100%;
+      margin-top: 20px;
+      padding: 0 22px;
+      border: 0;
+      border-radius: 15px;
+      color: #fff;
+      background: #174e3a;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(23, 78, 58, .2);
+      cursor: pointer;
+    }
+    .privacy {
+      margin: 18px 0 0;
+      color: #65736d;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .live-shell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding-top: 18px;
+    }
+    .live-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin: 14px 0 22px;
+    }
+    .plan-name {
+      min-width: 0;
+      margin: 0;
+      overflow: hidden;
+      font-size: clamp(21px, 4vw, 30px);
+      font-weight: 820;
+      letter-spacing: -.025em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .role-pill {
+      flex: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #285f49;
+      background: #e2eee8;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .connection {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 10px 12px 10px 16px;
+      border-radius: 15px;
+      color: #6c531d;
+      background: #fff1d2;
+      font-size: 14px;
+      font-weight: 750;
+    }
+    .connection::before {
+      width: 9px;
+      height: 9px;
+      flex: none;
+      border-radius: 50%;
+      background: #c88724;
+      content: "";
+    }
+    .connection.live { color: #285f49; background: #e4f1eb; }
+    .connection.live::before { background: #2d7b5b; }
+    .connection.error { color: #88433a; background: #fbe5e1; }
+    .connection.error::before { background: #d66355; }
+    .reconnect {
+      min-height: 44px;
+      margin-left: auto;
+      padding: 0 12px;
+      border: 1px solid currentColor;
+      border-radius: 10px;
+      color: inherit;
+      background: transparent;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .session-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(240px, .42fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .step-card, .side-card {
+      border: 1px solid rgba(24, 51, 42, .07);
+      border-radius: 26px;
+      background: rgba(255, 255, 255, .95);
+      box-shadow: 0 18px 50px rgba(24, 51, 42, .09);
+    }
+    .step-card {
+      min-height: 470px;
+      padding: clamp(24px, 5vw, 48px);
+      display: flex;
+      flex-direction: column;
+    }
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .session-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      color: #285f49;
+      background: #e2eee8;
+      font-size: 13px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .step-position { color: #65736d; font-size: 14px; font-weight: 750; }
+    .current-step {
+      max-width: 16ch;
+      margin: auto 0;
+      padding: 30px 0;
+      font-size: clamp(42px, 7vw, 78px);
+      line-height: 1.02;
+      letter-spacing: -.05em;
+      overflow-wrap: anywhere;
+    }
+    .timer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .timer-label {
+      display: block;
+      margin-bottom: 7px;
+      color: #65736d;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .timer-value {
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 760;
+      line-height: 1;
+      letter-spacing: -.04em;
+    }
+    .progress-track {
+      height: 8px;
+      margin-top: 26px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e5ebe8;
+    }
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: #2d7b5b;
+      transition: width .25s linear;
+    }
+    .side-column { display: flex; flex-direction: column; gap: 18px; }
+    .side-card { padding: 24px; }
+    .side-label {
+      display: block;
+      margin-bottom: 12px;
+      color: #65736d;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+    .next-step {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.15;
+      letter-spacing: -.025em;
+      overflow-wrap: anywhere;
+    }
+    .action-card { margin-top: auto; }
+    .action-card p { margin: 0; color: #5a6d66; line-height: 1.45; }
+    .action-card button:disabled { cursor: default; opacity: .48; box-shadow: none; }
+    .controller-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .controller-actions .advance { grid-column: 1 / -1; margin-top: 0; }
+    .secondary {
+      padding: 0 14px;
+      border: 1.5px solid #7a877f;
+      border-radius: 15px;
+      color: #174e3a;
+      background: #fff;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .control-divider {
+      height: 1px;
+      margin: 22px 0;
+      border: 0;
+      background: #e5ebe8;
+    }
+    .overtime .remaining-value { color: #c55245; }
+    .overtime .session-status { color: #8a3f36; background: #fbe3df; }
+    .overtime .progress-fill { background: #d66355; }
+    .frozen .progress-fill { transition: none; }
+    .fatal-wrap .card { text-align: center; }
+    .fatal-icon { margin-bottom: 18px; font-size: 38px; }
+    .fatal-wrap h1 { font-size: 32px; }
+    noscript {
+      display: block;
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 12px;
+      color: #88433a;
+      background: #fbe5e1;
+    }
+    @media (max-width: 760px) {
+      .page { padding-inline: 16px; }
+      .live-header { margin-top: 8px; }
+      .session-grid { grid-template-columns: 1fr; }
+      .step-card { min-height: 440px; }
+      .side-column { display: grid; grid-template-columns: 1fr; }
+      .action-card { margin-top: 0; }
+    }
+    @media (max-width: 420px) {
+      .brand-mark { width: 38px; height: 38px; border-radius: 12px; }
+      .card { border-radius: 22px; }
+      .step-card { min-height: 420px; border-radius: 22px; padding: 22px; }
+      .timer-value { font-size: 38px; }
+      .connection { align-items: flex-start; }
+      .reconnect { min-height: 44px; }
+    }
+    .display-mode .page { width: min(100%, 1500px); }
+    .display-mode .step-card { min-height: 62vh; }
+    .display-mode .current-step { max-width: 20ch; font-size: clamp(54px, 9vw, 120px); }
+    .display-mode .timer-value { font-size: clamp(48px, 8vw, 96px); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+  <script defer src="/client.js"></script>
+</head>
+<body>
+  <main class="page">
+    <div class="brand" aria-label="ChronoSync">
+      <span class="brand-mark" aria-hidden="true">◷</span>
+      <span>ChronoSync</span>
+    </div>
+
+    <section class="entry-wrap" id="entry-panel" hidden>
+      <div class="card">
+        <p class="eyebrow" id="entry-role">Team participant</p>
+        <h1>Join the live runbook.</h1>
+        <p class="lede">Stay on the same Wi-Fi network as the host iPhone and keep this page open.</p>
+        <div id="name-field">
+          <label for="display-name">Your name</label>
+          <input id="display-name" maxlength="48" autocomplete="name" enterkeyhint="go" required>
+        </div>
+        <button class="primary" id="connect-button" type="button">Join live session</button>
+        <p class="privacy">No account needed. Your invitation secret stays in this browser and is never included in the page request.</p>
+        <noscript>JavaScript is required to join this live session.</noscript>
+      </div>
+    </section>
+
+    <section class="live-shell" id="live-panel" hidden>
+      <header class="live-header">
+        <h1 class="plan-name" id="plan-title">Live session</h1>
+        <span class="role-pill" id="role-label">Participant</span>
+      </header>
+      <div class="connection connecting" id="connection-banner" role="status" aria-live="polite">
+        <span id="connection-label">Connecting to host…</span>
+        <button class="reconnect" id="reconnect-button" type="button" hidden>Reconnect</button>
+      </div>
+
+      <div class="session-grid">
+        <article class="step-card">
+          <div class="status-row">
+            <span class="session-status" id="session-status">Waiting</span>
+            <span class="step-position" id="step-position">Step 1</span>
+          </div>
+          <h2 class="current-step" id="current-step">Syncing…</h2>
+          <span class="visually-hidden" id="step-announcement" role="status" aria-live="polite" aria-atomic="true"></span>
+          <div class="timer-grid">
+            <div>
+              <span class="timer-label">Elapsed</span>
+              <strong class="timer-value" id="elapsed">00:00</strong>
+            </div>
+            <div>
+              <span class="timer-label" id="remaining-caption">Remaining</span>
+              <strong class="timer-value remaining-value" id="remaining">00:00</strong>
+            </div>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </article>
+
+        <aside class="side-column">
+          <section class="side-card">
+            <span class="side-label">Up next</span>
+            <h2 class="next-step" id="next-step">Waiting for host</h2>
+          </section>
+          <section class="side-card action-card" id="action-panel">
+            <div id="controller-controls" hidden>
+              <span class="side-label">Control</span>
+              <div class="controller-actions">
+                <button class="secondary" id="pause-resume-button" type="button" disabled>Pause</button>
+                <button class="secondary" id="subtract-minute-button" type="button" disabled aria-label="Subtract one minute">−1 min</button>
+                <button class="secondary" id="add-minute-button" type="button" disabled aria-label="Add one minute">+1 min</button>
+                <button class="primary advance" id="advance-button" type="button" disabled>Advance</button>
+              </div>
+              <hr class="control-divider">
+            </div>
+            <div id="acknowledgement-controls">
+              <span class="side-label">Confirm</span>
+              <p>Let the team know you saw the current step. This never advances the runbook.</p>
+              <button class="primary" id="acknowledge-button" type="button" disabled>Got it</button>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <section class="fatal-wrap" id="fatal-panel" hidden>
+      <div class="card">
+        <div class="fatal-icon" aria-hidden="true">○</div>
+        <p class="eyebrow">Can’t join</p>
+        <h1>Ask the host for a new invite.</h1>
+        <p class="lede" id="fatal-message">This invitation could not be opened.</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

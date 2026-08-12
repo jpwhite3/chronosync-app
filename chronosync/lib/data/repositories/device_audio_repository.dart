@@ -50,8 +50,9 @@ class DeviceAudioRepository {
     } else if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
       // Desktop: Audio preview has session conflicts with LiveTimerBloc
       // In production (iOS/Android), native platform channels handle this properly
-      debugPrint('Audio preview not available on desktop (development platform)');
-      debugPrint('Selected sound: $soundPath');
+      debugPrint(
+        'Audio preview not available on desktop (development platform)',
+      );
       // Skip playback on desktop to avoid audio session conflicts
     }
   }

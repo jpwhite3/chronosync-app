@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:chronosync/core/time/clock.dart';
 import 'package:chronosync/data/models/event.dart';
 import 'package:chronosync/data/models/series.dart';
 import 'package:chronosync/data/models/series_statistics.dart';
 import 'package:chronosync/data/services/notification_service.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 
 part 'live_timer_event.dart';
@@ -17,13 +19,17 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   bool _audioLoaded = false;
   final bool enableAudio;
   final NotificationService? _notificationService;
-  DateTime? _lastTickTime;
+  final Clock _clock;
+  bool _autoProgressInFlight = false;
+  int _transitionRevision = 0;
 
   LiveTimerBloc({
     this.enableAudio = true,
     NotificationService? notificationService,
-  })  : _notificationService = notificationService,
-        super(LiveTimerInitial()) {
+    Clock? clock,
+  }) : _notificationService = notificationService,
+       _clock = clock ?? const SystemClock(),
+       super(LiveTimerInitial()) {
     on<StartTimer>(_onStartTimer);
     on<TimerTick>(_onTimerTick);
     on<NextEvent>(_onNextEvent);
@@ -33,15 +39,15 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
       _loadAudio();
     }
   }
-  
+
   Future<void> _loadAudio() async {
     try {
       _audioPlayer = AudioPlayer();
       await _audioPlayer!.setAsset('assets/audio/auto_progress_beep.mp3');
       _audioLoaded = true;
-    } catch (e) {
+    } on Object {
       // Log error but don't fail - audio is optional
-      print('Failed to load audio asset: $e');
+      debugPrint('The timer audio cue could not be loaded.');
       _audioLoaded = false;
       _audioPlayer?.dispose();
       _audioPlayer = null;
@@ -49,6 +55,7 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   }
 
   void _onStartTimer(StartTimer event, Emitter<LiveTimerState> emit) {
+    _transitionRevision += 1;
     if (event.series.events.isEmpty) {
       // Calculate empty series statistics
       final SeriesStatistics stats = const SeriesStatistics(
@@ -60,15 +67,17 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
       return;
     }
 
-    final DateTime now = DateTime.now();
-    emit(LiveTimerRunning(
-      series: event.series,
-      currentEventIndex: 0,
-      elapsedSeconds: 0,
-      eventStartTime: now,
-      seriesStartTime: now,
-      totalSeriesElapsedSeconds: 0,
-    ));
+    final DateTime now = _clock.now();
+    emit(
+      LiveTimerRunning(
+        series: event.series,
+        currentEventIndex: 0,
+        elapsedSeconds: 0,
+        eventStartTime: now,
+        seriesStartTime: now,
+        totalSeriesElapsedSeconds: 0,
+      ),
+    );
 
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -79,24 +88,27 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   void _onTimerTick(TimerTick event, Emitter<LiveTimerState> emit) {
     if (state is LiveTimerRunning) {
       final LiveTimerRunning currentState = state as LiveTimerRunning;
-      final int newElapsed = currentState.elapsedSeconds + 1;
-      final int newTotalElapsed = currentState.totalSeriesElapsedSeconds + 1;
-      
-      // Track last tick time for background handling
-      _lastTickTime = DateTime.now();
-      
-      emit(LiveTimerRunning(
-        series: currentState.series,
-        currentEventIndex: currentState.currentEventIndex,
-        elapsedSeconds: newElapsed,
-        eventStartTime: currentState.eventStartTime,
-        seriesStartTime: currentState.seriesStartTime,
-        totalSeriesElapsedSeconds: newTotalElapsed,
-      ));
-      
+      final DateTime now = _clock.now();
+      final int newElapsed = _secondsSince(currentState.eventStartTime, now);
+      final int newTotalElapsed = _secondsSince(
+        currentState.seriesStartTime ?? currentState.eventStartTime,
+        now,
+      );
+
+      emit(
+        LiveTimerRunning(
+          series: currentState.series,
+          currentEventIndex: currentState.currentEventIndex,
+          elapsedSeconds: newElapsed,
+          eventStartTime: currentState.eventStartTime,
+          seriesStartTime: currentState.seriesStartTime,
+          totalSeriesElapsedSeconds: newTotalElapsed,
+        ),
+      );
+
       // Check if auto-progression should trigger
       final LiveTimerRunning updatedState = state as LiveTimerRunning;
-      if (updatedState.shouldAutoProgress) {
+      if (updatedState.shouldAutoProgressAt(now)) {
         add(AutoProgressTriggered());
       }
     }
@@ -104,36 +116,47 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
 
   void _onNextEvent(NextEvent event, Emitter<LiveTimerState> emit) {
     if (state is LiveTimerRunning) {
+      _transitionRevision += 1;
       final LiveTimerRunning currentState = state as LiveTimerRunning;
       final int nextIndex = currentState.currentEventIndex + 1;
+      final DateTime now = _clock.now();
+      final int totalElapsedSeconds = _secondsSince(
+        currentState.seriesStartTime ?? currentState.eventStartTime,
+        now,
+      );
 
       if (nextIndex >= currentState.series.events.length) {
         _timer?.cancel();
-        
+
         // Calculate series statistics
-        final SeriesStatistics stats = _calculateStatistics(currentState);
+        final SeriesStatistics stats = _calculateStatistics(
+          currentState,
+          actualTimeSeconds: totalElapsedSeconds,
+        );
         emit(LiveTimerCompleted(statistics: stats));
       } else {
-        emit(LiveTimerRunning(
-          series: currentState.series,
-          currentEventIndex: nextIndex,
-          elapsedSeconds: 0,
-          eventStartTime: DateTime.now(),
-          seriesStartTime: currentState.seriesStartTime,
-          totalSeriesElapsedSeconds: currentState.totalSeriesElapsedSeconds,
-        ));
+        emit(
+          LiveTimerRunning(
+            series: currentState.series,
+            currentEventIndex: nextIndex,
+            elapsedSeconds: 0,
+            eventStartTime: now,
+            seriesStartTime: currentState.seriesStartTime,
+            totalSeriesElapsedSeconds: totalElapsedSeconds,
+          ),
+        );
       }
     }
   }
 
   /// Handles automatic progression to next event when countdown reaches 00:00
-  /// 
+  ///
   /// Logic flow:
   /// 1. Check if audio is loaded and play the progression sound cue
   /// 2. Determine if this is the last event in the series
   /// 3a. If last event: Calculate statistics and emit LiveTimerCompleted
   /// 3b. If not last: Emit new LiveTimerRunning state with next event
-  /// 
+  ///
   /// Key behaviors:
   /// - Audio playback is optional (errors are logged but don't block progression)
   /// - Statistics include event count, expected vs actual time
@@ -144,82 +167,95 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
     AutoProgressTriggered event,
     Emitter<LiveTimerState> emit,
   ) async {
-    if (state is LiveTimerRunning) {
-      final LiveTimerRunning currentState = state as LiveTimerRunning;
-      
-      final String currentEventTitle = currentState.currentEvent.title;
-      final int nextIndex = currentState.currentEventIndex + 1;
-      
-      print('⏭️ Auto-progression triggered for event: $currentEventTitle');
-      
-      // Trigger event completion notifications/haptics
-      if (_notificationService != null) {
-        await _notificationService.onEventComplete(currentState.currentEvent);
-      }
-      
-      // Play audio cue if loaded and user preference enabled
+    if (state is! LiveTimerRunning || _autoProgressInFlight) {
+      return;
+    }
+    final LiveTimerRunning currentState = state as LiveTimerRunning;
+    if (!currentState.shouldAutoProgressAt(_clock.now())) {
+      return;
+    }
+
+    _autoProgressInFlight = true;
+    final int transitionRevision = _transitionRevision;
+    final int nextIndex = currentState.currentEventIndex + 1;
+    try {
+      // Trigger event completion notifications/haptics.
+      await _notificationService?.onEventComplete(currentState.currentEvent);
+
+      // Play audio cue if loaded and user preference enabled.
       if (_audioLoaded && _audioPlayer != null) {
         try {
           await _audioPlayer!.seek(Duration.zero);
           await _audioPlayer!.play();
-          print('🔊 Audio cue played');
-        } catch (e) {
-          // Log error but continue - audio is optional
-          print('❌ Failed to play audio: $e');
+        } on Object {
+          // Audio is optional and never blocks timer progression.
+          debugPrint('The timer audio cue could not be played.');
         }
       }
-      
-      // Advance to next event or complete series
+
+      // A manual transition may have completed while feedback was playing.
+      final LiveTimerState latest = state;
+      if (transitionRevision != _transitionRevision ||
+          latest is! LiveTimerRunning ||
+          latest.currentEventIndex != currentState.currentEventIndex ||
+          latest.eventStartTime != currentState.eventStartTime) {
+        return;
+      }
+
+      final DateTime transitionTime = _clock.now();
+      final int totalElapsedSeconds = _secondsSince(
+        currentState.seriesStartTime ?? currentState.eventStartTime,
+        transitionTime,
+      );
+      _transitionRevision += 1;
       if (nextIndex >= currentState.series.events.length) {
         _timer?.cancel();
-        
-        // Calculate series statistics
-        final SeriesStatistics stats = _calculateStatistics(currentState);
-        
-        // Log completion for fully automated series
-        final bool allAutoProgressed = currentState.series.events.every((Event e) => e.autoProgress);
-        if (allAutoProgressed) {
-          print('✅ Fully automated series completed: ${currentState.series.title}');
-        } else {
-          print('✅ Series completed: ${currentState.series.title}');
-        }
-        
-        emit(LiveTimerCompleted(statistics: stats));
+        emit(
+          LiveTimerCompleted(
+            statistics: _calculateStatistics(
+              currentState,
+              actualTimeSeconds: totalElapsedSeconds,
+            ),
+          ),
+        );
       } else {
-        final String nextEventTitle = currentState.series.events[nextIndex].title;
-        print('➡️ Advancing to event ${nextIndex + 1}: $nextEventTitle');
-        
-        emit(LiveTimerRunning(
-          series: currentState.series,
-          currentEventIndex: nextIndex,
-          elapsedSeconds: 0,
-          eventStartTime: DateTime.now(),
-          seriesStartTime: currentState.seriesStartTime,
-          totalSeriesElapsedSeconds: currentState.totalSeriesElapsedSeconds,
-        ));
+        emit(
+          LiveTimerRunning(
+            series: currentState.series,
+            currentEventIndex: nextIndex,
+            elapsedSeconds: 0,
+            eventStartTime: transitionTime,
+            seriesStartTime: currentState.seriesStartTime,
+            totalSeriesElapsedSeconds: totalElapsedSeconds,
+          ),
+        );
       }
+    } finally {
+      _autoProgressInFlight = false;
     }
   }
 
   /// Calculates aggregate statistics for series completion
-  /// 
+  ///
   /// Computes:
   /// - eventCount: Total number of events in the series
   /// - expectedTimeSeconds: Sum of all event durations
   /// - actualTimeSeconds: Total time elapsed during series execution
-  /// 
+  ///
   /// The SeriesStatistics model provides computed properties:
   /// - overUnderTimeSeconds: Difference between actual and expected (can be +/-)
   /// - isOvertime/isUndertime/isOnTime: Boolean flags for display
   /// - Formatted time strings for UI display
-  SeriesStatistics _calculateStatistics(LiveTimerRunning state) {
+  SeriesStatistics _calculateStatistics(
+    LiveTimerRunning state, {
+    required int actualTimeSeconds,
+  }) {
     // Calculate expected time (sum of all event durations)
-    final int expectedTimeSeconds = state.series.events
-        .fold<int>(0, (int sum, Event event) => sum + event.durationInSeconds);
-    
-    // Actual time is the total series elapsed time
-    final int actualTimeSeconds = state.totalSeriesElapsedSeconds;
-    
+    final int expectedTimeSeconds = state.series.events.fold<int>(
+      0,
+      (int sum, Event event) => sum + event.durationInSeconds,
+    );
+
     return SeriesStatistics(
       eventCount: state.series.events.length,
       expectedTimeSeconds: expectedTimeSeconds,
@@ -228,39 +264,40 @@ class LiveTimerBloc extends Bloc<LiveTimerEvent, LiveTimerState> {
   }
 
   void _onAppResumed(AppResumed event, Emitter<LiveTimerState> emit) {
-    if (state is LiveTimerRunning && _lastTickTime != null) {
+    if (state is LiveTimerRunning) {
       final LiveTimerRunning currentState = state as LiveTimerRunning;
-      
-      // Calculate time elapsed since last tick
-      final int secondsInBackground = event.resumeTime.difference(_lastTickTime!).inSeconds;
-      
-      if (secondsInBackground > 0) {
-        // Update elapsed time based on background duration
-        final int newElapsed = currentState.elapsedSeconds + secondsInBackground;
-        final int newTotalElapsed = currentState.totalSeriesElapsedSeconds + secondsInBackground;
-        
-        print('📱 App resumed: ${secondsInBackground}s elapsed in background');
-        
-        emit(LiveTimerRunning(
+      final DateTime resumeTime = event.resumeTime;
+      final int newElapsed = _secondsSince(
+        currentState.eventStartTime,
+        resumeTime,
+      );
+      final int newTotalElapsed = _secondsSince(
+        currentState.seriesStartTime ?? currentState.eventStartTime,
+        resumeTime,
+      );
+
+      emit(
+        LiveTimerRunning(
           series: currentState.series,
           currentEventIndex: currentState.currentEventIndex,
           elapsedSeconds: newElapsed,
           eventStartTime: currentState.eventStartTime,
           seriesStartTime: currentState.seriesStartTime,
           totalSeriesElapsedSeconds: newTotalElapsed,
-        ));
-        
-        // Check if auto-progression should have occurred during background
-        final LiveTimerRunning updatedState = state as LiveTimerRunning;
-        if (updatedState.shouldAutoProgress) {
-          print('⏭️ Auto-progression triggered after background');
-          add(AutoProgressTriggered());
-        }
-        
-        // Update last tick time
-        _lastTickTime = event.resumeTime;
+        ),
+      );
+
+      // Trigger auto-progression after a background interval when appropriate.
+      final LiveTimerRunning updatedState = state as LiveTimerRunning;
+      if (updatedState.shouldAutoProgressAt(resumeTime)) {
+        add(AutoProgressTriggered());
       }
     }
+  }
+
+  int _secondsSince(DateTime startedAt, DateTime now) {
+    final int seconds = now.toUtc().difference(startedAt.toUtc()).inSeconds;
+    return seconds < 0 ? 0 : seconds;
   }
 
   @override

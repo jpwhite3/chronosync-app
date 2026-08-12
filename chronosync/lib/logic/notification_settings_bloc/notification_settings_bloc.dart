@@ -12,10 +12,9 @@ class NotificationSettingsBloc
     extends Bloc<NotificationSettingsEvent, NotificationSettingsState> {
   final NotificationSettingsRepository _repository;
 
-  NotificationSettingsBloc({
-    required NotificationSettingsRepository repository,
-  })  : _repository = repository,
-        super(const NotificationSettingsInitial()) {
+  NotificationSettingsBloc({required NotificationSettingsRepository repository})
+    : _repository = repository,
+      super(const NotificationSettingsInitial()) {
     on<LoadGlobalSettingsEvent>(_onLoadGlobalSettings);
     on<ToggleNotificationsEvent>(_onToggleNotifications);
     on<ToggleHapticEvent>(_onToggleHaptic);
@@ -31,12 +30,15 @@ class NotificationSettingsBloc
   ) async {
     emit(const NotificationSettingsLoading());
     try {
-      final GlobalNotificationSettings settings = await _repository.getGlobalSettings();
+      final GlobalNotificationSettings settings = await _repository
+          .getGlobalSettings();
       final bool hasPermission = await _checkNotificationPermission();
-      emit(NotificationSettingsLoaded(
-        settings: settings,
-        hasNotificationPermission: hasPermission,
-      ));
+      emit(
+        NotificationSettingsLoaded(
+          settings: settings,
+          hasNotificationPermission: hasPermission,
+        ),
+      );
     } catch (e) {
       emit(NotificationSettingsError('Failed to load settings: $e'));
     }
@@ -48,9 +50,10 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
-    final GlobalNotificationSettings updatedSettings =
-        currentState.settings.copyWith(notificationsEnabled: event.enabled);
+    final NotificationSettingsLoaded currentState =
+        state as NotificationSettingsLoaded;
+    final GlobalNotificationSettings updatedSettings = currentState.settings
+        .copyWith(notificationsEnabled: event.enabled);
 
     try {
       await _repository.saveGlobalSettings(updatedSettings);
@@ -66,9 +69,10 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
-    final GlobalNotificationSettings updatedSettings =
-        currentState.settings.copyWith(hapticEnabled: event.enabled);
+    final NotificationSettingsLoaded currentState =
+        state as NotificationSettingsLoaded;
+    final GlobalNotificationSettings updatedSettings = currentState.settings
+        .copyWith(hapticEnabled: event.enabled);
 
     try {
       await _repository.saveGlobalSettings(updatedSettings);
@@ -84,9 +88,10 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
-    final GlobalNotificationSettings updatedSettings =
-        currentState.settings.copyWith(hapticIntensity: event.intensity);
+    final NotificationSettingsLoaded currentState =
+        state as NotificationSettingsLoaded;
+    final GlobalNotificationSettings updatedSettings = currentState.settings
+        .copyWith(hapticIntensity: event.intensity);
 
     try {
       await _repository.saveGlobalSettings(updatedSettings);
@@ -102,9 +107,10 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
-    final GlobalNotificationSettings updatedSettings =
-        currentState.settings.copyWith(soundEnabled: event.enabled);
+    final NotificationSettingsLoaded currentState =
+        state as NotificationSettingsLoaded;
+    final GlobalNotificationSettings updatedSettings = currentState.settings
+        .copyWith(soundEnabled: event.enabled);
 
     try {
       await _repository.saveGlobalSettings(updatedSettings);
@@ -120,9 +126,10 @@ class NotificationSettingsBloc
   ) async {
     if (state is! NotificationSettingsLoaded) return;
 
-    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
-    final GlobalNotificationSettings updatedSettings =
-        currentState.settings.copyWith(customSoundPath: event.soundPath);
+    final NotificationSettingsLoaded currentState =
+        state as NotificationSettingsLoaded;
+    final GlobalNotificationSettings updatedSettings = currentState.settings
+        .copyWith(customSoundPath: event.soundPath);
 
     try {
       await _repository.saveGlobalSettings(updatedSettings);
@@ -140,7 +147,8 @@ class NotificationSettingsBloc
 
     final bool hasPermission = await _requestNotificationPermission();
 
-    final NotificationSettingsLoaded currentState = state as NotificationSettingsLoaded;
+    final NotificationSettingsLoaded currentState =
+        state as NotificationSettingsLoaded;
     emit(currentState.copyWith(hasNotificationPermission: hasPermission));
   }
 
@@ -154,9 +162,9 @@ class NotificationSettingsBloc
     try {
       final PermissionStatus status = await Permission.notification.status;
       return status.isGranted;
-    } catch (e) {
+    } on Object {
       // If permission check fails, assume granted (graceful degradation)
-      debugPrint('Permission check failed: $e');
+      debugPrint('Notification permission could not be checked.');
       return true;
     }
   }
@@ -171,9 +179,9 @@ class NotificationSettingsBloc
     try {
       final PermissionStatus status = await Permission.notification.request();
       return status.isGranted;
-    } catch (e) {
+    } on Object {
       // If permission request fails, assume granted (graceful degradation)
-      debugPrint('Permission request failed: $e');
+      debugPrint('Notification permission could not be requested.');
       return true;
     }
   }

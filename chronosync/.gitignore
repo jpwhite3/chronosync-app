@@ -32,6 +32,10 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+/assets/nearby_client/*.deps
+/assets/nearby_client/*.map
+/web/*.deps
+/web/*.map
 
 # Symbolication related
 app.*.symbols

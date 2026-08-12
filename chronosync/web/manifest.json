@@ -1,12 +1,15 @@
 {
-    "name": "chronosync",
-    "short_name": "chronosync",
+    "name": "ChronoSync",
+    "short_name": "ChronoSync",
+    "id": ".",
     "start_url": ".",
+    "scope": ".",
+    "lang": "en",
+    "dir": "ltr",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#F7F5EF",
+    "theme_color": "#176B52",
+    "description": "Shared live runbooks that keep every team on time.",
     "prefer_related_applications": false,
     "icons": [
         {

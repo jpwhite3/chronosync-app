@@ -4,10 +4,7 @@ import 'package:chronosync/data/models/event.dart';
 void main() {
   group('Event', () {
     test('autoProgress defaults to false', () {
-      final Event event = Event(
-        title: 'Test Event',
-        durationInSeconds: 60,
-      );
+      final Event event = Event(title: 'Test Event', durationInSeconds: 60);
 
       expect(event.autoProgress, isFalse);
     });
@@ -44,10 +41,7 @@ void main() {
     });
 
     test('duration getter returns correct Duration', () {
-      final Event event = Event(
-        title: 'Test Event',
-        durationInSeconds: 90,
-      );
+      final Event event = Event(title: 'Test Event', durationInSeconds: 90);
 
       expect(event.duration, equals(const Duration(seconds: 90)));
     });
