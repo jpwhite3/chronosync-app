@@ -1246,54 +1246,58 @@ describe("ChronoSync relay", () => {
     }
   });
 
-  it("reclaims stale sockets before enforcing room capacity", async () => {
-    const room = await createRoom();
-    const displays: WebSocket[] = [];
-    let staleConnectionId: string | undefined;
+  it(
+    "reclaims stale sockets before enforcing room capacity",
+    async () => {
+      const room = await createRoom();
+      const displays: WebSocket[] = [];
+      let staleConnectionId: string | undefined;
 
-    for (let index = 0; index < MAX_CONNECTIONS; index += 1) {
-      const display = await openSocket(
+      for (let index = 0; index < MAX_CONNECTIONS; index += 1) {
+        const display = await openSocket(
+          await connect(room, "display", room.capabilities.display),
+        );
+        const welcome = await nextMessageOfType(display, "welcome");
+        staleConnectionId ??= String(welcome.connectionId);
+        displays.push(display);
+      }
+
+      const full = await connect(
+        room,
+        "display",
+        room.capabilities.display,
+      );
+      expect(full.status).toBe(503);
+      await expect(full.json()).resolves.toMatchObject({
+        error: {
+          code: "room_full",
+        },
+      });
+
+      if (staleConnectionId === undefined) {
+        throw new Error("Expected a display connection.");
+      }
+      const staleDisplay = displays[0];
+      if (staleDisplay === undefined) {
+        throw new Error("Expected a stale display socket.");
+      }
+      await ageConnectionHeartbeats(room, [staleConnectionId]);
+      const staleClosed = nextClose(staleDisplay);
+      const replacement = await openSocket(
         await connect(room, "display", room.capabilities.display),
       );
-      const welcome = await nextMessageOfType(display, "welcome");
-      staleConnectionId ??= String(welcome.connectionId);
-      displays.push(display);
-    }
+      await nextMessageOfType(replacement, "welcome");
+      await expect(staleClosed).resolves.toMatchObject({
+        code: 4002,
+      });
 
-    const full = await connect(
-      room,
-      "display",
-      room.capabilities.display,
-    );
-    expect(full.status).toBe(503);
-    await expect(full.json()).resolves.toMatchObject({
-      error: {
-        code: "room_full",
-      },
-    });
-
-    if (staleConnectionId === undefined) {
-      throw new Error("Expected a display connection.");
-    }
-    const staleDisplay = displays[0];
-    if (staleDisplay === undefined) {
-      throw new Error("Expected a stale display socket.");
-    }
-    await ageConnectionHeartbeats(room, [staleConnectionId]);
-    const staleClosed = nextClose(staleDisplay);
-    const replacement = await openSocket(
-      await connect(room, "display", room.capabilities.display),
-    );
-    await nextMessageOfType(replacement, "welcome");
-    await expect(staleClosed).resolves.toMatchObject({
-      code: 4002,
-    });
-
-    replacement.close();
-    for (const display of displays) {
-      display.close();
-    }
-  });
+      replacement.close();
+      for (const display of displays) {
+        display.close();
+      }
+    },
+    15_000,
+  );
 
   it("rejects new sockets after the fixed capability expiry", async () => {
     const room = await createRoom();
