@@ -38,7 +38,7 @@ body:
     attributes:
       label: Environment
       description: Include OS/device, browser, Flutter version, and network type when relevant.
-      placeholder: macOS 15, Chrome 140, Flutter 3.35.7, local Wi-Fi
+      placeholder: macOS 15, Chrome 140, Flutter 3.41.9, local Wi-Fi
     validations:
       required: true
 

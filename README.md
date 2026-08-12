@@ -40,8 +40,8 @@ currently supported product targets.
 
 ## Quick Start
 
-Prerequisites are Flutter 3.35.7 (including a Dart SDK compatible with
-`^3.9.2`), Node.js 22, npm, and Chrome. iPhone and Mac work additionally
+Prerequisites are Flutter 3.41.9 (including a Dart SDK compatible with
+`^3.11.5`), Node.js 22, npm, and Chrome. iPhone and Mac work additionally
 require macOS, Xcode, an installed iOS Simulator runtime, and CocoaPods.
 
 ```sh

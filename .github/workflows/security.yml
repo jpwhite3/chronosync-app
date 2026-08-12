@@ -38,8 +38,9 @@ jobs:
         with:
           languages: javascript-typescript
           build-mode: none
+          config-file: ./.github/codeql/codeql-config.yml
 
-      - name: Analyze relay source
+      - name: Analyze first-party JavaScript and TypeScript
         uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
         with:
           category: /language:javascript-typescript
