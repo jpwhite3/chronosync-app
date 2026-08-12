@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:chronosync/data/models/event_notification_settings.dart';
 import 'package:chronosync/data/models/global_notification_settings.dart';
 import 'package:chronosync/data/models/haptic_intensity.dart';
@@ -17,6 +16,11 @@ class NotificationService {
 
   bool _initialized = false;
 
+  bool get _isDesktopPlatform =>
+      defaultTargetPlatform == TargetPlatform.macOS ||
+      defaultTargetPlatform == TargetPlatform.linux ||
+      defaultTargetPlatform == TargetPlatform.windows;
+
   NotificationService({
     required NotificationSettingsRepository settingsRepository,
   }) : _settingsRepository = settingsRepository;
@@ -26,7 +30,7 @@ class NotificationService {
     if (_initialized || kIsWeb) return;
 
     // Skip initialization for desktop platforms (not fully supported)
-    if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
+    if (_isDesktopPlatform) {
       _initialized = true; // Mark as initialized but don't actually initialize
       return;
     }
@@ -47,7 +51,7 @@ class NotificationService {
         iOS: iosSettings,
       );
 
-      await _notificationsPlugin.initialize(settings);
+      await _notificationsPlugin.initialize(settings: settings);
       _initialized = true;
     } on Object {
       debugPrint('Notifications could not be initialized.');
@@ -101,7 +105,7 @@ class NotificationService {
     if (!_initialized || kIsWeb) return;
 
     // Skip showing notifications on desktop platforms
-    if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
+    if (_isDesktopPlatform) {
       debugPrint('Notification delivery is unavailable on desktop.');
       return;
     }
@@ -130,10 +134,10 @@ class NotificationService {
       );
 
       await _notificationsPlugin.show(
-        0, // notification ID
-        title,
-        body,
-        details,
+        id: 0,
+        title: title,
+        body: body,
+        notificationDetails: details,
       );
     } on Object {
       debugPrint('A notification could not be shown.');
