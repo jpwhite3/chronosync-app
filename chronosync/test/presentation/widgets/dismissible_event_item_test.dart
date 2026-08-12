@@ -1,3 +1,7 @@
+// HiveList remains experimental in Hive 2.x, but it is required to exercise
+// compatibility with the legacy persisted data model.
+// ignore_for_file: experimental_member_use
+
 import 'package:chronosync/data/models/event.dart';
 import 'package:chronosync/data/models/series.dart';
 import 'package:chronosync/data/models/user_preferences.dart';

@@ -14,44 +14,75 @@ void main() {
 
   group('ChronoTheme', () {
     test('meets AA contrast for semantic status pairs', () {
-      const ChronoColors colors = ChronoColors.light;
-      final List<(Color, Color)> pairs = <(Color, Color)>[
-        (colors.primary, Colors.white),
-        (colors.approaching, colors.approachingContainer),
-        (colors.due, colors.dueContainer),
-        (colors.overtime, colors.overtimeContainer),
-        (colors.live, colors.liveContainer),
-        (colors.success, colors.successContainer),
-        (colors.disconnected, colors.disconnectedContainer),
-        (colors.textSecondary, colors.surfaceMuted),
-      ];
+      final List<(String, ChronoColors, ThemeData)> themes =
+          <(String, ChronoColors, ThemeData)>[
+            ('light', ChronoColors.light, ChronoTheme.light()),
+            ('dark', ChronoColors.dark, ChronoTheme.dark()),
+          ];
 
-      for (final (Color foreground, Color background) in pairs) {
-        expect(
-          _contrastRatio(foreground, background),
-          greaterThanOrEqualTo(4.5),
-        );
+      for (final (String name, ChronoColors colors, ThemeData theme)
+          in themes) {
+        final List<(Color, Color)> pairs = <(Color, Color)>[
+          (theme.colorScheme.onPrimary, colors.primary),
+          (theme.colorScheme.onSecondary, theme.colorScheme.secondary),
+          (theme.colorScheme.onTertiary, theme.colorScheme.tertiary),
+          (theme.colorScheme.onError, theme.colorScheme.error),
+          (colors.onPrimaryContainer, colors.primaryContainer),
+          (colors.textPrimary, colors.surface),
+          (colors.textPrimary, colors.canvas),
+          (colors.approaching, colors.approachingContainer),
+          (colors.due, colors.dueContainer),
+          (colors.overtime, colors.overtimeContainer),
+          (colors.live, colors.liveContainer),
+          (colors.success, colors.successContainer),
+          (colors.disconnected, colors.disconnectedContainer),
+          (colors.textSecondary, colors.surfaceMuted),
+        ];
+
+        for (final (Color foreground, Color background) in pairs) {
+          expect(
+            _contrastRatio(foreground, background),
+            greaterThanOrEqualTo(4.5),
+            reason: '$name semantic colors must remain legible',
+          );
+        }
       }
     });
 
     test('meets AA non-text contrast for interactive boundaries', () {
-      const ChronoColors colors = ChronoColors.light;
-      final ThemeData theme = ChronoTheme.light();
-      final OutlineInputBorder enabledInputBorder =
-          theme.inputDecorationTheme.enabledBorder! as OutlineInputBorder;
-      final BorderSide outlinedButtonSide = theme
-          .outlinedButtonTheme
-          .style!
-          .side!
-          .resolve(<WidgetState>{})!;
-
-      for (final (Color foreground, Color background) in <(Color, Color)>[
-        (enabledInputBorder.borderSide.color, colors.surface),
-        (outlinedButtonSide.color, colors.surface),
-        (colors.focus, colors.surface),
+      for (final ThemeData theme in <ThemeData>[
+        ChronoTheme.light(),
+        ChronoTheme.dark(),
       ]) {
-        expect(_contrastRatio(foreground, background), greaterThanOrEqualTo(3));
+        final ChronoColors colors = theme.extension<ChronoColors>()!;
+        final OutlineInputBorder enabledInputBorder =
+            theme.inputDecorationTheme.enabledBorder! as OutlineInputBorder;
+        final BorderSide outlinedButtonSide = theme
+            .outlinedButtonTheme
+            .style!
+            .side!
+            .resolve(<WidgetState>{})!;
+
+        for (final (Color foreground, Color background) in <(Color, Color)>[
+          (enabledInputBorder.borderSide.color, colors.surface),
+          (outlinedButtonSide.color, colors.surface),
+          (colors.focus, colors.surface),
+        ]) {
+          expect(
+            _contrastRatio(foreground, background),
+            greaterThanOrEqualTo(3),
+          );
+        }
       }
+    });
+
+    test('publishes a dark semantic palette', () {
+      final ThemeData theme = ChronoTheme.dark();
+
+      expect(theme.brightness, Brightness.dark);
+      expect(theme.colorScheme.brightness, Brightness.dark);
+      expect(theme.scaffoldBackgroundColor, ChronoColors.dark.canvas);
+      expect(theme.extension<ChronoColors>(), ChronoColors.dark);
     });
 
     testWidgets('publishes the ChronoSync palette and accessible controls', (

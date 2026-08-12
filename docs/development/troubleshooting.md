@@ -178,7 +178,7 @@ and the chosen App Store or Developer ID/notarization workflow.
 
 ## Tests Pass Locally but Fail in CI
 
-Compare against CI's pinned Flutter 3.35.7, Node.js 22, Chrome environment, and
+Compare against CI's pinned Flutter 3.41.9, Node.js 22, Chrome environment, and
 macOS 15 runner. Run:
 
 ```sh
