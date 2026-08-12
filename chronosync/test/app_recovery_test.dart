@@ -10,6 +10,8 @@ import 'package:chronosync/data/services/live_cue_service.dart';
 import 'package:chronosync/domain/plan/plan.dart';
 import 'package:chronosync/domain/session/live_session.dart';
 import 'package:chronosync/main.dart';
+import 'package:chronosync/presentation/screens/mvp_app_shell.dart';
+import 'package:chronosync/presentation/theme/theme.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart' hide Step;
 import 'package:flutter_test/flutter_test.dart';
@@ -18,6 +20,56 @@ import 'package:sqlite3/sqlite3.dart' as sqlite;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('app follows system brightness changes while mounted', (
+    WidgetTester tester,
+  ) async {
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
+    addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+    final AppDatabase database = AppDatabase(NativeDatabase.memory());
+    final AppDependencies dependencies = AppDependencies(
+      database: database,
+      identity: const DeviceIdentity(
+        deviceId: 'host-1',
+        displayName: 'Event lead',
+      ),
+      identityRepository: DeviceIdentityRepository(database),
+      planRepository: const _MemoryPlans(),
+      historyRepository: _MemoryHistory(null),
+      archiveService: const PlanArchiveService(),
+      fileService: const PortabilityFileService(),
+      cueService: LiveCueService(audioPlayer: _AudioPlayerFake()),
+      onlineRoomService: null,
+      recoverableSession: null,
+    );
+
+    await tester.pumpWidget(MyApp(dependencies: dependencies));
+    await tester.pump();
+
+    ThemeData activeTheme() =>
+        Theme.of(tester.element(find.byType(MvpAppShell)));
+
+    expect(activeTheme().brightness, Brightness.light);
+    expect(activeTheme().extension<ChronoColors>(), ChronoColors.light);
+
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(activeTheme().brightness, Brightness.dark);
+    expect(activeTheme().extension<ChronoColors>(), ChronoColors.dark);
+
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(activeTheme().brightness, Brightness.light);
+    expect(activeTheme().extension<ChronoColors>(), ChronoColors.light);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await tester.pump();
+  });
 
   testWidgets('plan launch identity failures stay safe and recoverable', (
     WidgetTester tester,
