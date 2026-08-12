@@ -1,0 +1,74 @@
+name: Set up pinned Flutter SDK
+description: Restore or install the repository's exact Flutter SDK revision.
+
+inputs:
+  target:
+    description: Platform artifacts to precache (web, ios, or macos).
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Restore Flutter SDK cache
+      id: flutter-cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ runner.tool_cache }}/flutter/3.35.7
+        key: flutter-${{ runner.os }}-${{ runner.arch }}-3.35.7-adc901062556672b4138e18a4dc62a4be8f4b3c2
+
+    - name: Install pinned Flutter SDK
+      if: ${{ steps.flutter-cache.outputs.cache-hit != 'true' }}
+      shell: bash
+      env:
+        FLUTTER_REVISION: adc901062556672b4138e18a4dc62a4be8f4b3c2
+        FLUTTER_ROOT: ${{ runner.tool_cache }}/flutter/3.35.7
+        FLUTTER_VERSION: 3.35.7
+      run: |
+        mkdir -p "$(dirname "$FLUTTER_ROOT")"
+        git init --quiet "$FLUTTER_ROOT"
+        git -C "$FLUTTER_ROOT" remote add origin https://github.com/flutter/flutter.git
+        git -C "$FLUTTER_ROOT" fetch --depth=1 origin \
+          "refs/tags/$FLUTTER_VERSION:refs/tags/$FLUTTER_VERSION"
+        git -C "$FLUTTER_ROOT" -c advice.detachedHead=false \
+          checkout --detach "refs/tags/$FLUTTER_VERSION"
+
+    - name: Configure pinned Flutter SDK
+      shell: bash
+      env:
+        FLUTTER_REVISION: adc901062556672b4138e18a4dc62a4be8f4b3c2
+        FLUTTER_ROOT: ${{ runner.tool_cache }}/flutter/3.35.7
+        PUB_CACHE: ${{ runner.tool_cache }}/pub-cache
+        TARGET: ${{ inputs.target }}
+      run: |
+        test "$(git -C "$FLUTTER_ROOT" rev-parse HEAD)" = "$FLUTTER_REVISION"
+        echo "$FLUTTER_ROOT/bin" >> "$GITHUB_PATH"
+        echo "FLUTTER_ROOT=$FLUTTER_ROOT" >> "$GITHUB_ENV"
+        echo "PUB_CACHE=$PUB_CACHE" >> "$GITHUB_ENV"
+
+        case "$TARGET" in
+          web)
+            precache_args=(--web)
+            ;;
+          ios)
+            precache_args=(--ios)
+            ;;
+          macos)
+            precache_args=(--macos)
+            ;;
+          *)
+            echo "Unsupported Flutter precache target: $TARGET" >&2
+            exit 2
+            ;;
+        esac
+
+        "$FLUTTER_ROOT/bin/flutter" config --no-analytics
+        "$FLUTTER_ROOT/bin/flutter" precache "${precache_args[@]}"
+        "$FLUTTER_ROOT/bin/flutter" --version
+
+    - name: Restore Dart package cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ runner.tool_cache }}/pub-cache
+        key: pub-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('chronosync/pubspec.lock') }}
+        restore-keys: |
+          pub-${{ runner.os }}-${{ runner.arch }}-

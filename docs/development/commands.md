@@ -9,6 +9,7 @@ Run these recipes from the repository root. `make help` is generated from the
 | --- | --- |
 | `make help` | List recipes and common overrides. |
 | `make makefile-check` | Dry-run primary recipes to catch Makefile wiring errors. |
+| `make workflow-check` | Test and lint Actions YAML; reject mutable action references. |
 | `make setup` / `make install` | Install Flutter packages and locked relay packages. |
 | `make app-deps` | Run `flutter pub get` only. |
 | `make relay-deps` | Run locked `npm ci` only. |
@@ -103,9 +104,14 @@ Release output paths and signing constraints are documented in
 | --- | --- |
 | `make check-app` | Generate, format-check, verify bundles, analyze, and test Flutter/browser code. |
 | `make check-relay` | Run all relay checks. |
-| `make check` | Run normal non-native app and relay gates. |
-| `make ci` | Install dependencies, run normal checks, and verify web release. |
+| `make repository-check` | Validate Make/Actions automation and changed-file whitespace. |
+| `make check` | Run repository, non-native app, and relay gates. |
+| `make ci` | Install locked dependencies, run normal checks, and verify web release. |
 | `make ci-native` | Run Apple-native tests and verify Mac release. |
+
+`make workflow-check` uses Ruby's YAML parser and runs pin-check regression
+tests before actionlint. Its first run downloads a checksum-verified actionlint
+binary into the ignored `.dart_tool/` cache when one is not already installed.
 
 ## Deploy and Clean
 

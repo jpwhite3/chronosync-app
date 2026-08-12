@@ -1,6 +1,7 @@
 # ChronoSync
 
 [![CI](https://github.com/jpwhite3/chronosync-app/actions/workflows/ci.yml/badge.svg)](https://github.com/jpwhite3/chronosync-app/actions/workflows/ci.yml)
+[![Security](https://github.com/jpwhite3/chronosync-app/actions/workflows/security.yml/badge.svg)](https://github.com/jpwhite3/chronosync-app/actions/workflows/security.yml)
 
 ChronoSync is an account-free, local-first timed runbook for live event teams.
 Create a plan, run it from iPhone, Mac, or the web, and keep every role aligned

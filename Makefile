@@ -29,10 +29,10 @@ DEVICE_ARG = $(if $(strip $(DEVICE)),-d "$(DEVICE)")
 .NOTPARALLEL: build check check-app ci ci-native
 
 .PHONY: \
-	help makefile-check setup install app-deps relay-deps outdated doctor devices \
+	help makefile-check workflow-check repository-check setup install app-deps relay-deps outdated doctor devices \
 	emulators launch-emulator generate generate-watch nearby-client \
 	nearby-client-check drift-worker drift-worker-check branding-assets \
-	branding-assets-check format format-check \
+	branding-assets-check workflow-check format format-check \
 	analyze lint test test-all \
 	test-flutter test-focus tdd test-coverage test-browser test-native \
 	test-ios-native test-macos-native relay-test relay-test-watch relay-typecheck \
@@ -58,7 +58,7 @@ help: ## Show available targets and configuration variables.
 	@echo "  WEB_PORT=8080                    Chrome development port"
 
 makefile-check: ## Dry-run the primary recipes to validate Makefile wiring.
-	@targets="setup generate nearby-client drift-worker format-check analyze test test-native build run-web run-macos run-ios ios-simulator relay-dev relay-dev-https ci ci-native clean"; \
+	@targets="setup generate nearby-client drift-worker format-check analyze test test-native build run-web run-macos run-ios ios-simulator relay-dev relay-dev-https ci-native clean"; \
 	for target in $$targets; do \
 		$(MAKE) --no-print-directory --dry-run "$$target" >/dev/null; \
 	done
@@ -69,7 +69,7 @@ setup: app-deps relay-deps ## Install all locked app and relay dependencies.
 install: setup ## Alias for setup.
 
 app-deps: ## Install Flutter and Dart dependencies.
-	cd "$(APP_DIR)" && $(FLUTTER) pub get
+	cd "$(APP_DIR)" && $(FLUTTER) pub get --enforce-lockfile
 
 relay-deps: ## Install locked relay dependencies.
 	cd "$(RELAY_DIR)" && $(NPM) ci
@@ -141,6 +141,13 @@ branding-assets-check: ## Verify committed icons match the brand source SVG.
 		done; \
 	done; \
 	cmp "$$temp_dir/web/favicon.png" "$(APP_DIR)/web/favicon.png"
+
+workflow-check: ## Lint GitHub Actions workflows and enforce immutable action pins.
+	bash "$(ROOT_DIR)/.github/scripts/check-workflows.sh"
+
+repository-check: makefile-check workflow-check ## Validate repository automation and changed-file whitespace.
+	git -C "$(ROOT_DIR)" diff --check
+	git -C "$(ROOT_DIR)" diff --cached --check
 
 format: ## Format app source, tests, and development tools.
 	cd "$(APP_DIR)" && $(DART) format lib test tool
@@ -320,7 +327,7 @@ check-app: generate format-check nearby-client-check drift-worker-check analyze 
 
 check-relay: relay-check ## Run all relay checks.
 
-check: check-app check-relay ## Run normal local checks across the repository.
+check: repository-check check-app check-relay ## Run normal local checks across the repository.
 
 ci: setup check build-web ## Reproduce the cross-platform CI checks locally.
 
