@@ -60,7 +60,7 @@ install_actionlint() {
   archive="$install_dir/actionlint.tar.gz"
 
   if ! curl --fail --location --silent --show-error \
-    --retry 3 --retry-all-errors --retry-delay 2 \
+    --retry 8 --retry-all-errors --retry-delay 5 --retry-max-time 90 \
     "https://github.com/rhysd/actionlint/releases/download/v${actionlint_version}/actionlint_${actionlint_version}_${platform}.tar.gz" \
     --output "$archive"; then
     echo "Unable to download actionlint $actionlint_version." >&2
