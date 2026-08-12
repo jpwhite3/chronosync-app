@@ -64,7 +64,7 @@ Verification workflows have read-only repository access. The CodeQL job alone
 can upload security results. Checkout credentials are not persisted, and the
 repository permits only GitHub-owned actions with repository-wide full-SHA
 enforcement. A local composite action installs the exact Flutter revision from
-the `3.35.7` release tag and verifies its commit before use; its GitHub-owned
+the `3.41.9` release tag and verifies its commit before use; its GitHub-owned
 cache dependency is also SHA-pinned. No CI secrets are required.
 
 Keep Cloudflare credentials and Apple signing material out of these workflows.

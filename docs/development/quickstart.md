@@ -8,8 +8,8 @@ fresh checkout.
 All contributors need:
 
 - Git and GNU-compatible `make`;
-- Flutter **3.35.7** on the stable channel;
-- a Dart SDK compatible with **`^3.9.2`** (included with Flutter);
+- Flutter **3.41.9** on the stable channel;
+- a Dart SDK compatible with **`^3.11.5`** (included with Flutter);
 - Node.js **22** and npm;
 - Chrome for web development and browser tests.
 
