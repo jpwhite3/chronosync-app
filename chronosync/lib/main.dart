@@ -101,6 +101,8 @@ class _ChronoSyncBootstrapState extends State<ChronoSyncBootstrap> {
           title: 'ChronoSync',
           debugShowCheckedModeBanner: false,
           theme: ChronoTheme.light(),
+          darkTheme: ChronoTheme.dark(),
+          themeMode: ThemeMode.system,
           home: Builder(
             builder: (BuildContext context) => Scaffold(
               body: LayoutBuilder(
@@ -123,9 +125,11 @@ class _ChronoSyncBootstrapState extends State<ChronoSyncBootstrap> {
                                   color: Theme.of(context).colorScheme.primary,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.timer_outlined,
-                                  color: Colors.white,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
                                   size: 36,
                                 ),
                               ),
@@ -415,7 +419,8 @@ class _MyAppState extends State<MyApp> {
       title: 'ChronoSync',
       debugShowCheckedModeBanner: false,
       theme: ChronoTheme.light(),
-      themeMode: ThemeMode.light,
+      darkTheme: ChronoTheme.dark(),
+      themeMode: ThemeMode.system,
       home: MvpAppShell(
         planRepository: dependencies.planRepository,
         historyRepository: dependencies.historyRepository,

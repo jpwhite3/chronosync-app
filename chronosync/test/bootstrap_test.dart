@@ -73,6 +73,31 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('bootstrap follows system brightness while initializing', (
+    WidgetTester tester,
+  ) async {
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
+    addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+    final Completer<AppDependencies> pending = Completer<AppDependencies>();
+
+    await tester.pumpWidget(
+      ChronoSyncBootstrap(
+        dependencyInitializer: ({ValueChanged<String>? onProgress}) =>
+            pending.future,
+      ),
+    );
+
+    ThemeData activeTheme() => Theme.of(tester.element(find.byType(Scaffold)));
+
+    expect(activeTheme().brightness, Brightness.light);
+
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(activeTheme().brightness, Brightness.dark);
+  });
+
   testWidgets('bootstrap hides internal errors and retries initialization', (
     WidgetTester tester,
   ) async {

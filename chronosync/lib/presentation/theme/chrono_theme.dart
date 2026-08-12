@@ -5,46 +5,60 @@ import 'package:flutter/material.dart';
 
 /// The friendly, operationally clear visual language for ChronoSync.
 abstract final class ChronoTheme {
-  static ThemeData light() {
-    const ChronoColors colors = ChronoColors.light;
+  static ThemeData light() =>
+      _build(colors: ChronoColors.light, brightness: Brightness.light);
+
+  static ThemeData dark() =>
+      _build(colors: ChronoColors.dark, brightness: Brightness.dark);
+
+  static ThemeData _build({
+    required ChronoColors colors,
+    required Brightness brightness,
+  }) {
+    final bool isDark = brightness == Brightness.dark;
+    final Color onPrimary = isDark ? const Color(0xFF003829) : Colors.white;
+    final Color onAccent = isDark ? const Color(0xFF302100) : Colors.white;
+    final Color shadow = isDark
+        ? const Color(0x99000000)
+        : const Color(0x240F1D17);
     final ColorScheme colorScheme =
         ColorScheme.fromSeed(
           seedColor: colors.primary,
-          brightness: Brightness.light,
+          brightness: brightness,
           surface: colors.surface,
         ).copyWith(
           primary: colors.primary,
-          onPrimary: Colors.white,
+          onPrimary: onPrimary,
           primaryContainer: colors.primaryContainer,
           onPrimaryContainer: colors.onPrimaryContainer,
-          secondary: const Color(0xFF53675E),
-          onSecondary: Colors.white,
+          secondary: isDark ? const Color(0xFFB8CEC2) : const Color(0xFF53675E),
+          onSecondary: isDark ? const Color(0xFF23362D) : Colors.white,
           secondaryContainer: colors.surfaceMuted,
           onSecondaryContainer: colors.textPrimary,
           tertiary: colors.approaching,
-          onTertiary: Colors.white,
+          onTertiary: onAccent,
           tertiaryContainer: colors.approachingContainer,
           onTertiaryContainer: colors.approaching,
           error: colors.overtime,
-          onError: Colors.white,
+          onError: isDark ? const Color(0xFF3B0906) : Colors.white,
           errorContainer: colors.overtimeContainer,
           onErrorContainer: colors.overtime,
           surface: colors.surface,
           onSurface: colors.textPrimary,
           outline: colors.outlineStrong,
           outlineVariant: colors.outline,
-          shadow: const Color(0x240F1D17),
+          shadow: shadow,
         );
     final TextTheme textTheme = ChronoTypography.textTheme(
-      const ChronoColorsForTypography(
-        primary: Color(0xFF19221E),
-        secondary: Color(0xFF58645E),
+      ChronoColorsForTypography(
+        primary: colors.textPrimary,
+        secondary: colors.textSecondary,
       ),
     );
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
+      brightness: brightness,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colors.canvas,
       canvasColor: colors.canvas,
@@ -56,7 +70,7 @@ abstract final class ChronoTheme {
       visualDensity: VisualDensity.standard,
       fontFamily: 'Inter',
       textTheme: textTheme,
-      extensions: const <ThemeExtension<dynamic>>[colors],
+      extensions: <ThemeExtension<dynamic>>[colors],
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -69,13 +83,13 @@ abstract final class ChronoTheme {
       cardTheme: CardThemeData(
         color: colors.surface,
         surfaceTintColor: Colors.transparent,
-        shadowColor: const Color(0x140F1D17),
+        shadowColor: shadow,
         elevation: 0,
         margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,
-        shape: const RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
           borderRadius: ChronoRadii.surfaceBorder,
-          side: BorderSide(color: Color(0xFFD7DDD8)),
+          side: BorderSide(color: colors.outline),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
@@ -104,15 +118,15 @@ abstract final class ChronoTheme {
             }
             return colors.primary;
           }),
-          foregroundColor: const WidgetStatePropertyAll<Color>(Colors.white),
+          foregroundColor: WidgetStatePropertyAll<Color>(onPrimary),
           overlayColor: WidgetStateProperty.resolveWith<Color?>((
             Set<WidgetState> states,
           ) {
             if (states.contains(WidgetState.focused)) {
-              return Colors.white.withValues(alpha: 0.16);
+              return onPrimary.withValues(alpha: 0.16);
             }
             if (states.contains(WidgetState.hovered)) {
-              return Colors.white.withValues(alpha: 0.08);
+              return onPrimary.withValues(alpha: 0.08);
             }
             return null;
           }),
@@ -147,13 +161,15 @@ abstract final class ChronoTheme {
           textStyle: textTheme.labelLarge,
         ),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: Color(0xFF176B52),
-        foregroundColor: Colors.white,
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: colors.primary,
+        foregroundColor: onPrimary,
         elevation: 2,
         focusElevation: 3,
         hoverElevation: 3,
-        shape: RoundedRectangleBorder(borderRadius: ChronoRadii.surfaceBorder),
+        shape: const RoundedRectangleBorder(
+          borderRadius: ChronoRadii.surfaceBorder,
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -170,9 +186,9 @@ abstract final class ChronoTheme {
           borderRadius: ChronoRadii.controlBorder,
           borderSide: BorderSide(color: colors.outlineStrong),
         ),
-        focusedBorder: const OutlineInputBorder(
+        focusedBorder: OutlineInputBorder(
           borderRadius: ChronoRadii.controlBorder,
-          borderSide: BorderSide(color: Color(0xFF176B52), width: 2),
+          borderSide: BorderSide(color: colors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: ChronoRadii.controlBorder,
@@ -198,8 +214,10 @@ abstract final class ChronoTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: colors.textPrimary,
-        contentTextStyle: textTheme.bodyMedium?.copyWith(color: Colors.white),
+        backgroundColor: colorScheme.inverseSurface,
+        contentTextStyle: textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onInverseSurface,
+        ),
         shape: const RoundedRectangleBorder(
           borderRadius: ChronoRadii.controlBorder,
         ),
@@ -226,10 +244,12 @@ abstract final class ChronoTheme {
       ),
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
-          color: colors.textPrimary,
+          color: colorScheme.inverseSurface,
           borderRadius: BorderRadius.circular(ChronoSpacing.xs),
         ),
-        textStyle: textTheme.bodySmall?.copyWith(color: Colors.white),
+        textStyle: textTheme.bodySmall?.copyWith(
+          color: colorScheme.onInverseSurface,
+        ),
         waitDuration: const Duration(milliseconds: 500),
       ),
     );
