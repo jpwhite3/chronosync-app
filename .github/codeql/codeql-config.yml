@@ -1,0 +1,10 @@
+name: ChronoSync first-party JavaScript and TypeScript
+
+paths:
+  - relay/src
+  - chronosync/assets/nearby_client
+  - chronosync/web
+
+paths-ignore:
+  # Copied from Drift's pinned release by `make app-drift-worker-update`.
+  - chronosync/web/drift_worker.js

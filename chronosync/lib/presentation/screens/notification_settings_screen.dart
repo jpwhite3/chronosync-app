@@ -143,25 +143,30 @@ class NotificationSettingsScreen extends StatelessWidget {
   }
 
   Widget _buildPermissionBanner(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Container(
-      color: Colors.orange.shade100,
+      color: colorScheme.tertiaryContainer,
       padding: const EdgeInsets.all(16),
       child: Row(
         children: <Widget>[
-          const Icon(Icons.warning, color: Colors.orange),
+          Icon(Icons.warning, color: colorScheme.onTertiaryContainer),
           const SizedBox(width: 16),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   'Notification Permission Required',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: colorScheme.onTertiaryContainer,
+                  ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Grant permission to receive event notifications',
-                  style: TextStyle(fontSize: 12),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onTertiaryContainer,
+                  ),
                 ),
               ],
             ),
@@ -172,6 +177,9 @@ class NotificationSettingsScreen extends StatelessWidget {
                 const RequestNotificationPermissionEvent(),
               );
             },
+            style: TextButton.styleFrom(
+              foregroundColor: colorScheme.onTertiaryContainer,
+            ),
             child: const Text('Grant'),
           ),
         ],

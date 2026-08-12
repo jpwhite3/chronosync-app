@@ -35,11 +35,11 @@ class ChronoPrimaryButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           if (isLoading)
-            const SizedBox.square(
+            SizedBox.square(
               dimension: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
             )
           else if (icon != null)

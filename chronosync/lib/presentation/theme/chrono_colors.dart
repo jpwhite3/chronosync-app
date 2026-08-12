@@ -57,6 +57,33 @@ class ChronoColors extends ThemeExtension<ChronoColors> {
     focus: Color(0xFF2E7DFF),
   );
 
+  static const ChronoColors dark = ChronoColors(
+    canvas: Color(0xFF0F1713),
+    surface: Color(0xFF17201C),
+    surfaceMuted: Color(0xFF202B25),
+    textPrimary: Color(0xFFEEF5F1),
+    textSecondary: Color(0xFFB4C2BA),
+    outline: Color(0xFF607067),
+    outlineStrong: Color(0xFF8A9A91),
+    primary: Color(0xFF7EDDBA),
+    primaryPressed: Color(0xFF5EC39F),
+    primaryContainer: Color(0xFF164B3B),
+    onPrimaryContainer: Color(0xFFB6F2DB),
+    approaching: Color(0xFFFFD27A),
+    approachingContainer: Color(0xFF4A3300),
+    due: Color(0xFFFFB4A8),
+    dueContainer: Color(0xFF5D201A),
+    overtime: Color(0xFFFFB4AB),
+    overtimeContainer: Color(0xFF5E211C),
+    live: Color(0xFFA8CEFF),
+    liveContainer: Color(0xFF143E60),
+    success: Color(0xFF78D9A9),
+    successContainer: Color(0xFF16462F),
+    disconnected: Color(0xFFCFC4BD),
+    disconnectedContainer: Color(0xFF3D3631),
+    focus: Color(0xFF8BB8FF),
+  );
+
   final Color canvas;
   final Color surface;
   final Color surfaceMuted;
@@ -198,7 +225,12 @@ class ChronoColors extends ThemeExtension<ChronoColors> {
 }
 
 extension ChronoThemeColors on BuildContext {
-  /// Returns the active semantic palette, with the light palette as a fallback.
-  ChronoColors get chronoColors =>
-      Theme.of(this).extension<ChronoColors>() ?? ChronoColors.light;
+  /// Returns the active semantic palette, matching brightness as a fallback.
+  ChronoColors get chronoColors {
+    final ThemeData theme = Theme.of(this);
+    return theme.extension<ChronoColors>() ??
+        (theme.brightness == Brightness.dark
+            ? ChronoColors.dark
+            : ChronoColors.light);
+  }
 }

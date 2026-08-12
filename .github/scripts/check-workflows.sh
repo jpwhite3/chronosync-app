@@ -87,6 +87,7 @@ install_actionlint() {
 
 ruby "$repository_root/.github/scripts/check_action_pins_test.rb"
 ruby "$repository_root/.github/scripts/check_action_pins.rb" "$repository_root/.github"
+ruby "$repository_root/.github/scripts/check_codeql_config_test.rb"
 
 if command -v actionlint >/dev/null; then
   actionlint_binary="$(command -v actionlint)"
