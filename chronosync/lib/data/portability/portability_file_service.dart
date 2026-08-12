@@ -7,22 +7,81 @@ import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:share_plus/share_plus.dart';
 
-final class PortabilityFileService {
-  const PortabilityFileService({FilePicker? filePicker})
-    : _filePicker = filePicker;
+abstract interface class FilePickerAdapter {
+  Future<FilePickerResult?> pickFiles({
+    required String dialogTitle,
+    required FileType type,
+    required List<String> allowedExtensions,
+    required bool allowMultiple,
+    required bool withData,
+    required bool withReadStream,
+  });
 
-  final FilePicker? _filePicker;
+  Future<String?> saveFile({
+    required String dialogTitle,
+    required String fileName,
+    required FileType type,
+    required List<String> allowedExtensions,
+    required Uint8List bytes,
+  });
+}
+
+final class StaticFilePickerAdapter implements FilePickerAdapter {
+  const StaticFilePickerAdapter();
+
+  @override
+  Future<FilePickerResult?> pickFiles({
+    required String dialogTitle,
+    required FileType type,
+    required List<String> allowedExtensions,
+    required bool allowMultiple,
+    required bool withData,
+    required bool withReadStream,
+  }) {
+    return FilePicker.pickFiles(
+      dialogTitle: dialogTitle,
+      type: type,
+      allowedExtensions: allowedExtensions,
+      allowMultiple: allowMultiple,
+      withData: withData,
+      withReadStream: withReadStream,
+    );
+  }
+
+  @override
+  Future<String?> saveFile({
+    required String dialogTitle,
+    required String fileName,
+    required FileType type,
+    required List<String> allowedExtensions,
+    required Uint8List bytes,
+  }) {
+    return FilePicker.saveFile(
+      dialogTitle: dialogTitle,
+      fileName: fileName,
+      type: type,
+      allowedExtensions: allowedExtensions,
+      bytes: bytes,
+    );
+  }
+}
+
+final class PortabilityFileService {
+  const PortabilityFileService({
+    FilePickerAdapter filePicker = const StaticFilePickerAdapter(),
+  }) : _filePicker = filePicker;
+
+  final FilePickerAdapter _filePicker;
 
   Future<Uint8List?> pickChronoSyncArchive() async {
-    final FilePickerResult? result = await (_filePicker ?? FilePicker.platform)
-        .pickFiles(
-          dialogTitle: 'Import ChronoSync plans',
-          type: FileType.custom,
-          allowedExtensions: const <String>['chronosync'],
-          allowMultiple: false,
-          withData: false,
-          withReadStream: true,
-        );
+    final FilePickerResult? result = await _filePicker.pickFiles(
+      dialogTitle: 'Import ChronoSync plans',
+      type: FileType.custom,
+      allowedExtensions: const <String>['chronosync'],
+      allowMultiple: false,
+      withData: false,
+      withReadStream: true,
+    );
     if (result == null) {
       return null;
     }
@@ -56,7 +115,7 @@ final class PortabilityFileService {
     required String fileName,
   }) async {
     if (_usesNativeSaveDialog) {
-      await FilePicker.platform.saveFile(
+      await _filePicker.saveFile(
         dialogTitle: 'Export ChronoSync plans',
         fileName: fileName,
         type: FileType.custom,
@@ -82,7 +141,7 @@ final class PortabilityFileService {
   Future<void> shareCsv({required String csv, required String fileName}) async {
     final Uint8List bytes = Uint8List.fromList(utf8.encode(csv));
     if (_usesNativeSaveDialog) {
-      await FilePicker.platform.saveFile(
+      await _filePicker.saveFile(
         dialogTitle: 'Export ChronoSync activity',
         fileName: fileName,
         type: FileType.custom,

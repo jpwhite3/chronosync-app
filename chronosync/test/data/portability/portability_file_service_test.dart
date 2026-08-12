@@ -100,7 +100,7 @@ void main() {
   );
 }
 
-final class _RecordingFilePicker extends FilePicker {
+final class _RecordingFilePicker implements FilePickerAdapter {
   _RecordingFilePicker(this.file);
 
   final PlatformFile file;
@@ -109,21 +109,26 @@ final class _RecordingFilePicker extends FilePicker {
 
   @override
   Future<FilePickerResult?> pickFiles({
-    String? dialogTitle,
-    String? initialDirectory,
-    FileType type = FileType.any,
-    List<String>? allowedExtensions,
-    Function(FilePickerStatus)? onFileLoading,
-    bool allowCompression = false,
-    int compressionQuality = 0,
-    bool allowMultiple = false,
-    bool withData = false,
-    bool withReadStream = false,
-    bool lockParentWindow = false,
-    bool readSequential = false,
+    required String dialogTitle,
+    required FileType type,
+    required List<String> allowedExtensions,
+    required bool allowMultiple,
+    required bool withData,
+    required bool withReadStream,
   }) async {
     requestedWithData = withData;
     requestedWithReadStream = withReadStream;
     return FilePickerResult(<PlatformFile>[file]);
+  }
+
+  @override
+  Future<String?> saveFile({
+    required String dialogTitle,
+    required String fileName,
+    required FileType type,
+    required List<String> allowedExtensions,
+    required Uint8List bytes,
+  }) {
+    throw UnsupportedError('This picker only records import requests.');
   }
 }
