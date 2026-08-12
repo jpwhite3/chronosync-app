@@ -25,8 +25,11 @@ not configured yet.
 
 ## Security and Dependencies
 
-The `Security` workflow runs CodeQL for the TypeScript relay on pull requests,
-`main`, merge-queue commits, and every Monday. Pull requests also receive a
+The `Security` workflow runs CodeQL for first-party JavaScript and TypeScript on
+pull requests, `main`, merge-queue commits, and every Monday. Its scope file
+keeps the relay, nearby browser client, and web bootstrap under analysis while
+excluding Drift's pinned generated web worker, whose exact upstream copy is
+verified separately by Flutter CI. Pull requests also receive a
 dependency review that rejects newly introduced high-severity vulnerabilities
 in supported manifests. GitHub secret scanning, push protection, and Dependabot
 security updates are enabled at repository level. `Security required` is the
