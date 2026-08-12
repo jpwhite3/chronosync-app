@@ -63,7 +63,16 @@ install_actionlint() {
     --retry 8 --retry-all-errors --retry-delay 5 --retry-max-time 90 \
     "https://github.com/rhysd/actionlint/releases/download/v${actionlint_version}/actionlint_${actionlint_version}_${platform}.tar.gz" \
     --output "$archive"; then
-    echo "Unable to download actionlint $actionlint_version." >&2
+    rm -f "$archive"
+    if command -v go >/dev/null; then
+      echo "Release download failed; building pinned actionlint $actionlint_version with Go." >&2
+      if GOBIN="$install_dir" go install \
+        "github.com/rhysd/actionlint/cmd/actionlint@v${actionlint_version}"; then
+        echo "$install_dir/actionlint"
+        return
+      fi
+    fi
+    echo "Unable to install actionlint $actionlint_version." >&2
     return 1
   fi
 
