@@ -1,4 +1,5 @@
 import 'package:chronosync/logic/live_timer_bloc/live_timer_bloc.dart';
+import 'package:chronosync/presentation/theme/theme.dart';
 import 'package:chronosync/presentation/widgets/auto_progress_indicator.dart';
 import 'package:chronosync/presentation/widgets/series_statistics_panel.dart';
 import 'package:flutter/material.dart';
@@ -87,7 +88,9 @@ class _LiveTimerScreenState extends State<LiveTimerScreen>
                     Text(
                       _formatCountdown(state),
                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        color: state.isOvertime ? Colors.red : null,
+                        color: state.isOvertime
+                            ? context.chronoColors.overtime
+                            : null,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

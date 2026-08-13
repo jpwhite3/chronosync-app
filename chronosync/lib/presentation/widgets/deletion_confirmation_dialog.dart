@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:chronosync/data/models/series.dart';
+import 'package:flutter/material.dart';
 
 class DeletionConfirmationDialog extends StatelessWidget {
   final Series series;
@@ -27,7 +27,9 @@ class DeletionConfirmationDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, true),
-          style: TextButton.styleFrom(foregroundColor: Colors.red),
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.error,
+          ),
           child: const Text('Delete'),
         ),
       ],

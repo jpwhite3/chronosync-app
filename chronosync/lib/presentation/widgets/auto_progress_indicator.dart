@@ -1,3 +1,4 @@
+import 'package:chronosync/presentation/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 /// Visual indicator shown when auto-progression occurs
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 class AutoProgressIndicator {
   /// Show the auto-progress indicator using a SnackBar
   static void show(BuildContext context, {String? nextEventTitle}) {
+    final ChronoColors colors = context.chronoColors;
     final String message = nextEventTitle != null
         ? 'Auto-advancing to: $nextEventTitle'
         : 'Auto-advancing...';
@@ -15,13 +17,15 @@ class AutoProgressIndicator {
       SnackBar(
         content: Row(
           children: <Widget>[
-            const Icon(Icons.play_circle_outline, color: Colors.white),
+            Icon(Icons.play_circle_outline, color: colors.live),
             const SizedBox(width: 12),
-            Expanded(child: Text(message)),
+            Expanded(
+              child: Text(message, style: TextStyle(color: colors.live)),
+            ),
           ],
         ),
         duration: const Duration(seconds: 2),
-        backgroundColor: Colors.blue,
+        backgroundColor: colors.liveContainer,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

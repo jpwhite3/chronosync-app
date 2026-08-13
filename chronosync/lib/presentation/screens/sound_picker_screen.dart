@@ -1,6 +1,9 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+
+import 'package:chronosync/presentation/theme/theme.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
+
 import '../../data/models/device_sound.dart';
 import '../../data/repositories/device_audio_repository.dart';
 
@@ -124,7 +127,11 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                   const SizedBox(height: 16),
                   Text(_error!),
                   const SizedBox(height: 16),
@@ -151,7 +158,7 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
               return ListTile(
                 leading: Icon(
                   sound.isSystemSound ? Icons.phone_android : Icons.music_note,
-                  color: isSelected ? Theme.of(context).primaryColor : null,
+                  color: isSelected ? context.chronoColors.primary : null,
                 ),
                 title: Text(
                   sound.displayName,
@@ -167,7 +174,9 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
                     IconButton(
                       icon: Icon(
                         isPlaying ? Icons.stop : Icons.play_arrow,
-                        color: isPlaying ? Colors.red : null,
+                        color: isPlaying
+                            ? Theme.of(context).colorScheme.error
+                            : null,
                       ),
                       onPressed: () {
                         if (isPlaying) {
@@ -178,7 +187,7 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
                       },
                     ),
                     if (isSelected)
-                      const Icon(Icons.check, color: Colors.green),
+                      Icon(Icons.check, color: context.chronoColors.success),
                   ],
                 ),
                 onTap: () {

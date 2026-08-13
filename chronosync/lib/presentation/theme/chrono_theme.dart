@@ -16,39 +16,69 @@ abstract final class ChronoTheme {
     required Brightness brightness,
   }) {
     final bool isDark = brightness == Brightness.dark;
-    final Color onPrimary = isDark ? const Color(0xFF003829) : Colors.white;
-    final Color onAccent = isDark ? const Color(0xFF302100) : Colors.white;
+    final Color onPrimary = isDark ? const Color(0xFF050608) : Colors.white;
+    final Color secondary = isDark
+        ? const Color(0xFFC792EA)
+        : const Color(0xFF65429C);
+    final Color onSecondary = isDark ? const Color(0xFF0B0C0E) : Colors.white;
+    final Color secondaryContainer = isDark
+        ? const Color(0xFF33203D)
+        : const Color(0xFFEEE3FA);
+    final Color onSecondaryContainer = isDark
+        ? const Color(0xFFF0D9FF)
+        : const Color(0xFF321E49);
+    final Color onAccent = isDark ? const Color(0xFF241500) : Colors.white;
+    final Color onError = isDark ? const Color(0xFF2A050B) : Colors.white;
     final Color shadow = isDark
-        ? const Color(0x99000000)
-        : const Color(0x240F1D17);
-    final ColorScheme colorScheme =
-        ColorScheme.fromSeed(
-          seedColor: colors.primary,
-          brightness: brightness,
-          surface: colors.surface,
-        ).copyWith(
-          primary: colors.primary,
-          onPrimary: onPrimary,
-          primaryContainer: colors.primaryContainer,
-          onPrimaryContainer: colors.onPrimaryContainer,
-          secondary: isDark ? const Color(0xFFB8CEC2) : const Color(0xFF53675E),
-          onSecondary: isDark ? const Color(0xFF23362D) : Colors.white,
-          secondaryContainer: colors.surfaceMuted,
-          onSecondaryContainer: colors.textPrimary,
-          tertiary: colors.approaching,
-          onTertiary: onAccent,
-          tertiaryContainer: colors.approachingContainer,
-          onTertiaryContainer: colors.approaching,
-          error: colors.overtime,
-          onError: isDark ? const Color(0xFF3B0906) : Colors.white,
-          errorContainer: colors.overtimeContainer,
-          onErrorContainer: colors.overtime,
-          surface: colors.surface,
-          onSurface: colors.textPrimary,
-          outline: colors.outlineStrong,
-          outlineVariant: colors.outline,
-          shadow: shadow,
-        );
+        ? const Color(0xB3000000)
+        : const Color(0x2411131C);
+    final ColorScheme colorScheme = ColorScheme(
+      brightness: brightness,
+      primary: colors.primary,
+      onPrimary: onPrimary,
+      primaryContainer: colors.primaryContainer,
+      onPrimaryContainer: colors.onPrimaryContainer,
+      secondary: secondary,
+      onSecondary: onSecondary,
+      secondaryContainer: secondaryContainer,
+      onSecondaryContainer: onSecondaryContainer,
+      tertiary: colors.approaching,
+      onTertiary: onAccent,
+      tertiaryContainer: colors.approachingContainer,
+      onTertiaryContainer: colors.approaching,
+      error: colors.overtime,
+      onError: onError,
+      errorContainer: colors.overtimeContainer,
+      onErrorContainer: colors.overtime,
+      surface: colors.surface,
+      onSurface: colors.textPrimary,
+      surfaceDim: isDark ? colors.canvas : const Color(0xFFDDE0EA),
+      surfaceBright: isDark ? const Color(0xFF2C2F40) : colors.surface,
+      surfaceContainerLowest: isDark ? colors.canvas : colors.surface,
+      surfaceContainerLow: isDark ? colors.surface : colors.canvas,
+      surfaceContainer: isDark
+          ? const Color(0xFF0F1116)
+          : const Color(0xFFF0F2F7),
+      surfaceContainerHigh: colors.surfaceMuted,
+      surfaceContainerHighest: isDark
+          ? const Color(0xFF252833)
+          : const Color(0xFFDEE1EB),
+      onSurfaceVariant: colors.textSecondary,
+      outline: colors.outlineStrong,
+      outlineVariant: colors.outline,
+      shadow: shadow,
+      scrim: const Color(0xFF000000),
+      inverseSurface: isDark
+          ? const Color(0xFFE8EAF2)
+          : const Color(0xFF1A1D24),
+      onInverseSurface: isDark
+          ? const Color(0xFF11131C)
+          : const Color(0xFFF2F3F7),
+      inversePrimary: isDark
+          ? const Color(0xFF1E3A8A)
+          : const Color(0xFF82AAFF),
+      surfaceTint: Colors.transparent,
+    );
     final TextTheme textTheme = ChronoTypography.textTheme(
       ChronoColorsForTypography(
         primary: colors.textPrimary,

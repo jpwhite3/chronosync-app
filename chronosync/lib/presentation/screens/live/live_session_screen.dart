@@ -1222,18 +1222,19 @@ class _DisplaySessionViewState extends State<_DisplaySessionView> {
   Widget build(BuildContext context) {
     final LiveSessionViewData data = widget.data;
     final VoidCallback? onClose = widget.onClose;
-    const Color background = Color(0xFF101713);
-    const Color foreground = Color(0xFFF7F5EF);
-    const Color secondary = Color(0xFFB9C7BF);
+    const ChronoColors displayColors = ChronoColors.dark;
+    final Color background = displayColors.canvas;
+    final Color foreground = displayColors.textPrimary;
+    final Color secondary = displayColors.textSecondary;
     final ChronoStatus status = _statusFor(data);
     final Color accent = switch (status) {
-      ChronoStatus.disconnected => const Color(0xFFFFC9BF),
-      ChronoStatus.approaching => const Color(0xFFFFD27A),
-      ChronoStatus.due => const Color(0xFFFFB36B),
-      ChronoStatus.overtime => const Color(0xFFFF8D7D),
-      ChronoStatus.paused => const Color(0xFFD6C7FF),
+      ChronoStatus.disconnected => displayColors.disconnected,
+      ChronoStatus.approaching => displayColors.approaching,
+      ChronoStatus.due => displayColors.due,
+      ChronoStatus.overtime => displayColors.overtime,
+      ChronoStatus.paused => const Color(0xFFC792EA),
       ChronoStatus.ended => secondary,
-      _ => const Color(0xFF8ED8BC),
+      _ => displayColors.live,
     };
     return Scaffold(
       backgroundColor: background,
@@ -1373,10 +1374,10 @@ class _DisplaySessionViewState extends State<_DisplaySessionView> {
                                   ),
                                   const Spacer(),
                                   DecoratedBox(
-                                    decoration: const BoxDecoration(
+                                    decoration: BoxDecoration(
                                       border: Border(
                                         top: BorderSide(
-                                          color: Color(0xFF38463E),
+                                          color: displayColors.outline,
                                         ),
                                       ),
                                     ),

@@ -163,12 +163,16 @@ class EventListScreen extends StatelessWidget {
                     final int duration =
                         int.tryParse(durationController.text) ?? 0;
                     if (duration < 1) {
+                      final ColorScheme colorScheme = Theme.of(
+                        context,
+                      ).colorScheme;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text(
                             'Interval duration must be at least 1 second',
+                            style: TextStyle(color: colorScheme.onError),
                           ),
-                          backgroundColor: Colors.red,
+                          backgroundColor: colorScheme.error,
                         ),
                       );
                       return;
@@ -269,12 +273,16 @@ class EventListScreen extends StatelessWidget {
                     final int duration =
                         int.tryParse(durationController.text) ?? 0;
                     if (duration < 1) {
+                      final ColorScheme colorScheme = Theme.of(
+                        context,
+                      ).colorScheme;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text(
                             'Interval duration must be at least 1 second',
+                            style: TextStyle(color: colorScheme.onError),
                           ),
-                          backgroundColor: Colors.red,
+                          backgroundColor: colorScheme.error,
                         ),
                       );
                       return;

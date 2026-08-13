@@ -1,5 +1,7 @@
-# Launch Screen Assets
+# ChronoSync Launch Screen Assets
 
-You can customize the launch screen with your own desired assets by replacing the image files in this directory.
+These light and dark launch images are generated from the canonical ChronoSync
+identity artwork in `tool/branding/chronosync_app_icon.svg`.
 
-You can also do it by opening your Flutter project's Xcode project with `open ios/Runner.xcworkspace`, selecting `Runner/Assets.xcassets` in the Project Navigator and dropping in the desired images.
+Run `tool/branding/generate_assets.sh` from the app directory after changing
+the source SVG. Do not edit the generated PNG files directly.

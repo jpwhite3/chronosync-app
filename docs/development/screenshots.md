@@ -16,9 +16,11 @@ asset set:
 | `docs/assets/tutorial/iphone/` | PNG | 1206 x 2622 | 402 x 874 points at 3x |
 | `docs/assets/tutorial/mac/` | PNG | 1824 x 1488 | 912 x 744 points at 2x |
 
-Use light appearance, default text scaling, and a consistent system status bar.
-Close menus, snackbars, software keyboards, and unrelated windows unless they
-are the subject of the image. Keep the pointer outside the capture.
+Use light appearance for the iPhone set and dark appearance for the web,
+Participant, and Mac sets. This split deliberately demonstrates both sides of
+the Dark Deco palette. Keep default text scaling and a consistent system status
+bar. Close menus, snackbars, software keyboards, and unrelated windows unless
+they are the subject of the image. Keep the pointer outside the capture.
 
 ## Canonical Synthetic Fixture
 

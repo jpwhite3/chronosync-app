@@ -1,4 +1,5 @@
 import 'package:chronosync/data/models/series_statistics.dart';
+import 'package:chronosync/presentation/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 /// Displays aggregate series statistics at completion
@@ -54,7 +55,7 @@ class SeriesStatisticsPanel extends StatelessWidget {
                   ? 'Ahead of schedule'
                   : 'On time',
               statistics.overUnderTimeFormatted,
-              _getOverUnderColor(statistics),
+              _getOverUnderColor(context, statistics),
             ),
           ],
         ),
@@ -85,14 +86,15 @@ class SeriesStatisticsPanel extends StatelessWidget {
   }
 
   /// Returns color for over/under time display
-  /// Red for overtime, green for undertime, neutral for on-time
-  Color _getOverUnderColor(SeriesStatistics stats) {
+  /// Uses the semantic timing palette for overtime, success, and neutral data.
+  Color _getOverUnderColor(BuildContext context, SeriesStatistics stats) {
+    final ChronoColors colors = context.chronoColors;
     if (stats.isOvertime) {
-      return Colors.red;
+      return colors.overtime;
     } else if (stats.isUndertime) {
-      return Colors.green;
+      return colors.success;
     } else {
-      return Colors.grey;
+      return colors.textSecondary;
     }
   }
 }

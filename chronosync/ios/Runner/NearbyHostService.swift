@@ -1531,6 +1531,27 @@ final class NearbyHostService: NSObject, FlutterStreamHandler {
       && joinPage.contains("Connect when everyone is ready.")
   }
 
+  static func fallbackJoinPageUsesAdaptiveDarkDecoPalette() -> Bool {
+    let requiredTokens = [
+      #"name="color-scheme" content="light dark""#,
+      "--canvas: #F4F5FA;",
+      "--surface: #FFFFFF;",
+      "--text-primary: #11131C;",
+      "--text-secondary: #4B526D;",
+      "--primary: #1E3A8A;",
+      "@media (prefers-color-scheme: dark)",
+      "--canvas: #050608;",
+      "--surface: #0B0C0E;",
+      "--surface-muted: #1A1D24;",
+      "--text-primary: #E8E8E8;",
+      "--text-secondary: #BABED8;",
+      "--primary: #666AF5;",
+      "--primary-pressed: #7A7DFF;",
+      "--warning: #FFCB6B;",
+    ]
+    return requiredTokens.allSatisfy { joinPage.contains($0) }
+  }
+
   private func constantTimeEqual(_ lhs: String, _ rhs: String) -> Bool {
     let left = [UInt8](lhs.utf8)
     let right = [UInt8](rhs.utf8)
@@ -1645,24 +1666,63 @@ final class NearbyHostService: NSObject, FlutterStreamHandler {
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-      <meta name="theme-color" content="#174E3A">
+      <meta name="theme-color" content="#F4F5FA" media="(prefers-color-scheme: light)">
+      <meta name="theme-color" content="#050608" media="(prefers-color-scheme: dark)">
+      <meta name="color-scheme" content="light dark">
       <title>Join ChronoSync</title>
       <style>
-        :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+        :root {
+          color-scheme: light dark;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          --canvas: #F4F5FA;
+          --surface: #FFFFFF;
+          --surface-muted: #E8EAF2;
+          --text-primary: #11131C;
+          --text-secondary: #4B526D;
+          --outline: #7D849E;
+          --primary: #1E3A8A;
+          --primary-pressed: #152A67;
+          --on-primary: #FFFFFF;
+          --success: #4A5D23;
+          --warning: #765300;
+          --danger: #842331;
+          --glow: rgba(255, 203, 107, .22);
+          --shadow: rgba(17, 19, 28, .20);
+        }
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --canvas: #050608;
+            --surface: #0B0C0E;
+            --surface-muted: #1A1D24;
+            --text-primary: #E8E8E8;
+            --text-secondary: #BABED8;
+            --outline: #5A6077;
+            --primary: #666AF5;
+            --primary-pressed: #7A7DFF;
+            --on-primary: #050608;
+            --success: #9FB36B;
+            --warning: #FFCB6B;
+            --danger: #FF9CAC;
+            --glow: rgba(102, 106, 245, .20);
+            --shadow: rgba(0, 0, 0, .64);
+          }
+        }
         * { box-sizing: border-box; }
-        body { margin: 0; min-height: 100vh; background: #F7F3EA; color: #18332A; display: grid; place-items: center; padding: 24px; }
-        main { width: min(100%, 480px); background: white; border-radius: 24px; padding: 28px; box-shadow: 0 18px 50px rgba(24,51,42,.12); }
-        .mark { width: 48px; height: 48px; border-radius: 16px; background: #174E3A; color: white; display: grid; place-items: center; font-size: 24px; }
+        body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 88% 4%, var(--glow), transparent 24rem), var(--canvas); color: var(--text-primary); display: grid; place-items: center; padding: 24px; }
+        main { width: min(100%, 480px); background: var(--surface); border: 1px solid var(--outline); border-radius: 24px; padding: 28px; box-shadow: 0 18px 50px var(--shadow); }
+        .mark { width: 48px; height: 48px; border-radius: 16px; background: var(--primary); color: var(--on-primary); display: grid; place-items: center; font-size: 24px; }
         h1 { margin: 20px 0 8px; font-size: 30px; letter-spacing: -.5px; }
-        p { line-height: 1.5; color: #52645E; }
-        .status { margin: 24px 0; border-radius: 16px; padding: 18px; background: #F3F6F4; }
+        p { line-height: 1.5; color: var(--text-secondary); }
+        .status { margin: 24px 0; border: 1px solid var(--outline); border-radius: 16px; padding: 18px; background: var(--surface-muted); }
         .row { display: flex; align-items: center; gap: 10px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #C88724; }
-        .dot.live { background: #2D7B5B; }
-        .dot.error { background: #D66355; }
-        button { border: 0; border-radius: 14px; min-height: 50px; width: 100%; padding: 0 20px; background: #174E3A; color: white; font: inherit; font-weight: 700; cursor: pointer; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--warning); }
+        .dot.live { background: var(--success); }
+        .dot.error { background: var(--danger); }
+        button { border: 0; border-radius: 14px; min-height: 50px; width: 100%; padding: 0 20px; background: var(--primary); color: var(--on-primary); font: inherit; font-weight: 700; cursor: pointer; }
+        button:active:not(:disabled) { background: var(--primary-pressed); }
+        button:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
         button:disabled { opacity: .5; cursor: default; }
-        small { display: block; margin-top: 18px; color: #71807A; line-height: 1.45; }
+        small { display: block; margin-top: 18px; color: var(--text-secondary); line-height: 1.45; }
       </style>
     </head>
     <body>

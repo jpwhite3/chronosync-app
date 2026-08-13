@@ -7,8 +7,8 @@
     "lang": "en",
     "dir": "ltr",
     "display": "standalone",
-    "background_color": "#F7F5EF",
-    "theme_color": "#176B52",
+    "background_color": "#F4F5FA",
+    "theme_color": "#1E3A8A",
     "description": "A local-first shared timer for groups moving through a sequence together.",
     "prefer_related_applications": false,
     "icons": [
