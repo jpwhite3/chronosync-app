@@ -22,7 +22,9 @@ npm test
 Before deployment, replace `ALLOWED_ORIGINS` in `wrangler.toml` with the exact
 HTTPS origin of the ChronoSync web app. Configure Cloudflare rate limiting for
 `POST /v1/rooms`; the Worker also enforces per-room connection, controller,
-message-size, and per-connection message-rate limits.
+message-size, and per-connection message-rate limits. The product calls the
+`controller` role **Timekeeper**; the protocol name remains stable for connected
+clients.
 
 Deploy with:
 

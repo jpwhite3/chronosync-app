@@ -15,6 +15,16 @@ session.
 4. Select **Start** on the Sequence card.
 5. Choose **Just me** for a solo preview or **Online** for a shared room.
 
+![Native Mac Sequence library showing Shared rhythm](assets/tutorial/mac/library.png)
+
+*The native Mac library shows each Sequence's Intervals, runtime, and start
+controls.*
+
+![Native Mac Session setup with Just me available](assets/tutorial/mac/start-session.png)
+
+*Mac can run solo or host Online when configured; Nearby hosting remains an
+iPhone feature.*
+
 The disabled **Nearby** row is expected: nearby hosting requires iPhone.
 If **Online** is disabled, the build has no configured online service.
 
@@ -24,6 +34,11 @@ The Mac Host and Timekeeper views use the same controls as iPhone and web:
 **Advance**, **Got it**, **Pause / Resume**, quick and custom time adjustments,
 and **Jump to interval**. A Host also has **End session**. Mac provides visual
 and sound cues but does not provide haptics.
+
+![Native Mac Host view ready to start the Gather Interval](assets/tutorial/mac/live-session.png)
+
+*The Mac live view keeps the current Interval, timing status card, and next
+Interval together.*
 
 Keep the app open while hosting. If you try to quit during a live Session,
 ChronoSync asks **Quit during the live session?** Choose **Keep Session Open**

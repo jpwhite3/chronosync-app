@@ -17,6 +17,11 @@ Sequences and History are stored in this browser profile for this site. Private
 browsing, clearing site data, or using another browser profile creates a
 separate local library. Export important Sequences before clearing browser data.
 
+![Empty web Sequence library with create, sample, and join actions](assets/tutorial/web/01-empty-library.jpg)
+
+*The web library starts with clear paths to create a Sequence, try the sample,
+or join a Session.*
+
 ## Create and Run a Sequence
 
 1. Select **Create a sequence** or **Try a sample sequence**.
@@ -24,6 +29,10 @@ separate local library. Export important Sequences before clearing browser data.
    **Save**.
 3. Select **Start**.
 4. Choose **Just me** for a solo preview or **Online** for a shared room.
+
+![Web Sequence editor showing Shared rhythm and four ordered Intervals](assets/tutorial/web/02-sequence-editor.jpg)
+
+*Wide screens place Sequence settings beside the ordered Interval list.*
 
 **Nearby** is disabled on the web because only iPhone can host nearby.
 **Online** is enabled only in a deployed build configured with the secure
@@ -41,6 +50,10 @@ removes the secret invitation fragment from the visible URL. You can also:
 3. Select **Join session**.
 4. Enter **Name for this session** for a Participant invitation. Displays join
    without a name.
+
+![Web dialog for pasting a live Session invitation](assets/tutorial/participant/01-join-session.jpg)
+
+*Paste the complete invitation to join without creating an account.*
 
 For nearby sessions, the link must be opened while connected to the same Wi-Fi
 as the host iPhone. The page is served by that iPhone and works without

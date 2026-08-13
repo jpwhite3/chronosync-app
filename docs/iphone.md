@@ -14,6 +14,16 @@ online sessions, every guest role, sound, visual cues, and native haptics.
    auto-advance, and any per-Interval cue overrides.
 5. Select **Save**.
 
+![Empty iPhone Sequence library with create, sample, and join actions](assets/tutorial/iphone/01-sequence-library-empty.png)
+
+*The iPhone Sequence library keeps creating, sampling, and joining within easy
+reach.*
+
+![iPhone Sequence editor showing Shared rhythm and four Intervals](assets/tutorial/iphone/02-sequence-editor-sample.png)
+
+*The compact editor keeps Sequence settings and ordered Intervals on one
+scrollable screen.*
+
 The bottom bar provides **Sequences**, **History**, and **Settings**. The Sequence
 library menu contains import and export actions; iPhone presents the system
 picker or share sheet when a file is involved.
@@ -26,6 +36,11 @@ picker or share sheet when a file is involved.
 4. Keep the screen available for cues and controls. Use **Pause**, **Advance**,
    time adjustments, **Jump to interval**, and **Got it** as needed.
 5. Finish the final Interval and review the summary.
+
+![iPhone Host view ready to start the Gather Interval](assets/tutorial/iphone/03-live-session-ready.png)
+
+*Before the Session starts, the timer and timing status card both show
+**Scheduled**.*
 
 If an unfinished solo session exists when the app reopens, choose **Resume**
 or **Discard session**. A running timer includes the time the app was closed;

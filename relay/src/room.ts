@@ -409,7 +409,7 @@ export class Room implements DurableObject {
     ) {
       return errorResponse(
         "controller_limit",
-        "The room has reached its controller limit.",
+        "The room has reached its Timekeeper limit.",
         503,
       );
     }

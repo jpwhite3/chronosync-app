@@ -128,4 +128,4 @@ behavior untested: coverage should follow risk, branches, and contracts.
 Mirror the production path under `chronosync/test/`, name files
 `<subject>_test.dart`, and group cases by observable behavior. Relay tests live
 under `relay/test/` and use `*.test.ts`. Keep fixtures fictional, minimal, and
-free of credentials or private event data.
+free of credentials or private Session data.

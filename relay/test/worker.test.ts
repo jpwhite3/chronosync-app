@@ -1200,6 +1200,7 @@ describe("ChronoSync relay", () => {
     await expect(rejected.json()).resolves.toMatchObject({
       error: {
         code: "controller_limit",
+        message: "The room has reached its Timekeeper limit.",
       },
     });
 

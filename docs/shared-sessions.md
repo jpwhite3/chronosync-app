@@ -44,6 +44,11 @@ Host's **Connected people** view is read-only.
 4. Enter **Name for this session** for a Participant invitation.
 5. Select **Join session** and wait for the Host's encrypted snapshot.
 
+![Dialog for pasting a live Session invitation](assets/tutorial/participant/01-join-session.jpg)
+
+*A complete invitation opens the intended Session role without requiring an
+account.*
+
 ### Nearby Browser Page
 
 1. Scan the Host's QR code while connected to the same Wi-Fi.

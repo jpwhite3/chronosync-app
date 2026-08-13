@@ -7,6 +7,11 @@ through a Sequence together. Build a **Sequence**, run it as a live
 **Session**, and let others follow as a Timekeeper, Participant, or
 fullscreen Display.
 
+![Empty iPhone Sequence library with create, sample, and join actions](assets/tutorial/iphone/01-sequence-library-empty.png)
+
+*Create a Sequence, try the sample, or join a Session from the same starting
+point.*
+
 This guide describes the current iPhone, web/PWA, and native Mac apps. Any QR
 codes and invitation links used as examples are not active rooms.
 

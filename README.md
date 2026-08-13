@@ -14,6 +14,11 @@ Use it for workshops, classes, training, ceremonies, service teams,
 productions, drills, workouts, games, and any other activity where a group
 needs to share the same timing.
 
+![ChronoSync Host view running the Gather Interval with Set the pace up next](docs/assets/tutorial/web/06-live-running.jpg)
+
+*A live Session keeps the current Interval, timing status card, and next moment
+visible at a glance.*
+
 > **Project status:** ChronoSync is under active development. There is no tagged
 > public release yet, and configuration still contains placeholder application
 > identifiers. It is suitable for development and evaluation, not production

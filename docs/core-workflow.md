@@ -14,6 +14,11 @@ consistent.
 The name is stored only on this device and identifies its actions in shared
 session history. No account is created.
 
+![ChronoSync Settings showing local-by-default Sequence storage and private Sessions](assets/tutorial/web/09-settings.jpg)
+
+*Device names, local storage, and invitation privacy are configured without an
+account.*
+
 ## 2. Create a Sequence
 
 For the fastest tour, open **Sequences** and select **Try a sample sequence**.
@@ -31,6 +36,11 @@ Each Sequence card shows its Interval count, total runtime, and scheduled
 start. Use **Edit** to change it or **Start** to run it. The Sequence menu also
 provides **Duplicate**, **Export**, and **Delete**. Deleting a Sequence does not
 delete its past Session history.
+
+![Web Sequence library showing Shared rhythm with four Intervals](assets/tutorial/web/03-sequence-library.jpg)
+
+*Each Sequence card puts its Interval count, scheduled start, and run controls
+in one place.*
 
 ## 3. Build the Sequence
 
@@ -50,6 +60,10 @@ In **Edit sequence**:
 Drag an Interval by its handle to reorder it. Its menu also offers **Move up**,
 **Move down**, **Edit**, **Duplicate**, and **Delete**. The footer continuously
 shows the Interval count and total scheduled runtime.
+
+![Sequence editor showing Shared rhythm and four ordered Intervals](assets/tutorial/web/02-sequence-editor.jpg)
+
+*Build a reusable Sequence, then arrange and tune each Interval.*
 
 ### Schedule a Start
 
@@ -82,7 +96,17 @@ ChronoSync asks whether to **Keep editing** or **Discard changes**.
    card.
 2. On **How will everyone join?**, select **Just me**.
 3. Review the first Interval and select **Start session**. A scheduled Session
-   may begin automatically when its planned time arrives.
+   may begin automatically when its scheduled time arrives.
+
+![Session setup with Just me available and Nearby and Online unavailable](assets/tutorial/web/04-session-setup.jpg)
+
+*Choose **Just me** for a solo run; Nearby and Online availability depends on
+the platform and build configuration.*
+
+![Host view ready to start Shared rhythm at the Gather Interval](assets/tutorial/web/05-live-ready.jpg)
+
+*Before the Session starts, the timer and timing status card both show
+**Scheduled**.*
 
 ## 5. Operate the Live Session
 
@@ -90,6 +114,11 @@ The large timer is the current Interval's remaining time. **Elapsed** shows its
 active elapsed time, and the timing status card reports **Ahead**, **Behind**,
 or **On schedule** against the original Sequence. **Up next** previews the
 following Interval.
+
+![Host view running Gather with Set the pace up next](assets/tutorial/web/06-live-running.jpg)
+
+*During the Session, the timing status card reports **On schedule**, **Ahead**,
+or **Behind**.*
 
 Use the controls as follows:
 
@@ -118,9 +147,18 @@ the run is ending without completing the final Interval.
 The summary compares every scheduled duration with actual timing and shows total
 runtime, Timing drift, acknowledgements, and the activity count.
 
+![Session summary comparing scheduled and actual timing for four Intervals](assets/tutorial/web/07-session-summary.jpg)
+
+*The summary uses **Scheduled vs. actual** and reports **Timing drift** for every
+Interval.*
+
 Select **Export CSV** or **Export activity as CSV** for the complete activity
 record. Then close the summary. The session remains under **History**; select
 its row to reopen the summary and export it later.
+
+![History screen with the completed Shared rhythm Session](assets/tutorial/web/08-history.jpg)
+
+*History keeps completed Sessions available for later review and CSV export.*
 
 ## 7. Reuse or Move the Sequence
 
