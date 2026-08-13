@@ -19,7 +19,7 @@ class SeriesStatisticsPanel extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Series Statistics',
+              'Sequence timing',
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -27,21 +27,21 @@ class SeriesStatisticsPanel extends StatelessWidget {
             const SizedBox(height: 16),
             _buildStatRow(
               context,
-              'Events Completed',
+              'Intervals completed',
               '${statistics.eventCount}',
               null,
             ),
             const SizedBox(height: 8),
             _buildStatRow(
               context,
-              'Expected Time',
+              'Scheduled time',
               statistics.expectedTimeFormatted,
               null,
             ),
             const SizedBox(height: 8),
             _buildStatRow(
               context,
-              'Actual Time',
+              'Actual time',
               statistics.actualTimeFormatted,
               null,
             ),
@@ -49,10 +49,10 @@ class SeriesStatisticsPanel extends StatelessWidget {
             _buildStatRow(
               context,
               statistics.isOvertime
-                  ? 'Overtime'
+                  ? 'Behind schedule'
                   : statistics.isUndertime
-                  ? 'Undertime'
-                  : 'On Time',
+                  ? 'Ahead of schedule'
+                  : 'On time',
               statistics.overUnderTimeFormatted,
               _getOverUnderColor(statistics),
             ),

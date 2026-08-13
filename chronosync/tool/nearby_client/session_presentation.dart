@@ -175,14 +175,14 @@ final class NearbySessionPresentation {
       role: role,
       roleLabel: switch (role) {
         SessionRole.host => 'Host',
-        SessionRole.controller => 'Controller',
+        SessionRole.controller => 'Timekeeper',
         SessionRole.participant => 'Participant',
         SessionRole.display => 'Display',
       },
       currentStepTitle: session.currentStep.title,
       nextStepTitle: session.nextStep?.title ?? 'Session complete',
       stepPositionLabel:
-          'Step ${session.currentStepIndex + 1} of '
+          'Interval ${session.currentStepIndex + 1} of '
           '${session.planSnapshot.steps.length}',
       statusLabel: switch (session.status) {
         LiveSessionStatus.waiting => 'Waiting to start',

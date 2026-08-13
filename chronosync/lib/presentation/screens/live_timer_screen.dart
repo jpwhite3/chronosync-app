@@ -121,7 +121,7 @@ class _LiveTimerScreenState extends State<LiveTimerScreen>
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     const Text(
-                      'All events completed!',
+                      'All intervals complete!',
                       style: TextStyle(fontSize: 24),
                     ),
                     const SizedBox(height: 20),
@@ -132,7 +132,7 @@ class _LiveTimerScreenState extends State<LiveTimerScreen>
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text('Back to Series'),
+                      child: const Text('Back to Sequences'),
                     ),
                   ],
                 ),

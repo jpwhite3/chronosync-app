@@ -26,6 +26,7 @@ void main() {
     final Uint8List? bytes = await service.pickChronoSyncArchive();
 
     expect(bytes, <int>[1, 2, 3, 4]);
+    expect(picker.requestedDialogTitle, 'Import ChronoSync sequences');
     expect(picker.requestedWithData, isFalse);
     expect(picker.requestedWithReadStream, isTrue);
   });
@@ -104,6 +105,7 @@ final class _RecordingFilePicker implements FilePickerAdapter {
   _RecordingFilePicker(this.file);
 
   final PlatformFile file;
+  String? requestedDialogTitle;
   bool? requestedWithData;
   bool? requestedWithReadStream;
 
@@ -116,6 +118,7 @@ final class _RecordingFilePicker implements FilePickerAdapter {
     required bool withData,
     required bool withReadStream,
   }) async {
+    requestedDialogTitle = dialogTitle;
     requestedWithData = withData;
     requestedWithReadStream = withReadStream;
     return FilePickerResult(<PlatformFile>[file]);

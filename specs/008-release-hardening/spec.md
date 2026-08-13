@@ -16,15 +16,15 @@ solo session is interrupted, without weakening shared-session authority.
   list.
 - At startup, offer only the newest non-ended solo session owned by the current
   device and retaining complete local history. Preserve its ID, revision,
-  embedded Plan snapshot, activities, and current Step.
+  embedded `Plan` snapshot, activities, and current `Step`.
 - Require an explicit, non-dismissible **Resume** or **Discard session** choice.
   Discard removes the unfinished session and its recovery metadata.
 - A recovered running session derives elapsed and remaining time from its
   original UTC timestamps, so downtime counts as running time. A recovered
   paused session remains frozen until the user resumes it from the live view.
-  A waiting solo session reopens at its first Step.
+  A waiting solo session reopens at its first `Step`.
 - Do not synthesize a recovery activity or silently overwrite the original
-  Plan. Recovery is process restoration, not a runbook state transition.
+  `Plan`. Recovery is process restoration, not a session state transition.
 - Purge unfinished shared-host and shared-participant snapshots during startup.
   They are not resumable because transport credentials, encryption context,
   and host authority are intentionally ephemeral. Ended history remains.
@@ -53,4 +53,4 @@ solo session is interrupted, without weakening shared-session authority.
 
 Physical-device and production-environment validation, the full accessibility
 matrix, localization infrastructure, privacy and store-release artifacts, and
-250-Step/50-connection/eight-hour performance qualification remain pending.
+250-Interval/50-connection/eight-hour performance qualification remain pending.

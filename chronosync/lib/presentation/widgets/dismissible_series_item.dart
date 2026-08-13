@@ -59,7 +59,10 @@ class DismissibleSeriesItem extends StatelessWidget {
           ),
           child: ListTile(
             title: Text(series.title),
-            subtitle: Text('${series.events.length} event(s)'),
+            subtitle: Text(
+              '${series.events.length} '
+              '${series.events.length == 1 ? 'interval' : 'intervals'}',
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[

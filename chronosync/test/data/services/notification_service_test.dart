@@ -45,7 +45,7 @@ void main() {
     calls.clear();
   });
 
-  test('initializes and shows an event completion notification', () async {
+  test('initializes and shows an interval completion notification', () async {
     final NotificationService service = NotificationService(
       settingsRepository: _StubSettingsRepository(),
     );
@@ -63,7 +63,7 @@ void main() {
       calls.first.arguments,
       containsPair('defaultIcon', '@mipmap/ic_launcher'),
     );
-    expect(calls.last.arguments, containsPair('title', 'Event Complete'));
+    expect(calls.last.arguments, containsPair('title', 'Interval complete'));
     expect(
       calls.last.arguments,
       containsPair('body', 'Closing remarks has finished'),

@@ -24,7 +24,7 @@ class SettingsScreen extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.notifications_active),
                   title: const Text('Notifications & Haptics'),
-                  subtitle: const Text('Configure event completion alerts'),
+                  subtitle: const Text('Configure interval completion alerts'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () async {
                     // Initialize notification settings repository
@@ -85,14 +85,14 @@ class SettingsScreen extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(
-                    'Auto-Progress',
+                    'Auto-advance',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SwitchListTile(
                   title: const Text('Audio Cue'),
                   subtitle: const Text(
-                    'Play sound when auto-progressing to next event',
+                    'Play sound when auto-advancing to the next interval',
                   ),
                   value: state.autoProgressAudioEnabled,
                   onChanged: (bool value) {

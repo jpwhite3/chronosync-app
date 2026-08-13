@@ -1386,10 +1386,11 @@ final class LiveSessionController extends ChangeNotifier
         SessionCommandError.confirmationRequired =>
           'Confirm this action before continuing.',
         SessionCommandError.invalidAdjustment =>
-          'That adjustment would make the step duration invalid.',
+          'That adjustment would make the interval duration invalid.',
         SessionCommandError.invalidState =>
           'That control is not available in the current session state.',
-        SessionCommandError.invalidStep => 'That step is no longer available.',
+        SessionCommandError.invalidStep =>
+          'That interval is no longer available.',
         SessionCommandError.wrongSession =>
           'That command belongs to another session.',
       };

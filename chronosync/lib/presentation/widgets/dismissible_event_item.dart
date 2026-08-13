@@ -82,8 +82,8 @@ class DismissibleEventItem extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Cannot Delete'),
-        content: const Text('Event is in use. Stop the timer first.'),
+        title: const Text('Cannot delete'),
+        content: const Text('Interval is in use. Stop the timer first.'),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),

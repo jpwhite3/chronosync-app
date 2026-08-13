@@ -3,28 +3,34 @@
 [![CI](https://github.com/jpwhite3/chronosync-app/actions/workflows/ci.yml/badge.svg)](https://github.com/jpwhite3/chronosync-app/actions/workflows/ci.yml)
 [![Security](https://github.com/jpwhite3/chronosync-app/actions/workflows/security.yml/badge.svg)](https://github.com/jpwhite3/chronosync-app/actions/workflows/security.yml)
 
-ChronoSync is an account-free, local-first timed runbook for live event teams.
-Create a plan, run it from iPhone, Mac, or the web, and keep every role aligned
-on the current step, next step, remaining time, and schedule variance.
+**Time moves together.**
+
+ChronoSync is an account-free, local-first shared timer for groups moving
+through a Sequence together. Build a reusable Sequence of timed Intervals, run
+it from iPhone, Mac, or the web, and keep every person and display aligned on
+what is happening now, what comes next, and how the timing is drifting.
+
+Use it for workshops, classes, training, ceremonies, service teams,
+productions, drills, workouts, games, and any other activity where a group
+needs to share the same timing.
 
 > **Project status:** ChronoSync is under active development. There is no tagged
 > public release yet, and configuration still contains placeholder application
 > identifiers. It is suitable for development and evaluation, not production
 > deployment.
 
-![ChronoSync shared-session lobby](docs/assets/tutorial/shared/01-session-lobby.jpg)
-
 ## Highlights
 
-- Build reusable plans with ordered, timed steps, cues, scheduled starts, and
-  optional auto-advance.
-- Run solo or share a live session as Host, Controller, Participant, or Display.
+- Build reusable Sequences with ordered, timed Intervals, cues, scheduled
+  starts, and optional auto-advance.
+- Run solo or share a live Session as Host, Timekeeper, Participant, or Display.
 - Host nearby sessions from a foreground iPhone without Internet access.
 - Host anonymous online sessions through the optional Cloudflare relay.
-- Keep plans and history on the local device unless they are explicitly
+- Keep Sequences and history on the local device unless they are explicitly
   exported.
-- Move plans with versioned `.chronosync` archives and export activity as CSV.
-- Recover interrupted solo sessions and review planned-versus-actual results.
+- Move Sequences with versioned `.chronosync` archives and export activity as
+  CSV.
+- Recover interrupted solo Sessions and review scheduled-versus-actual timing.
 
 ## Supported Platforms
 
@@ -71,7 +77,7 @@ online rooms, build variants, generated assets, and device configuration.
 ## Documentation
 
 - [User guide](docs/README.md) — step-by-step iPhone, Mac, web, and shared-session
-  instructions with screenshots.
+  instructions.
 - [Developer handbook](docs/development/README.md) — setup, architecture,
   testing, relay development, releases, and troubleshooting.
 - [Contributing](CONTRIBUTING.md) — TDD workflow, standards, and pull-request
@@ -97,17 +103,19 @@ specs/                   Feature requirements, contracts, and implementation pla
 
 The active implementation uses immutable `Plan` and `LiveSession` domain
 models, Drift persistence, `LiveSessionController`, and host-authoritative
-session transports. Read the architecture guide before changing session state,
-persistence, or synchronization behavior.
+session transports. The product calls these reusable objects Sequences while
+retaining `Plan` in compatibility-sensitive code. Read the architecture guide
+before changing session state, persistence, or synchronization behavior.
 
 ## Privacy and Security
 
 ChronoSync has no accounts and sends no product analytics by default. Online
-session payloads are end-to-end encrypted; the relay coordinates opaque room
-state and does not receive decrypted plans. Nearby traffic is authenticated and
-encrypted at the application layer, but nearby sessions are intended for
-trusted local networks. Invitation links contain capabilities: treat them as
-secrets and never include them in issues, logs, screenshots, or test fixtures.
+Session payloads are end-to-end encrypted; the relay coordinates opaque room
+state and does not receive decrypted Sequence contents. Nearby traffic is
+authenticated and encrypted at the application layer, but nearby sessions are
+intended for trusted local networks. Invitation links contain capabilities:
+treat them as secrets and never include them in issues, logs, screenshots, or
+test fixtures.
 
 For suspected vulnerabilities, read [SECURITY.md](SECURITY.md) and establish a
 private channel before sharing technical details.

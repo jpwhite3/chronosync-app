@@ -1,7 +1,7 @@
 import 'package:chronosync/domain/session/live_session.dart';
 import 'package:flutter/foundation.dart';
 
-/// The timer's visual phase after applying the current step's cue profile.
+/// The timer's visual phase after applying the current interval's cue profile.
 enum LiveTimingPhase { normal, approaching, due, overtime }
 
 /// One device's acknowledgement of a step.

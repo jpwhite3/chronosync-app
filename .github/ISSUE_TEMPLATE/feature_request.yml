@@ -40,7 +40,7 @@ body:
       label: Live-session roles
       options:
         - label: Host
-        - label: Controller
+        - label: Timekeeper
         - label: Participant
         - label: Display
         - label: Not role-specific
@@ -70,5 +70,5 @@ body:
       options:
         - label: I searched existing issues and feature specifications.
           required: true
-        - label: I did not include invitations, capabilities, secrets, identifiers, or sensitive plan data.
+        - label: I did not include invitations, capabilities, secrets, identifiers, or sensitive Sequence data.
           required: true

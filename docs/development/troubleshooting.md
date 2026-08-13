@@ -8,8 +8,8 @@ make devices
 make help
 ```
 
-Use the smallest corrective action below. Preserve local plan/history data and
-uncommitted source changes before cleaning or reinstalling anything.
+Use the smallest corrective action below. Preserve local Sequence/History data
+and uncommitted source changes before cleaning or reinstalling anything.
 
 ## Flutter or CocoaPods Cannot Find Generated Configuration
 
@@ -131,13 +131,13 @@ This is expected when the guest cannot verify active host authority. Check that:
 Guests intentionally freeze the last verified timer. Do not work around stale
 state by advancing locally or promoting a guest to host.
 
-## Web Plans or History Disappeared
+## Web Sequences or History Disappeared
 
 Web data is local to the browser profile and origin. Private browsing, site-data
 clearing, a different hostname/port, or browser storage eviction creates a
 different or empty library. Import a prior `.chronosync` export if available.
 
-Before clearing site data for diagnosis, export important plans. Session
+Before clearing site data for diagnosis, export important Sequences. Session
 history is not automatically synchronized between devices.
 
 ## Drift Web Worker or WASM Fails to Load

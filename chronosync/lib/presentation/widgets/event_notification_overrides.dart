@@ -71,7 +71,7 @@ class EventNotificationOverrides extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Override global notification settings for this event',
+                      'Override global notification settings for this interval',
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                     const SizedBox(height: 16),
@@ -175,7 +175,7 @@ class EventNotificationOverrides extends StatelessWidget {
                               );
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Event settings saved'),
+                                  content: Text('Interval settings saved'),
                                   duration: Duration(seconds: 2),
                                 ),
                               );

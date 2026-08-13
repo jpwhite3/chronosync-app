@@ -17,7 +17,7 @@ void main() {
     ) async {
       await _pumpSummary(tester, size: size, data: _summaryData());
 
-      expect(find.text('Planned vs. actual'), findsOneWidget);
+      expect(find.text('Scheduled vs. actual'), findsOneWidget);
       expect(find.text('Opening keynote'), findsOneWidget);
       expect(find.text('Not reached'), findsOneWidget);
       expect(find.text('Sam Rivera'), findsOneWidget);
@@ -104,7 +104,7 @@ void main() {
       );
 
       expect(find.text('Session summary'), findsOneWidget);
-      expect(find.text('Planned vs. actual'), findsOneWidget);
+      expect(find.text('Scheduled vs. actual'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

@@ -93,16 +93,16 @@ void main() {
 
     expect(find.text('Advance'), findsOneWidget);
     expect(
-      find.bySemanticsLabel('Acknowledge the current step'),
+      find.bySemanticsLabel('Acknowledge the current interval'),
       findsOneWidget,
     );
-    expect(find.text('Jump to step'), findsOneWidget);
+    expect(find.text('Jump to interval'), findsOneWidget);
     expect(find.text('End session'), findsNothing);
 
     await tester.ensureVisible(
-      find.bySemanticsLabel('Acknowledge the current step'),
+      find.bySemanticsLabel('Acknowledge the current interval'),
     );
-    await tester.tap(find.bySemanticsLabel('Acknowledge the current step'));
+    await tester.tap(find.bySemanticsLabel('Acknowledge the current interval'));
 
     expect(acknowledged, isTrue);
     expect(tester.takeException(), isNull);
@@ -155,7 +155,7 @@ void main() {
       );
 
       final Finder announcement = find.bySemanticsLabel(
-        'Current step Opening keynote. Session running.',
+        'Current interval Opening keynote. Session running.',
       );
       expect(announcement, findsOneWidget);
       expect(

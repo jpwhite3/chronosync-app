@@ -255,7 +255,7 @@ String _displayNameFor({
   }
   return switch (actorRole) {
     SessionRole.host => 'Host',
-    SessionRole.controller => 'Controller',
+    SessionRole.controller => 'Timekeeper',
     SessionRole.participant => 'Participant',
     SessionRole.display => 'Display',
   };

@@ -41,11 +41,11 @@ final class PlanArchiveService {
   Uint8List exportPlans(Iterable<Plan> plans, {DateTime? exportedAt}) {
     final List<Plan> selected = List<Plan>.unmodifiable(plans);
     if (selected.isEmpty) {
-      throw const FormatException('Select at least one plan to export.');
+      throw const FormatException('Select at least one sequence to export.');
     }
     if (selected.length > _maximumImportedPlans) {
       throw const FormatException(
-        'A ChronoSync archive cannot contain more than 500 plans.',
+        'A ChronoSync archive cannot contain more than 500 sequences.',
       );
     }
     final DateTime timestamp = (exportedAt ?? DateTime.now()).toUtc();
@@ -65,7 +65,7 @@ final class PlanArchiveService {
     if (utf8.encode(manifestJson).length > _maximumArchiveEntryBytes ||
         utf8.encode(plansJson).length > _maximumArchiveEntryBytes) {
       throw const FormatException(
-        'The selected plans exceed the 10 MB ChronoSync archive limit.',
+        'The selected sequences exceed the 10 MB ChronoSync archive limit.',
       );
     }
     final Archive archive = Archive()
@@ -74,7 +74,7 @@ final class PlanArchiveService {
     final Uint8List encoded = ZipEncoder().encodeBytes(archive);
     if (encoded.length > maximumChronoSyncArchiveBytes) {
       throw const FormatException(
-        'The selected plans exceed the 10 MB ChronoSync archive limit.',
+        'The selected sequences exceed the 10 MB ChronoSync archive limit.',
       );
     }
     return encoded;
@@ -113,7 +113,7 @@ final class PlanArchiveService {
     _requireArchiveVersion(plansPayload);
     if (manifest['format'] != 'com.chronosync.plans') {
       throw const FormatException(
-        'This archive is not a ChronoSync plan file.',
+        'This archive is not a ChronoSync sequence file.',
       );
     }
 
@@ -122,19 +122,19 @@ final class PlanArchiveService {
         plansValue.isEmpty ||
         plansValue.length > _maximumImportedPlans) {
       throw const FormatException(
-        'An archive must contain between 1 and 500 plans.',
+        'An archive must contain between 1 and 500 sequences.',
       );
     }
     final List<Plan> plans = plansValue
         .map<Plan>((Object? value) {
           if (value is! Map<Object?, Object?>) {
-            throw const FormatException('An imported plan is malformed.');
+            throw const FormatException('An imported sequence is malformed.');
           }
           return Plan.fromJson(Map<String, Object?>.from(value));
         })
         .toList(growable: false);
     if (manifest['planCount'] != plans.length) {
-      throw const FormatException('The archive plan count does not match.');
+      throw const FormatException('The archive sequence count does not match.');
     }
 
     final Object? exportedAtValue = manifest['exportedAt'];

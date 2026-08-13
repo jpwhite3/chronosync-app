@@ -33,8 +33,9 @@
   Display, online hosting, import/export, and sound cues.
 - [ ] T013 Exercise production PWA and relay origins, invitation precedence,
   reconnect, revocation, expiry, Wi-Fi interruption, and host backgrounding.
-- [ ] T014 Run representative event-team beta sessions and record defects and
-  acceptance results.
+- [ ] T014 Run representative beta sessions across workshops, classes,
+  training, ceremonies, service teams, productions, drills, workouts, and
+  games; record defects and acceptance results.
 
 ## Accessibility and Localization — Pending
 
@@ -43,16 +44,18 @@
 - [ ] T016 Test Dynamic Type/text scaling through at least 200–300 percent and
   resolve overflow without reducing the 44-point target size.
 - [ ] T017 Recheck WCAG 2.2 AA contrast, semantics, and responsive golden tests.
-- [ ] T018 Add generated Flutter localization and extract core Plan, lobby,
-  live-session, recovery, history, and error strings.
+- [ ] T018 Add generated Flutter localization and extract core Sequence,
+  lobby, live-session, recovery, history, and error strings.
 
 ## Privacy, Performance, and Release — Pending
 
 - [ ] T019 Add and validate Apple privacy manifests, privacy disclosures, data
   retention language, and account-free product policy.
 - [ ] T020 Finalize bundle identifiers, signing, versions, production relay/PWA
-  configuration, App Store metadata, screenshots, and web release assets.
-- [ ] T021 Qualify 250-Step Plans, 50 connected devices, eight-hour sessions,
-  and LAN/online update latency targets with deterministic tests and profiling.
+  configuration, App Store metadata, and web release assets; recapture product
+  and tutorial screenshots with Sequence, Interval, and Timekeeper language.
+- [ ] T021 Qualify 250-Interval Sequences, 50 connected devices, eight-hour
+  sessions, and LAN/online update latency targets with deterministic tests and
+  profiling.
 - [ ] T022 Run final format, analyze, Flutter/relay/native tests, release builds,
   signing checks, and manual acceptance checklist before release approval.

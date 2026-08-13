@@ -18,7 +18,7 @@ class SeriesListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Series'),
+        title: const Text('Sequences'),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.settings),
@@ -38,7 +38,9 @@ class SeriesListScreen extends StatelessWidget {
           if (state is DeletionError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: const Text('Could not delete the series. Try again.'),
+                content: const Text(
+                  'Could not delete the sequence. Try again.',
+                ),
                 duration: const Duration(seconds: 5),
                 action: SnackBarAction(
                   label: 'Retry',
@@ -77,7 +79,7 @@ class SeriesListScreen extends StatelessWidget {
                       // Show undo snackbar
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: const Text('Series deleted'),
+                          content: const Text('Sequence deleted'),
                           duration: const Duration(seconds: 8),
                           action: SnackBarAction(
                             label: 'Undo',
@@ -111,10 +113,10 @@ class SeriesListScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Create Series'),
+          title: const Text('Create sequence'),
           content: TextField(
             controller: titleController,
-            decoration: const InputDecoration(hintText: 'Series Title'),
+            decoration: const InputDecoration(hintText: 'Sequence title'),
           ),
           actions: <Widget>[
             TextButton(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Visual indicator shown when auto-progression occurs
 ///
 /// Displays a brief SnackBar notification to inform the user
-/// that the timer has automatically advanced to the next event.
+/// that the timer has automatically advanced to the next interval.
 class AutoProgressIndicator {
   /// Show the auto-progress indicator using a SnackBar
   static void show(BuildContext context, {String? nextEventTitle}) {

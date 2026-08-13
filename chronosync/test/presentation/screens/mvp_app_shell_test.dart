@@ -52,7 +52,7 @@ void main() {
 
     expect(find.byType(NavigationRail), findsOneWidget);
     expect(find.byType(NavigationBar), findsNothing);
-    expect(find.text('Your plans'), findsOneWidget);
+    expect(find.text('Your sequences'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

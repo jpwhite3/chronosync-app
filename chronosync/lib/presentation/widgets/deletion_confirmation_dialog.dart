@@ -15,9 +15,10 @@ class DeletionConfirmationDialog extends StatelessWidget {
     }
 
     return AlertDialog(
-      title: Text('Delete series "$displayTitle"?'),
+      title: Text('Delete sequence "$displayTitle"?'),
       content: Text(
-        'This will permanently delete ${series.events.length} event(s).',
+        'This will permanently delete ${series.events.length} '
+        '${series.events.length == 1 ? 'interval' : 'intervals'}.',
       ),
       actions: <Widget>[
         TextButton(

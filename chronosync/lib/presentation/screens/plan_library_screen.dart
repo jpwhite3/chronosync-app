@@ -106,7 +106,7 @@ class PlanLibraryScreen extends StatelessWidget {
                                                   ).scale(1) -
                                                   1)
                                               .clamp(0, 2) *
-                                          260),
+                                          300),
                                 ),
                             itemCount: plans.length,
                             itemBuilder: (BuildContext context, int index) {
@@ -135,7 +135,7 @@ class PlanLibraryScreen extends StatelessWidget {
               : FloatingActionButton.extended(
                   onPressed: () => _createPlan(context),
                   icon: const Icon(Icons.add_rounded),
-                  label: const Text('New plan'),
+                  label: const Text('New sequence'),
                 ),
         );
       },
@@ -154,7 +154,7 @@ class PlanLibraryScreen extends StatelessWidget {
       }
     } on Object {
       if (context.mounted) {
-        _showMessage(context, 'Could not create the plan. Try again.');
+        _showMessage(context, 'Could not create the sequence. Try again.');
       }
     }
   }
@@ -163,7 +163,7 @@ class PlanLibraryScreen extends StatelessWidget {
     Plan? base;
     bool savedExample = false;
     try {
-      base = await repository.createPlan(title: 'Event run of show');
+      base = await repository.createPlan(title: 'Shared rhythm');
       final DateTime now = DateTime.now().toUtc();
       final Plan example = base.copyWith(
         steps: <Step>[
@@ -171,28 +171,28 @@ class PlanLibraryScreen extends StatelessWidget {
             id: '${base.id}-welcome',
             planId: base.id,
             position: 0,
-            title: 'Welcome and doors open',
+            title: 'Gather',
             durationSeconds: 300,
           ),
           Step(
             id: '${base.id}-keynote',
             planId: base.id,
             position: 1,
-            title: 'Opening keynote',
+            title: 'Set the pace',
             durationSeconds: 1800,
           ),
           Step(
             id: '${base.id}-questions',
             planId: base.id,
             position: 2,
-            title: 'Audience questions',
+            title: 'Focus time',
             durationSeconds: 600,
           ),
           Step(
             id: '${base.id}-close',
             planId: base.id,
             position: 3,
-            title: 'Closing notes',
+            title: 'Wrap up',
             durationSeconds: 300,
           ),
         ],
@@ -214,7 +214,10 @@ class PlanLibraryScreen extends StatelessWidget {
         }
       }
       if (context.mounted) {
-        _showMessage(context, 'Could not create the example plan. Try again.');
+        _showMessage(
+          context,
+          'Could not create the sample sequence. Try again.',
+        );
       }
     }
   }
@@ -246,7 +249,7 @@ class PlanLibraryScreen extends StatelessWidget {
       }
     } on Object {
       if (context.mounted) {
-        _showMessage(context, 'Could not duplicate the plan. Try again.');
+        _showMessage(context, 'Could not duplicate the sequence. Try again.');
       }
     }
   }
@@ -255,7 +258,7 @@ class PlanLibraryScreen extends StatelessWidget {
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Delete plan?'),
+        title: const Text('Delete sequence?'),
         content: Text(
           '“${plan.title}” will be removed from this device. '
           'Past session history stays available.',
@@ -279,11 +282,11 @@ class PlanLibraryScreen extends StatelessWidget {
       try {
         await repository.deletePlan(plan.id);
         if (context.mounted) {
-          _showMessage(context, 'Plan deleted');
+          _showMessage(context, 'Sequence deleted');
         }
       } on Object {
         if (context.mounted) {
-          _showMessage(context, 'Could not delete the plan. Try again.');
+          _showMessage(context, 'Could not delete the sequence. Try again.');
         }
       }
     }
@@ -294,14 +297,14 @@ class PlanLibraryScreen extends StatelessWidget {
       final Uint8List bytes = archiveService.exportPlans(plans);
       final String stem = plans.length == 1
           ? safeFileStem(plans.single.title)
-          : 'chronosync-plans';
+          : 'chronosync-sequences';
       await fileService.shareArchive(
         bytes: bytes,
         fileName: '$stem.chronosync',
       );
     } on Object {
       if (context.mounted) {
-        _showMessage(context, 'Could not export plans. Try again.');
+        _showMessage(context, 'Could not export sequences. Try again.');
       }
     }
   }
@@ -316,9 +319,12 @@ class PlanLibraryScreen extends StatelessWidget {
       final bool? confirmed = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text('Import plans?'),
+          title: const Text('Import sequences?'),
           content: Text(
-            '${preview.plans.length} plans and ${preview.stepCount} steps '
+            '${preview.plans.length} '
+            '${preview.plans.length == 1 ? 'sequence' : 'sequences'} and '
+            '${preview.stepCount} '
+            '${preview.stepCount == 1 ? 'interval' : 'intervals'} '
             'were exported by ChronoSync ${preview.sourceAppVersion}.',
           ),
           actions: <Widget>[
@@ -347,7 +353,11 @@ class PlanLibraryScreen extends StatelessWidget {
       );
       await repository.savePlans(imports);
       if (context.mounted) {
-        _showMessage(context, 'Imported ${imports.length} plans');
+        _showMessage(
+          context,
+          'Imported ${imports.length} '
+          '${imports.length == 1 ? 'sequence' : 'sequences'}',
+        );
       }
     } on Object {
       if (context.mounted) {
@@ -386,15 +396,15 @@ class _PlanTitleDialogState extends State<_PlanTitleDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('New plan'),
+      title: const Text('New sequence'),
       content: TextField(
         controller: _controller,
         autofocus: true,
         maxLength: 160,
         textCapitalization: TextCapitalization.sentences,
         decoration: const InputDecoration(
-          labelText: 'Plan name',
-          hintText: 'Saturday conference',
+          labelText: 'Sequence name',
+          hintText: 'Morning workshop',
         ),
         onSubmitted: (String value) => _submit(value),
       ),
@@ -441,12 +451,15 @@ class _LibraryHeader extends StatelessWidget {
     final Widget title = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Your plans', style: Theme.of(context).textTheme.headlineMedium),
+        Text(
+          'Your sequences',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
         const SizedBox(height: ChronoSpacing.xxs),
         Text(
           planCount == 1
-              ? '1 plan ready on this device'
-              : '$planCount plans ready on this device',
+              ? '1 sequence ready on this device'
+              : '$planCount sequences ready on this device',
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ],
@@ -457,7 +470,7 @@ class _LibraryHeader extends StatelessWidget {
       runSpacing: ChronoSpacing.xs,
       children: <Widget>[
         PopupMenuButton<String>(
-          tooltip: 'Plan library actions',
+          tooltip: 'Sequence library actions',
           onSelected: (String value) {
             if (value == 'import') {
               onImport();
@@ -478,7 +491,7 @@ class _LibraryHeader extends StatelessWidget {
               enabled: onExportAll != null,
               child: const ListTile(
                 leading: Icon(Icons.ios_share_rounded),
-                title: Text('Export all plans'),
+                title: Text('Export all sequences'),
               ),
             ),
           ],
@@ -491,7 +504,7 @@ class _LibraryHeader extends StatelessWidget {
         ),
         if (windowClass == ChronoWindowClass.expanded && planCount > 0)
           ChronoPrimaryButton(
-            label: 'New plan',
+            label: 'New sequence',
             icon: Icons.add_rounded,
             onPressed: onCreate,
           ),
@@ -557,7 +570,7 @@ class _PlanCard extends StatelessWidget {
     return ChronoCard(
       semanticLabel:
           '${plan.title}, ${plan.steps.length} '
-          '${plan.steps.length == 1 ? 'step' : 'steps'}',
+          '${plan.steps.length == 1 ? 'interval' : 'intervals'}',
       padding: const EdgeInsets.all(ChronoSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -574,7 +587,7 @@ class _PlanCard extends StatelessWidget {
                 ),
               ),
               PopupMenuButton<String>(
-                tooltip: 'Plan actions',
+                tooltip: 'Sequence actions',
                 onSelected: (String value) {
                   switch (value) {
                     case 'duplicate':
@@ -606,7 +619,8 @@ class _PlanCard extends StatelessWidget {
           ),
           const SizedBox(height: ChronoSpacing.xs),
           Text(
-            '${plan.steps.length} steps · '
+            '${plan.steps.length} '
+            '${plan.steps.length == 1 ? 'interval' : 'intervals'} · '
             '${formatFriendlyDuration(plan.totalDuration)}',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
@@ -639,7 +653,7 @@ class _PlanCard extends StatelessWidget {
                 child: FilledButton.icon(
                   onPressed: onStart,
                   icon: const Icon(Icons.play_arrow_rounded),
-                  label: Text(onStart == null ? 'Add steps' : 'Start'),
+                  label: Text(onStart == null ? 'Add intervals' : 'Start'),
                 ),
               ),
             ],
@@ -692,27 +706,27 @@ class _EmptyLibrary extends StatelessWidget {
                       ),
                       const SizedBox(height: ChronoSpacing.md),
                       Text(
-                        'Keep the whole team on the same step',
+                        'Keep every clock in sync',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: ChronoSpacing.xs),
                       Text(
-                        'Build a timed plan, run it live, and share the current '
-                        'moment with anyone nearby or online.',
+                        'Build a sequence of timed intervals, then share the '
+                        'live moment with anyone nearby or online.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       const SizedBox(height: ChronoSpacing.md),
                       ChronoPrimaryButton(
-                        label: 'Create a plan',
+                        label: 'Create a sequence',
                         icon: Icons.add_rounded,
                         onPressed: onCreate,
                       ),
                       const SizedBox(height: ChronoSpacing.xs),
                       TextButton(
                         onPressed: onCreateExample,
-                        child: const Text('Start with an event example'),
+                        child: const Text('Try a sample sequence'),
                       ),
                       TextButton.icon(
                         onPressed: onJoin,
@@ -740,7 +754,7 @@ class _LibraryError extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(ChronoSpacing.md),
         child: Text(
-          'ChronoSync could not open your plans.',
+          'ChronoSync could not open your sequences.',
           textAlign: TextAlign.center,
         ),
       ),

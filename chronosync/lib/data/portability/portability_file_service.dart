@@ -75,7 +75,7 @@ final class PortabilityFileService {
 
   Future<Uint8List?> pickChronoSyncArchive() async {
     final FilePickerResult? result = await _filePicker.pickFiles(
-      dialogTitle: 'Import ChronoSync plans',
+      dialogTitle: 'Import ChronoSync sequences',
       type: FileType.custom,
       allowedExtensions: const <String>['chronosync'],
       allowMultiple: false,
@@ -116,7 +116,7 @@ final class PortabilityFileService {
   }) async {
     if (_usesNativeSaveDialog) {
       await _filePicker.saveFile(
-        dialogTitle: 'Export ChronoSync plans',
+        dialogTitle: 'Export ChronoSync sequences',
         fileName: fileName,
         type: FileType.custom,
         allowedExtensions: const <String>['chronosync'],
@@ -126,7 +126,7 @@ final class PortabilityFileService {
     }
     await SharePlus.instance.share(
       ShareParams(
-        subject: 'ChronoSync plans',
+        subject: 'ChronoSync sequences',
         files: <XFile>[
           XFile.fromData(
             bytes,

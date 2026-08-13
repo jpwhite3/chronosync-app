@@ -58,7 +58,8 @@ depend on a deployed Worker or real secrets.
 - `POST /v1/rooms` creates a room and role capabilities.
 - WebSocket connections provide protocol, role, capability, and opaque device
   token through subprotocols.
-- A room accepts one active host, up to 50 guests, and up to 10 controllers.
+- A room accepts one active host, up to 50 guests, and up to 10 Timekeepers
+  (`controller` in the protocol).
 - The latest accepted encrypted snapshot is retained for reconnecting guests.
 - Capabilities expire 24 hours after creation; storage also expires after 24
   hours without activity.
@@ -75,7 +76,7 @@ Do not add logging for:
 - WebSocket frames or ciphertext;
 - capabilities, invitation fragments, or session keys;
 - opaque device tokens or raw device IDs;
-- plan titles, steps, participant names, or activity content.
+- Sequence titles, Intervals, participant names, or activity content.
 
 Safe operational telemetry should be aggregate and content-free, such as
 status codes, bounded counters, or latency distributions. Review any new

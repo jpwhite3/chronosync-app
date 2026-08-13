@@ -3692,7 +3692,7 @@ p=A.bf(0,0,a9.e+a6).a
 o=p===0?0:a2.a/p
 switch(b0.a){case 0:n="Host"
 break
-case 1:n="Controller"
+case 1:n="Timekeeper"
 break
 case 2:n="Participant"
 break
@@ -3728,7 +3728,7 @@ else a4=a0
 else a4=a0
 a5=!1
 if(b1)if(s)a5=j===B.k||c
-return new A.iC(a3.b,b0,n,a9.d,k,"Step "+m+" of "+l,i,h,g,a7<0,f,q,r,r,s,e,d,b,a,a4,a5)},
+return new A.iC(a3.b,b0,n,a9.d,k,"Interval "+m+" of "+l,i,h,g,a7<0,f,q,r,r,s,e,d,b,a,a4,a5)},
 qo(a,b,c,d,e){if(c)return B.J
 if(!d)return B.S
 if(b!=null&&a>b)return B.T
@@ -7379,7 +7379,7 @@ o.xr!==$&&A.na()
 o.xr=k
 e=m.w===B.t
 A.kR(o.a,"display-mode",e)
-k=e?"Fullscreen display":"Team participant"
+k=e?"Fullscreen display":"Participant"
 o.id.textContent=k
 o.go.hidden=e
 c.textContent=e?"Open display":"Join live session"
@@ -7427,7 +7427,7 @@ c_(){var s,r,q=this,p=q.k4
 if(p==null)return
 if(p.w===B.l){s=q.cx
 r=A.n4(s.value)
-if(r==null){s.setCustomValidity("Enter the name your team will see.")
+if(r==null){s.setCustomValidity("Enter the name others will see.")
 s.reportValidity()
 return}s.setCustomValidity("")
 s.value=r
@@ -7541,7 +7541,7 @@ s=17
 return A.x(n.aA(h),$async$af)
 case 17:s=11
 break
-case 11:case 9:n.Y(n.a3||m.w===B.t?"Live with host":"Connected \xb7 joining team\u2026",B.ar)
+case 11:case 9:n.Y(n.a3||m.w===B.t?"Live with host":"Connected \xb7 joining session\u2026",B.ar)
 n.aV()
 p=2
 s=6

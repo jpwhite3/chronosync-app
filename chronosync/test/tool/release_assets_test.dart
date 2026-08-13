@@ -92,6 +92,13 @@ void main() {
     );
     expect(index, contains('<noscript>'));
     expect(index, contains('ChronoSync requires JavaScript'));
+    expect(
+      index,
+      contains(
+        'ChronoSync keeps groups in sync through shared timed sequences.',
+      ),
+    );
+    expect(index, contains('create and run shared sequences'));
   });
 
   test('web manifest has a stable scoped identity and localized metadata', () {
@@ -105,6 +112,11 @@ void main() {
     expect(manifest['lang'], 'en');
     expect(manifest['dir'], 'ltr');
     expect(manifest['display'], 'standalone');
+    expect(
+      manifest['description'],
+      'A local-first shared timer for groups moving through a sequence '
+      'together.',
+    );
   });
 
   test('nearby entry name limit matches the shared domain contract', () {
@@ -113,6 +125,26 @@ void main() {
     ).readAsStringSync();
     expect(index, contains('id="display-name" maxlength="48"'));
     expect(index, isNot(contains('maxlength="50"')));
+  });
+
+  test('nearby client uses the Sequence and Interval product language', () {
+    final String index = File(
+      'assets/nearby_client/index.html',
+    ).readAsStringSync();
+
+    expect(index, contains('Join the live sequence.'));
+    expect(index, contains('id="step-position">Interval 1'));
+    expect(index, contains('you saw the current interval'));
+    expect(index, isNot(contains('live runbook')));
+    expect(index, isNot(contains('Team participant')));
+    expect(index, contains('Let everyone know'));
+
+    final String source = File(
+      'tool/nearby_client/main.dart',
+    ).readAsStringSync();
+    expect(source, contains("'Participant'"));
+    expect(source, contains('Enter the name others will see.'));
+    expect(source, isNot(contains('joining team')));
   });
 
   test('nearby client removes invitation secrets from browser history', () {

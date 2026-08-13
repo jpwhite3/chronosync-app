@@ -55,11 +55,11 @@ class NotificationSettingsScreen extends StatelessWidget {
                 // Notifications section
                 _buildSectionHeader('Notifications'),
                 Semantics(
-                  label: 'Enable or disable event completion notifications',
+                  label: 'Enable or disable interval completion notifications',
                   child: SwitchListTile(
                     title: const Text('Enable Notifications'),
                     subtitle: const Text(
-                      'Receive notifications when events complete',
+                      'Receive notifications when intervals complete',
                     ),
                     value: state.settings.notificationsEnabled,
                     onChanged: (bool value) {
@@ -77,7 +77,7 @@ class NotificationSettingsScreen extends StatelessWidget {
                   label: 'Enable or disable haptic feedback vibration',
                   child: SwitchListTile(
                     title: const Text('Enable Haptic Feedback'),
-                    subtitle: const Text('Vibrate when events complete'),
+                    subtitle: const Text('Vibrate when intervals complete'),
                     value: state.settings.hapticEnabled,
                     onChanged: (bool value) {
                       context.read<NotificationSettingsBloc>().add(
@@ -96,7 +96,7 @@ class NotificationSettingsScreen extends StatelessWidget {
                   label: 'Enable or disable notification sound',
                   child: SwitchListTile(
                     title: const Text('Enable Sound'),
-                    subtitle: const Text('Play sound when events complete'),
+                    subtitle: const Text('Play sound when intervals complete'),
                     value: state.settings.soundEnabled,
                     onChanged: (bool value) {
                       context.read<NotificationSettingsBloc>().add(
@@ -163,7 +163,7 @@ class NotificationSettingsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Grant permission to receive event notifications',
+                  'Grant permission to receive interval notifications',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: colorScheme.onTertiaryContainer,
                   ),

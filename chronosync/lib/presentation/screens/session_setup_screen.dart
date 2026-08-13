@@ -44,7 +44,8 @@ class SessionSetupScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: ChronoSpacing.xs),
                 Text(
-                  '${plan.steps.length} steps · '
+                  '${plan.steps.length} '
+                  '${plan.steps.length == 1 ? 'interval' : 'intervals'} · '
                   '${formatFriendlyDuration(plan.totalDuration)}',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
@@ -65,14 +66,14 @@ class SessionSetupScreen extends StatelessWidget {
                 ],
                 const SizedBox(height: ChronoSpacing.lg),
                 Text(
-                  'How will the team join?',
+                  'How will everyone join?',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: ChronoSpacing.sm),
                 _LaunchOption(
                   title: 'Just me',
                   description:
-                      'Run the plan on this device with the complete timer, '
+                      'Run the sequence on this device with the complete timer, '
                       'history, cues, and summary.',
                   icon: Icons.person_outline_rounded,
                   badge: 'Fastest',
@@ -81,7 +82,7 @@ class SessionSetupScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: ChronoSpacing.sm),
                 _LaunchOption(
-                  title: 'Nearby team',
+                  title: 'Nearby',
                   description: nearbyAvailable
                       ? 'Host from this iPhone over the current Wi‑Fi network. '
                             'No Internet connection is required.'
@@ -94,9 +95,9 @@ class SessionSetupScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: ChronoSpacing.sm),
                 _LaunchOption(
-                  title: 'Online team',
+                  title: 'Online',
                   description: onlineAvailable
-                      ? 'Share an expiring encrypted link with teammates on '
+                      ? 'Share an expiring encrypted link with anyone on '
                             'any supported browser.'
                       : 'Online rooms aren’t available in this build. You can '
                             'still run solo or join a shared session.',

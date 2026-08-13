@@ -86,7 +86,7 @@ class NotificationService {
       // Show notification if enabled
       if (notificationsEnabled && _initialized) {
         await _showNotification(
-          title: 'Event Complete',
+          title: 'Interval complete',
           body: '${event.title} has finished',
           soundEnabled: soundEnabled,
         );
@@ -114,8 +114,8 @@ class NotificationService {
       final AndroidNotificationDetails androidDetails =
           AndroidNotificationDetails(
             'event_completion',
-            'Event Completions',
-            channelDescription: 'Notifications when events complete',
+            'Interval completions',
+            channelDescription: 'Notifications when intervals complete',
             importance: Importance.high,
             priority: Priority.high,
             playSound: soundEnabled,

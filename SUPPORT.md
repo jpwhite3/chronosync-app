@@ -27,7 +27,7 @@ Use the repository's bug-report issue form. Include:
 - the smallest relevant test case, when possible.
 
 Never attach invitation URLs, capability tokens, room secrets, raw device IDs,
-or sensitive plan content. If a report may have security impact, stop, read
+or sensitive Sequence content. If a report may have security impact, stop, read
 [SECURITY.md](SECURITY.md), and establish a private channel before sharing
 details.
 

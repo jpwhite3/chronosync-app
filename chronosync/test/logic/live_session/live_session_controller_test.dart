@@ -55,6 +55,33 @@ void main() {
     expect(history.saved.last.revision, controller.session!.revision);
   });
 
+  test('describes rejected controls with interval language', () async {
+    final LiveSessionController controller =
+        await LiveSessionController.createSolo(
+          plan: _plan(),
+          identity: const DeviceIdentity(deviceId: 'host', displayName: 'Alex'),
+          historyRepository: _MemoryHistory(),
+          clock: _MutableClock(DateTime.utc(2026, 7, 28, 12)),
+        );
+    addTearDown(() async {
+      await controller.shutdown();
+      controller.dispose();
+    });
+    await controller.start();
+
+    await expectLater(controller.adjustRemaining(-10), throwsA(isA<Object>()));
+    expect(
+      controller.lastError,
+      'That adjustment would make the interval duration invalid.',
+    );
+
+    await expectLater(
+      controller.jumpTo(99, confirmed: true),
+      throwsA(isA<Object>()),
+    );
+    expect(controller.lastError, 'That interval is no longer available.');
+  });
+
   test('notifies timer listeners only when displayed time changes', () async {
     final _MutableClock clock = _MutableClock(DateTime.utc(2026, 7, 28, 12));
     final LiveSessionController controller =

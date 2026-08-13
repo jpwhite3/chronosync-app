@@ -35,7 +35,7 @@ are secrets and must never appear in source, logs, or fixtures.
 
 ## Run Offline and Solo Workflows
 
-No service configuration is required for plan editing, local history, solo
+No service configuration is required for Sequence editing, local history, solo
 sessions, imports, or exports:
 
 ```sh
@@ -45,7 +45,7 @@ make run-ios
 ```
 
 The web app persists through browser storage. Clearing site data removes local
-plans and history, so export important plans before resetting it.
+Sequences and history, so export important Sequences before resetting it.
 
 ## Develop Online Rooms
 
@@ -60,10 +60,10 @@ HTTPS origin. Accept or trust Wrangler's development certificate before a
 browser connects, and set `ALLOWED_ORIGINS` to the web origin exactly.
 
 The default `make run-web` server is `http://localhost:8080`. That is suitable
-for plan, solo, and offline browser development, but it cannot create a valid
-online invitation because online join URLs require HTTPS. For end-to-end online
-testing, use a trusted local HTTPS web server or staging PWA and compile it with
-the reachable HTTPS relay URL:
+for Sequence, solo, and offline browser development, but it cannot create a
+valid online invitation because online join URLs require HTTPS. For end-to-end
+online testing, use a trusted local HTTPS web server or staging PWA and compile
+it with the reachable HTTPS relay URL:
 
 ```sh
 make build-web RELAY_URL=https://relay.example.com

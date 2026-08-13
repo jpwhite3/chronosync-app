@@ -57,7 +57,7 @@ class _IdentitySettingsScreenState extends State<IdentitySettingsScreen> {
         Text('Settings', style: Theme.of(context).textTheme.displaySmall),
         const SizedBox(height: ChronoSpacing.xxs),
         Text(
-          'Your plans and session history stay on this device.',
+          'Your sequences and session history stay on this device.',
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         const SizedBox(height: ChronoSpacing.lg),
@@ -83,7 +83,7 @@ class _IdentitySettingsScreenState extends State<IdentitySettingsScreen> {
                   textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
                     labelText: 'Display name',
-                    hintText: 'Stage manager',
+                    hintText: 'Alex Rivera',
                   ),
                   onSubmitted: (String value) => _save(),
                 ),
@@ -111,7 +111,7 @@ class _IdentitySettingsScreenState extends State<IdentitySettingsScreen> {
                   icon: Icons.cloud_off_rounded,
                   title: 'Local by default',
                   body:
-                      'Plans never sync automatically. Sharing starts only '
+                      'Sequences never sync automatically. Sharing starts only '
                       'when you create a live session or export a file.',
                 ),
                 Divider(height: ChronoSpacing.lg),

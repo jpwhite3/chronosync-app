@@ -145,7 +145,7 @@ include an `errorCode`; connection-only results echo `connectionId` instead of
 `deviceToken`.
 
 The active host promotes or demotes an authenticated device without sharing a
-Controller bearer secret:
+Timekeeper (`controller`) bearer secret:
 
 ```json
 {
@@ -164,7 +164,8 @@ the override. Role overrides and blocked-device tombstones are each capped at
 250 entries; new entries beyond that bound return a correlated
 `retained_device_limit` failure.
 
-Controllers and participants can submit encrypted requests to the host:
+Timekeepers (`controller` in the protocol) and participants can submit
+encrypted requests to the host:
 
 ```json
 {
@@ -184,18 +185,20 @@ Display connections cannot submit commands.
 
 Relay-originated messages include `welcome`, aggregate `presence`, `pong`,
 `command_forwarded`, `snapshot_accepted`, `peer_disconnect_result`,
-`peer_role_result`, `room_closed`, and structured `error` messages. Presence contains only
-ephemeral connection IDs, roles, connection timestamps, and—only for the
-active host—opaque device tokens; never display names or plan content.
+`peer_role_result`, `room_closed`, and structured `error` messages. Presence
+contains only ephemeral connection IDs, roles, connection timestamps, and—only
+for the active host—opaque device tokens; never display names or Sequence
+content.
 
 ## Host liveness
 
 All clients send `{"type":"ping"}` every 10 seconds because browser WebSockets
 do not expose control-frame pings. Any valid frame refreshes that socket's
 30-second application lease. Normal room traffic and new joins sweep expired
-sockets: stale participants, controllers, and displays are closed and excluded
-from presence, routing, role limits, and room capacity. A frame arriving after
-its sender's lease expired is rejected before it can refresh the lease.
+sockets: stale participants, Timekeepers (`controller`), and displays are
+closed and excluded from presence, routing, role limits, and room capacity. A
+frame arriving after its sender's lease expired is rejected before it can
+refresh the lease.
 
 The host uses the same lease, with additional authority semantics. When it
 expires, the relay clears the active-host identity and reports
@@ -207,7 +210,7 @@ from a healthy guest-to-host session.
 ## Operational limits
 
 - 50 simultaneous guest connections per room, plus one authoritative host.
-- 10 Controller connections per room.
+- 10 Timekeeper (`controller`) connections per room.
 - 250 retained device-role overrides and 250 blocked-device tombstones.
 - 256 KiB of encrypted application payload per message, with a 320 KiB limit
   for the complete WebSocket frame including protocol metadata.

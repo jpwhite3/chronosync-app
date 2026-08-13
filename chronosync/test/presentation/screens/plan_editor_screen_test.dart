@@ -21,14 +21,14 @@ void main() {
       },
     );
 
-    await tester.ensureVisible(find.text('Add step').first);
-    await tester.tap(find.text('Add step').first);
+    await tester.ensureVisible(find.text('Add interval').first);
+    await tester.tap(find.text('Add interval').first);
     await tester.pumpAndSettle();
     await tester.enterText(
-      find.widgetWithText(TextField, 'Step title'),
+      find.widgetWithText(TextField, 'Interval title'),
       'Sound check',
     );
-    await tester.tap(find.widgetWithText(FilledButton, 'Add step').last);
+    await tester.tap(find.widgetWithText(FilledButton, 'Add interval').last);
     await tester.pumpAndSettle();
 
     expect(find.text('Sound check'), findsOneWidget);
@@ -52,7 +52,7 @@ void main() {
       repository: repository,
     );
     await tester.enterText(
-      find.widgetWithText(TextField, 'Plan name'),
+      find.widgetWithText(TextField, 'Sequence name'),
       'Changed run of show',
     );
     await tester.pump();
@@ -70,7 +70,7 @@ void main() {
 
     await tester.tap(find.text('Keep editing'));
     await tester.pumpAndSettle();
-    expect(find.text('Edit plan'), findsOneWidget);
+    expect(find.text('Edit sequence'), findsOneWidget);
 
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
@@ -90,7 +90,10 @@ void main() {
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Could not save the plan. Try again.'), findsOneWidget);
+    expect(
+      find.text('Could not save the sequence. Try again.'),
+      findsOneWidget,
+    );
     expect(find.textContaining('secret.db'), findsNothing);
     expect(find.textContaining('abc123'), findsNothing);
   });
@@ -113,8 +116,8 @@ void main() {
 
     await tester.drag(find.byType(NestedScrollView), const Offset(0, -400));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byTooltip('Step actions').first);
-    await tester.tap(find.byTooltip('Step actions').first);
+    await tester.ensureVisible(find.byTooltip('Interval actions').first);
+    await tester.tap(find.byTooltip('Interval actions').first);
     await tester.pumpAndSettle();
 
     expect(find.text('Move up'), findsOneWidget);
@@ -141,8 +144,8 @@ void main() {
       textScale: 2,
     );
 
-    expect(find.text('Plan details', skipOffstage: false), findsOneWidget);
-    expect(find.text('Steps', skipOffstage: false), findsOneWidget);
+    expect(find.text('Sequence details', skipOffstage: false), findsOneWidget);
+    expect(find.text('Intervals', skipOffstage: false), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -156,11 +159,13 @@ void main() {
       repository: _MemoryPlanRepository(),
     );
 
-    expect(find.text('Edit plan').hitTestable(), findsOneWidget);
-    expect(find.text('Plan details').hitTestable(), findsOneWidget);
-    expect(find.text('Add the first step').hitTestable(), findsOneWidget);
+    expect(find.text('Edit sequence').hitTestable(), findsOneWidget);
+    expect(find.text('Sequence details').hitTestable(), findsOneWidget);
+    await tester.ensureVisible(find.text('Add the first interval'));
+    await tester.pumpAndSettle();
+    expect(find.text('Add the first interval').hitTestable(), findsOneWidget);
     expect(
-      tester.getTopLeft(find.text('Edit plan')).dy,
+      tester.getTopLeft(find.text('Edit sequence')).dy,
       greaterThanOrEqualTo(0),
     );
     expect(tester.takeException(), isNull);
@@ -178,7 +183,7 @@ void main() {
     await tester.tap(find.text('Scheduled start'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Plan start date'), findsOneWidget);
+    expect(find.text('Sequence start date'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -199,12 +204,12 @@ void main() {
       repository: _MemoryPlanRepository(),
     );
 
-    expect(find.text('250-step limit reached'), findsOneWidget);
-    expect(find.text('Add step', skipOffstage: false), findsOneWidget);
+    expect(find.text('250-interval limit reached'), findsOneWidget);
+    expect(find.text('Add interval', skipOffstage: false), findsOneWidget);
     final TextButton addButton = tester.widget<TextButton>(
       find.byWidgetPredicate(
         (Widget widget) => widget is TextButton && widget.onPressed == null,
-        description: 'disabled Add step button',
+        description: 'disabled Add interval button',
       ),
     );
     expect(addButton.onPressed, isNull);

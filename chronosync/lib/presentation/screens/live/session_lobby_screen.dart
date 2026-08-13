@@ -44,7 +44,7 @@ class SessionLobbyScreen extends StatelessWidget {
             ? null
             : IconButton(
                 onPressed: onBack,
-                tooltip: 'Back to plans',
+                tooltip: 'Back to sequences',
                 icon: const Icon(Icons.arrow_back_rounded),
               ),
         title: const Text('Session lobby'),
@@ -135,7 +135,8 @@ class _LobbyHeader extends StatelessWidget {
     return Semantics(
       container: true,
       label:
-          '${data.planTitle}, ${data.stepCount} steps, '
+          '${data.planTitle}, ${data.stepCount} '
+          '${data.stepCount == 1 ? 'interval' : 'intervals'}, '
           '$connectedCount connected',
       child: ExcludeSemantics(
         child: Column(
@@ -152,7 +153,8 @@ class _LobbyHeader extends StatelessWidget {
             ),
             const SizedBox(height: ChronoSpacing.xs),
             Text(
-              '${data.stepCount} ${data.stepCount == 1 ? 'step' : 'steps'}'
+              '${data.stepCount} '
+              '${data.stepCount == 1 ? 'interval' : 'intervals'}'
               ' · ${formatFriendlyDuration(data.totalDuration)}'
               ' · $connectedCount connected',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -631,7 +633,7 @@ class _ParticipantRow extends StatelessWidget {
                   items: const <DropdownMenuItem<SessionRole>>[
                     DropdownMenuItem<SessionRole>(
                       value: SessionRole.controller,
-                      child: Text('Controller'),
+                      child: Text('Timekeeper'),
                     ),
                     DropdownMenuItem<SessionRole>(
                       value: SessionRole.participant,
@@ -780,7 +782,7 @@ class _LobbyBottomBar extends StatelessWidget {
                         ? null
                         : (bool? value) => onReadyChanged!(value ?? false),
                     title: const Text('I’m ready'),
-                    subtitle: const Text('Everyone sees the first step'),
+                    subtitle: const Text('Everyone sees the first interval'),
                   );
                   final Widget start = ChronoPrimaryButton(
                     label: 'Start session',
@@ -823,7 +825,7 @@ class _LobbyBottomBar extends StatelessWidget {
 String _roleLabel(SessionRole role) {
   return switch (role) {
     SessionRole.host => 'Host',
-    SessionRole.controller => 'Controller',
+    SessionRole.controller => 'Timekeeper',
     SessionRole.participant => 'Participant',
     SessionRole.display => 'Display',
   };

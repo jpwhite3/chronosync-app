@@ -41,7 +41,7 @@
       called out below.
 - [ ] User and developer documentation is updated where needed.
 - [ ] `CHANGELOG.md` is updated for a noteworthy user-facing change.
-- [ ] No invitation, capability, room secret, private plan data, or raw device
+- [ ] No invitation, capability, room secret, private Sequence data, or raw device
       identifier appears in the change or its diagnostics.
 
 ## Additional Notes

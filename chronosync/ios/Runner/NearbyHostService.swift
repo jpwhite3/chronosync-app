@@ -1526,6 +1526,11 @@ final class NearbyHostService: NSObject, FlutterStreamHandler {
       && scrub.lowerBound < parse.lowerBound
   }
 
+  static func fallbackJoinPageUsesNeutralAudienceLanguage() -> Bool {
+    joinPage.contains("<h1>Join the live sequence.</h1>")
+      && joinPage.contains("Connect when everyone is ready.")
+  }
+
   private func constantTimeEqual(_ lhs: String, _ rhs: String) -> Bool {
     let left = [UInt8](lhs.utf8)
     let right = [UInt8](rhs.utf8)
@@ -1663,11 +1668,11 @@ final class NearbyHostService: NSObject, FlutterStreamHandler {
     <body>
       <main>
         <div class="mark" aria-hidden="true">◷</div>
-        <h1>Join this Live Session</h1>
+        <h1>Join the live sequence.</h1>
         <p id="intro">Stay on the same Wi-Fi network as the host iPhone.</p>
         <div class="status" aria-live="polite">
           <div class="row"><span class="dot" id="dot"></span><strong id="status">Invitation ready</strong></div>
-          <p id="detail">Connect when your team is ready.</p>
+          <p id="detail">Connect when everyone is ready.</p>
         </div>
         <button id="connect">Connect</button>
         <small>Your invite secret stays in this browser and is not included in the web request. Keep this page open to remain connected.</small>

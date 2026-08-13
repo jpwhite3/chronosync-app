@@ -80,7 +80,8 @@ also inspect:
 - VoiceOver/screen-reader names, roles, values, and traversal order;
 - keyboard-only operation and visible focus;
 - contrast, reduced motion, and status cues that do not rely only on color;
-- Host, Controller, Participant, and Display roles.
+- Host, Timekeeper (`controller` in the protocol), Participant, and Display
+  roles.
 
 Attach screenshots or recordings for affected form factors to the pull request.
 
@@ -93,7 +94,7 @@ on a physical iPhone and at least one guest device for:
 - local-network permission and QR/link join;
 - host foreground/background transitions and screen-awake behavior;
 - Wi-Fi interruption and automatic reconnect;
-- simultaneous controller commands and role revocation;
+- simultaneous Timekeeper commands and role revocation;
 - invitation expiry, audio, native haptics, and VoiceOver;
 - long-running sessions and device sleep/thermal behavior.
 

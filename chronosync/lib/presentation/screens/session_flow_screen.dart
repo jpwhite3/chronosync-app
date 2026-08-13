@@ -334,7 +334,7 @@ class _SessionFlowScreenState extends State<SessionFlowScreen> {
         participantInvitation: _mapInvitation(
           _participantInvitation,
           label: 'Join as participant',
-          detail: 'See the current and next steps, then tap Got it.',
+          detail: 'See the current and next intervals, then tap Got it.',
         ),
         displayInvitation: _mapInvitation(
           _displayInvitation,
@@ -347,7 +347,7 @@ class _SessionFlowScreenState extends State<SessionFlowScreen> {
                   'again.'
             : (_transportLabel.startsWith('Nearby')
                   ? 'Keep this iPhone awake, open, and on the same Wi‑Fi '
-                        'network as the team.'
+                        'network as everyone else.'
                   : 'The host device remains authoritative and must stay '
                         'open.'),
       ),
@@ -487,7 +487,7 @@ class _SessionFlowScreenState extends State<SessionFlowScreen> {
           builder: (BuildContext context) => AlertDialog(
             title: const Text('Finish live session?'),
             content: const Text(
-              'This completes the final step and opens the session summary '
+              'This completes the final interval and opens the session summary '
               'for everyone.',
             ),
             actions: <Widget>[
@@ -517,7 +517,7 @@ class _SessionFlowScreenState extends State<SessionFlowScreen> {
           const SnackBar(
             content: Text(
               'The session changed while confirmation was open. Review the '
-              'current step and try again.',
+              'current interval and try again.',
             ),
           ),
         );
@@ -572,7 +572,7 @@ class _SessionFlowScreenState extends State<SessionFlowScreen> {
     final int? target = await showDialog<int>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Jump to another step?'),
+        title: const Text('Jump to another interval?'),
         content: SizedBox(
           width: 420,
           child: ListView.builder(
@@ -717,7 +717,7 @@ class _SessionFlowScreenState extends State<SessionFlowScreen> {
                 ),
                 title: Text(participant.displayName),
                 subtitle: Text(
-                  '${participant.role.name} · '
+                  '${_roleLabel(participant.role)} · '
                   '${controller.participantConnectionState(participant.deviceId).name}',
                 ),
               ),
@@ -859,4 +859,13 @@ class _SessionFlowScreenState extends State<SessionFlowScreen> {
   Future<void> _releaseActivity() {
     return widget.releaseActivity?.call() ?? _activityLease.release();
   }
+}
+
+String _roleLabel(SessionRole role) {
+  return switch (role) {
+    SessionRole.host => 'Host',
+    SessionRole.controller => 'Timekeeper',
+    SessionRole.participant => 'Participant',
+    SessionRole.display => 'Display',
+  };
 }

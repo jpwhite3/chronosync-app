@@ -168,7 +168,7 @@ final class NearbyClientApp {
   void _configureEntry(Invitation invitation) {
     final bool isDisplay = invitation.requestedRole == SessionRole.display;
     _body.classes.toggle('display-mode', isDisplay);
-    _entryRole.text = isDisplay ? 'Fullscreen display' : 'Team participant';
+    _entryRole.text = isDisplay ? 'Fullscreen display' : 'Participant';
     _nameField.hidden = isDisplay;
     _connectButton.text = isDisplay ? 'Open display' : 'Join live session';
     _roleLabel.text = isDisplay ? 'Display' : 'Participant';
@@ -198,7 +198,7 @@ final class NearbyClientApp {
       );
       if (displayName == null) {
         _displayName
-          ..setCustomValidity('Enter the name your team will see.')
+          ..setCustomValidity('Enter the name others will see.')
           ..reportValidity();
         return;
       }
@@ -370,7 +370,7 @@ final class NearbyClientApp {
       _showConnection(
         _joinConfirmed || invitation.requestedRole == SessionRole.display
             ? 'Live with host'
-            : 'Connected · joining team…',
+            : 'Connected · joining session…',
         state: ConnectionVisualState.live,
       );
       _renderSession();
