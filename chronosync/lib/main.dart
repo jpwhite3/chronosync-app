@@ -157,7 +157,7 @@ class _ChronoSyncBootstrapState extends State<ChronoSyncBootstrap> {
                                 ),
                                 const SizedBox(height: 8),
                                 const Text(
-                                  'Your plans remain on this device. Try '
+                                  'Your sequences remain on this device. Try '
                                   'opening them again.',
                                   textAlign: TextAlign.center,
                                 ),
@@ -258,7 +258,7 @@ final class AppDependencies {
             legacyNotificationSettingsBoxName,
           );
 
-      onProgress?.call('Migrating plans safely…');
+      onProgress?.call('Migrating sequences safely…');
       database =
           initializationOverrides?.createDatabase?.call() ??
           AppDatabase.defaults();

@@ -5,6 +5,7 @@ import '../../data/services/haptic_service.dart';
 import '../../logic/notification_settings_bloc/notification_settings_bloc.dart';
 import '../../logic/notification_settings_bloc/notification_settings_event.dart';
 import '../../logic/notification_settings_bloc/notification_settings_state.dart';
+import '../theme/theme.dart';
 import 'sound_picker_screen.dart';
 
 /// Global notification and haptic settings screen
@@ -26,7 +27,11 @@ class NotificationSettingsScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                   const SizedBox(height: 16),
                   const Text(
                     'Could not load notification settings. Try again.',
@@ -53,13 +58,13 @@ class NotificationSettingsScreen extends StatelessWidget {
                   _buildPermissionBanner(context),
 
                 // Notifications section
-                _buildSectionHeader('Notifications'),
+                _buildSectionHeader(context, 'Notifications'),
                 Semantics(
-                  label: 'Enable or disable event completion notifications',
+                  label: 'Enable or disable interval completion notifications',
                   child: SwitchListTile(
                     title: const Text('Enable Notifications'),
                     subtitle: const Text(
-                      'Receive notifications when events complete',
+                      'Receive notifications when intervals complete',
                     ),
                     value: state.settings.notificationsEnabled,
                     onChanged: (bool value) {
@@ -72,12 +77,12 @@ class NotificationSettingsScreen extends StatelessWidget {
                 const Divider(),
 
                 // Haptic section
-                _buildSectionHeader('Haptic Feedback'),
+                _buildSectionHeader(context, 'Haptic Feedback'),
                 Semantics(
                   label: 'Enable or disable haptic feedback vibration',
                   child: SwitchListTile(
                     title: const Text('Enable Haptic Feedback'),
-                    subtitle: const Text('Vibrate when events complete'),
+                    subtitle: const Text('Vibrate when intervals complete'),
                     value: state.settings.hapticEnabled,
                     onChanged: (bool value) {
                       context.read<NotificationSettingsBloc>().add(
@@ -91,12 +96,12 @@ class NotificationSettingsScreen extends StatelessWidget {
                 const Divider(),
 
                 // Sound section
-                _buildSectionHeader('Sound'),
+                _buildSectionHeader(context, 'Sound'),
                 Semantics(
                   label: 'Enable or disable notification sound',
                   child: SwitchListTile(
                     title: const Text('Enable Sound'),
-                    subtitle: const Text('Play sound when events complete'),
+                    subtitle: const Text('Play sound when intervals complete'),
                     value: state.settings.soundEnabled,
                     onChanged: (bool value) {
                       context.read<NotificationSettingsBloc>().add(
@@ -163,7 +168,7 @@ class NotificationSettingsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Grant permission to receive event notifications',
+                  'Grant permission to receive interval notifications',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: colorScheme.onTertiaryContainer,
                   ),
@@ -187,15 +192,14 @@ class NotificationSettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 14,
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Colors.grey,
+          color: context.chronoColors.textSecondary,
         ),
       ),
     );

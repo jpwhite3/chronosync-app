@@ -17,7 +17,7 @@ state for initialization failures, and runs one ordered startup flow. A deep
 link invitation is handled first. The recovery dialog then prepares audio and
 controller state from the Resume gesture, or deletes the candidate on Discard.
 The existing `SessionFlowScreen` renders the recovered controller from its
-embedded Plan snapshot.
+embedded `PlanSnapshot`.
 
 ## TDD Evidence
 

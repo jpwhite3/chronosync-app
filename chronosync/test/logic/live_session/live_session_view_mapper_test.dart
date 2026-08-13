@@ -180,6 +180,35 @@ void main() {
     expect(summary.steps.single.wasAcknowledged, isTrue);
   });
 
+  test('uses the Timekeeper label when a controller name is unavailable', () {
+    LiveSession session = _startSession(start: start);
+    session = session.copyWith(
+      revision: session.revision + 1,
+      appendedActivity: Activity(
+        id: 'activity-timekeeper',
+        commandId: 'ack-timekeeper',
+        sessionId: session.id,
+        revision: session.revision + 1,
+        type: ActivityType.acknowledged,
+        actorDeviceId: 'controller-1',
+        actorRole: SessionRole.controller,
+        occurredAt: start.add(const Duration(seconds: 10)),
+        stepIndex: 0,
+        stepId: session.currentStep.id,
+      ),
+    );
+
+    final SessionSummaryViewData summary = mapSessionSummaryView(
+      session: session,
+      now: start.add(const Duration(seconds: 15)),
+    );
+
+    expect(
+      summary.steps.single.acknowledgements.single.displayName,
+      'Timekeeper',
+    );
+  });
+
   test('marks live and summary views with incomplete activity history', () {
     final LiveSession complete = _startSession(start: start);
     final LiveSession incomplete = complete.copyWith(

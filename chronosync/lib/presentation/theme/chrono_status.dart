@@ -54,6 +54,7 @@ class ChronoStatusVisual {
 
   static ChronoStatusVisual resolve(BuildContext context, ChronoStatus status) {
     final ChronoColors colors = context.chronoColors;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return switch (status) {
       ChronoStatus.neutral => ChronoStatusVisual(
@@ -82,9 +83,9 @@ class ChronoStatusVisual {
         border: colors.overtime,
       ),
       ChronoStatus.paused => ChronoStatusVisual(
-        foreground: colors.textPrimary,
-        background: colors.surfaceMuted,
-        border: colors.outlineStrong,
+        foreground: colorScheme.secondary,
+        background: colorScheme.secondaryContainer,
+        border: colorScheme.secondary,
       ),
       ChronoStatus.ended => ChronoStatusVisual(
         foreground: colors.textPrimary,

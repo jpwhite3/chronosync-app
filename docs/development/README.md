@@ -13,9 +13,11 @@ says otherwise.
 3. [Command reference](commands.md) — every Make recipe, variable, and artifact
    workflow in one place.
 4. [Testing](testing.md) — the required TDD cycle and complete test matrix.
-5. [Architecture](architecture.md) — layers, domain contracts, persistence,
+5. [Screenshot maintenance](screenshots.md) — canonical fixtures, capture sizes,
+   platform commands, and documentation image checks.
+6. [Architecture](architecture.md) — layers, domain contracts, persistence,
    synchronization, and security boundaries.
-6. [Continuous integration](continuous-integration.md) — GitHub Actions jobs,
+7. [Continuous integration](continuous-integration.md) — GitHub Actions jobs,
    security automation, artifacts, permissions, and failure diagnosis.
 
 ## Operate and Ship

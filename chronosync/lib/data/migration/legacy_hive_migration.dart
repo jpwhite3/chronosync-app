@@ -114,7 +114,7 @@ final class LegacyHiveMigration {
             );
             final String stepTitle = _normalizedLegacyTitle(
               legacyEvent.title,
-              fallback: 'Untitled step',
+              fallback: 'Untitled interval',
               maximumLength: maximumStepTitleLength,
             );
             await _database
@@ -225,14 +225,14 @@ String _chunkedLegacyPlanTitle(
   if (chunkCount == 1) {
     return _normalizedLegacyTitle(
       value,
-      fallback: 'Untitled plan',
+      fallback: 'Untitled sequence',
       maximumLength: maximumLength,
     );
   }
   final String suffix = ' (${chunkIndex + 1}/$chunkCount)';
   final String base = _normalizedLegacyTitle(
     value,
-    fallback: 'Untitled plan',
+    fallback: 'Untitled sequence',
     maximumLength: maximumLength - suffix.length,
   );
   return '$base$suffix';

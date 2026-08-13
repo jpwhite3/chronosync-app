@@ -84,9 +84,28 @@ platform channels, and Cloudflare.
 
 ## Core Domain Contracts
 
+### Product and Domain Terminology
+
+The product language is intentionally broader and more time-focused than the
+compatibility-sensitive domain vocabulary:
+
+| Product and UI term | Internal compatibility term |
+| --- | --- |
+| Sequence | `Plan` / `PlanSnapshot` |
+| Interval | `Step` |
+| Timekeeper | `Controller` role |
+| Timing drift | schedule variance fields and calculations |
+
+User-facing copy and documentation should use the product terms. Code
+identifiers, paths, database names, JSON and CSV fields, archive contents, and
+protocol values retain their existing internal names unless a separately
+versioned migration changes them. This boundary keeps `.chronosync` archives,
+Session history, invitations, and shared transports compatible.
+
 A `Plan` is editable local content. Starting a session embeds an immutable
 `PlanSnapshot`, so later plan edits cannot rewrite history. `LiveSession` is
-immutable, revisioned, and replayable.
+immutable, revisioned, and replayable. In the product, this means that editing
+a Sequence after a live Session cannot rewrite that Session's history.
 
 `SessionReducer` is the only domain state-transition boundary. Each command has
 a unique ID and `baseRevision`; duplicate command IDs are idempotent. Every
@@ -111,8 +130,8 @@ Authorization is enforced in the reducer:
 | Role | Capabilities |
 | --- | --- |
 | Host | Every session and role-management action. |
-| Controller | Pause/resume, advance, adjust, jump, and acknowledge. |
-| Participant | Acknowledge the current step. |
+| `Controller` (Timekeeper in the UI) | Operate timing and acknowledge. |
+| Participant | Acknowledge the current `Step` (Interval in the UI). |
 | Display | Read-only. |
 
 Timers are derived from authenticated timestamps, accumulated pauses, and
@@ -233,17 +252,19 @@ These properties are architectural contracts:
 - Room-scoped device tokens are HMAC-SHA-256 values derived locally; the relay
   never receives the raw local device ID.
 - The relay retains hashes, opaque tokens, role overrides, blocked-token
-  tombstones, revision metadata, and latest ciphertext—not decrypted plans.
-- Public invitations grant Participant or Display; the host manages Controller
-  authority.
+  tombstones, revision metadata, and latest ciphertext—not decrypted Sequence
+  contents.
+- Public invitations grant Participant or Display; the host manages
+  `Controller` authority, presented as Timekeeper access in the UI.
 - Nearby payloads remain application-encrypted, but browser traffic is HTTP/WS
   and assumes a trusted Wi-Fi network.
 
 Never log request bodies, WebSocket frames, capabilities, device tokens,
-ciphertext, session secrets, or private plan content. Report vulnerabilities
+ciphertext, session secrets, or private Sequence content. Report vulnerabilities
 using [SECURITY.md](../../SECURITY.md).
 
-Current operational bounds include 50 guests plus one host, 10 controllers,
+Current operational bounds include 50 guests plus one host, 10 Timekeepers
+(`Controller` roles),
 250 retained role overrides, 250 blocked tokens, 256 KiB encrypted payloads,
 320 KiB frames, 120 messages per 10 seconds per connection, a 30-second socket
 lease, 24-hour online capability/inactivity lifetimes, and eight-hour nearby

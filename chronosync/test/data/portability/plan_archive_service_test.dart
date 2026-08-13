@@ -24,14 +24,14 @@ void main() {
     expect(preview.stepCount, 2);
   });
 
-  test('refuses to export more plans than the importer accepts', () {
+  test('describes an oversized collection as sequences', () {
     expect(
       () => service.exportPlans(List<Plan>.filled(501, _plan())),
       throwsA(
         isA<FormatException>().having(
           (FormatException error) => error.message,
           'message',
-          contains('500 plans'),
+          contains('500 sequences'),
         ),
       ),
     );

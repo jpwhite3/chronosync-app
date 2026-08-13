@@ -7,6 +7,7 @@ import 'package:chronosync/data/models/event.dart';
 import 'package:chronosync/data/models/series.dart';
 import 'package:chronosync/logic/live_timer_bloc/live_timer_bloc.dart';
 import 'package:chronosync/presentation/screens/live_timer_screen.dart';
+import 'package:chronosync/presentation/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -115,7 +116,7 @@ void main() {
       expect(find.text('02:00'), findsOneWidget);
     });
 
-    testWidgets('countdown is not red in normal state', (
+    testWidgets('countdown does not use overtime color in normal state', (
       WidgetTester tester,
     ) async {
       final DateTime now = DateTime.now();
@@ -135,8 +136,7 @@ void main() {
       expect(countdownFinder, findsOneWidget);
 
       final Text countdownWidget = tester.widget<Text>(countdownFinder);
-      // Verify it's not red (should be null or theme default, not Colors.red)
-      expect(countdownWidget.style?.color, isNot(Colors.red));
+      expect(countdownWidget.style?.color, isNot(ChronoColors.light.overtime));
     });
   });
 
@@ -163,7 +163,9 @@ void main() {
       expect(find.text('06:00'), findsOneWidget);
     });
 
-    testWidgets('countdown turns red in overtime', (WidgetTester tester) async {
+    testWidgets('countdown uses the semantic overtime color', (
+      WidgetTester tester,
+    ) async {
       final DateTime now = DateTime.now();
       final LiveTimerRunning state = LiveTimerRunning(
         series: testSeries,
@@ -181,7 +183,7 @@ void main() {
       expect(countdownFinder, findsOneWidget);
 
       final Text countdownWidget = tester.widget<Text>(countdownFinder);
-      expect(countdownWidget.style?.color, Colors.red);
+      expect(countdownWidget.style?.color, ChronoColors.light.overtime);
     });
 
     testWidgets('elapsed timer stays default color in overtime', (
@@ -204,8 +206,7 @@ void main() {
       expect(elapsedFinder, findsOneWidget);
 
       final Text elapsedWidget = tester.widget<Text>(elapsedFinder);
-      // Verify it's not red
-      expect(elapsedWidget.style?.color, isNot(Colors.red));
+      expect(elapsedWidget.style?.color, isNot(ChronoColors.light.overtime));
     });
   });
 

@@ -9,7 +9,7 @@ import 'package:chronosync/presentation/widgets/design_system/design_system.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-/// Role-aware live runbook. All state and actions remain owned by the caller.
+/// Role-aware live sequence. All state and actions remain owned by the caller.
 class LiveSessionScreen extends StatelessWidget {
   const LiveSessionScreen({
     required this.data,
@@ -226,7 +226,7 @@ class _LiveHeader extends StatelessWidget {
       container: true,
       label:
           '${data.planTitle}. ${_roleLabel(data.role)} view. '
-          'Step ${data.currentStepIndex + 1} of ${data.stepCount}. '
+          'Interval ${data.currentStepIndex + 1} of ${data.stepCount}. '
           '${status.label}.',
       child: ExcludeSemantics(
         child: Row(
@@ -245,7 +245,7 @@ class _LiveHeader extends StatelessWidget {
                   const SizedBox(height: ChronoSpacing.xxs),
                   Text(
                     '${_roleLabel(data.role)} · '
-                    'Step ${data.currentStepIndex + 1} of ${data.stepCount}',
+                    'Interval ${data.currentStepIndex + 1} of ${data.stepCount}',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -447,7 +447,7 @@ class _CurrentStepCard extends StatelessWidget {
       child: Semantics(
         container: true,
         label:
-            'Current step, ${data.currentStepTitle}. '
+            'Current interval, ${data.currentStepTitle}. '
             '${_timerSemantic(data)}.',
         child: ExcludeSemantics(
           child: Column(
@@ -457,7 +457,7 @@ class _CurrentStepCard extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      'CURRENT STEP',
+                      'CURRENT INTERVAL',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                   ),
@@ -490,7 +490,7 @@ class _CurrentStepCard extends StatelessWidget {
               const SizedBox(height: ChronoSpacing.md),
               Semantics(
                 label:
-                    'Plan progress, step ${data.currentStepIndex + 1} '
+                    'Sequence progress, interval ${data.currentStepIndex + 1} '
                     'of ${data.stepCount}',
                 value: '${(progress * 100).round()} percent',
                 child: LinearProgressIndicator(
@@ -624,9 +624,9 @@ class _NextStepCard extends StatelessWidget {
       child: Semantics(
         container: true,
         label: hasNext
-            ? 'Next step, ${data.nextStepTitle}, '
+            ? 'Next interval, ${data.nextStepTitle}, '
                   '${_durationSemantic(data.nextStepDuration!)}'
-            : 'This is the final step',
+            : 'This is the final interval',
         child: ExcludeSemantics(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -639,7 +639,7 @@ class _NextStepCard extends StatelessWidget {
                   ),
                   const SizedBox(width: ChronoSpacing.xs),
                   Text(
-                    hasNext ? 'UP NEXT' : 'FINAL STEP',
+                    hasNext ? 'UP NEXT' : 'FINAL INTERVAL',
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                 ],
@@ -675,7 +675,7 @@ class _AcknowledgementsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final DateFormat timeFormat = DateFormat.jm();
     final String semanticDetails = acknowledgements.isEmpty
-        ? 'No one has acknowledged this step yet.'
+        ? 'No one has acknowledged this interval yet.'
         : acknowledgements
               .map<String>(
                 (AcknowledgementViewData acknowledgement) =>
@@ -895,7 +895,7 @@ class _ParticipantAction extends StatelessWidget {
         backgroundColor: context.chronoColors.successContainer,
         borderColor: context.chronoColors.success,
         child: Semantics(
-          label: 'You acknowledged the current step',
+          label: 'You acknowledged the current interval',
           child: ExcludeSemantics(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -919,7 +919,7 @@ class _ParticipantAction extends StatelessWidget {
     }
     return ChronoPrimaryButton(
       label: 'Got it',
-      semanticLabel: 'Acknowledge the current step',
+      semanticLabel: 'Acknowledge the current interval',
       icon: Icons.check_rounded,
       expand: true,
       autofocus: true,
@@ -968,7 +968,7 @@ class _ControllerActions extends StatelessWidget {
             label: isFinalStep ? 'Finish session' : 'Advance',
             semanticLabel: isFinalStep
                 ? 'Finish the live session'
-                : 'Advance to the next step',
+                : 'Advance to the next interval',
             icon: isFinalStep ? Icons.flag_rounded : Icons.skip_next_rounded,
             expand: true,
             autofocus: true,
@@ -1030,7 +1030,7 @@ class _ControllerActions extends StatelessWidget {
                   TextButton.icon(
                     onPressed: enabled ? onJumpRequested : null,
                     icon: const Icon(Icons.alt_route_rounded),
-                    label: const Text('Jump to step'),
+                    label: const Text('Jump to interval'),
                   ),
                 if (isHost && onEndRequested != null)
                   TextButton.icon(
@@ -1065,7 +1065,7 @@ class _ControllerAcknowledgementAction extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!acknowledged) {
       return Semantics(
-        label: 'Acknowledge the current step',
+        label: 'Acknowledge the current interval',
         button: true,
         enabled: enabled,
         child: ExcludeSemantics(
@@ -1079,7 +1079,7 @@ class _ControllerAcknowledgementAction extends StatelessWidget {
     }
 
     return Semantics(
-      label: 'You acknowledged the current step',
+      label: 'You acknowledged the current interval',
       child: ExcludeSemantics(
         child: Container(
           constraints: const BoxConstraints(
@@ -1222,18 +1222,19 @@ class _DisplaySessionViewState extends State<_DisplaySessionView> {
   Widget build(BuildContext context) {
     final LiveSessionViewData data = widget.data;
     final VoidCallback? onClose = widget.onClose;
-    const Color background = Color(0xFF101713);
-    const Color foreground = Color(0xFFF7F5EF);
-    const Color secondary = Color(0xFFB9C7BF);
+    const ChronoColors displayColors = ChronoColors.dark;
+    final Color background = displayColors.canvas;
+    final Color foreground = displayColors.textPrimary;
+    final Color secondary = displayColors.textSecondary;
     final ChronoStatus status = _statusFor(data);
     final Color accent = switch (status) {
-      ChronoStatus.disconnected => const Color(0xFFFFC9BF),
-      ChronoStatus.approaching => const Color(0xFFFFD27A),
-      ChronoStatus.due => const Color(0xFFFFB36B),
-      ChronoStatus.overtime => const Color(0xFFFF8D7D),
-      ChronoStatus.paused => const Color(0xFFD6C7FF),
+      ChronoStatus.disconnected => displayColors.disconnected,
+      ChronoStatus.approaching => displayColors.approaching,
+      ChronoStatus.due => displayColors.due,
+      ChronoStatus.overtime => displayColors.overtime,
+      ChronoStatus.paused => const Color(0xFFC792EA),
       ChronoStatus.ended => secondary,
-      _ => const Color(0xFF8ED8BC),
+      _ => displayColors.live,
     };
     return Scaffold(
       backgroundColor: background,
@@ -1268,7 +1269,7 @@ class _DisplaySessionViewState extends State<_DisplaySessionView> {
                     Semantics(
                       container: true,
                       label:
-                          'Display view. Current step '
+                          'Display view. Current interval '
                           '${data.currentStepTitle}. ${_timerSemantic(data)}.'
                           '${data.isStale ? ' Connection stale.' : ''}',
                       child: ExcludeSemantics(
@@ -1373,10 +1374,10 @@ class _DisplaySessionViewState extends State<_DisplaySessionView> {
                                   ),
                                   const Spacer(),
                                   DecoratedBox(
-                                    decoration: const BoxDecoration(
+                                    decoration: BoxDecoration(
                                       border: Border(
                                         top: BorderSide(
-                                          color: Color(0xFF38463E),
+                                          color: displayColors.outline,
                                         ),
                                       ),
                                     ),
@@ -1398,7 +1399,7 @@ class _DisplaySessionViewState extends State<_DisplaySessionView> {
                                             flex: 3,
                                             child: Text(
                                               data.nextStepTitle == null
-                                                  ? 'Final step'
+                                                  ? 'Final interval'
                                                   : 'Next: ${data.nextStepTitle}',
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
@@ -1654,13 +1655,13 @@ String _liveUpdateLabel(LiveSessionViewData data) {
             : 'Session ended',
     };
   }
-  return 'Current step ${data.currentStepTitle}. $state.';
+  return 'Current interval ${data.currentStepTitle}. $state.';
 }
 
 String _roleLabel(SessionRole role) {
   return switch (role) {
     SessionRole.host => 'Host',
-    SessionRole.controller => 'Controller',
+    SessionRole.controller => 'Timekeeper',
     SessionRole.participant => 'Participant',
     SessionRole.display => 'Display',
   };

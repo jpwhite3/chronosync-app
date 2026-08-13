@@ -106,7 +106,7 @@ class _MvpAppShellState extends State<MvpAppShell> {
                           NavigationRailDestination(
                             icon: Icon(Icons.view_timeline_outlined),
                             selectedIcon: Icon(Icons.view_timeline_rounded),
-                            label: Text('Plans'),
+                            label: Text('Sequences'),
                           ),
                           NavigationRailDestination(
                             icon: Icon(Icons.history_outlined),
@@ -148,7 +148,7 @@ class _MvpAppShellState extends State<MvpAppShell> {
                   NavigationDestination(
                     icon: Icon(Icons.view_timeline_outlined),
                     selectedIcon: Icon(Icons.view_timeline_rounded),
-                    label: 'Plans',
+                    label: 'Sequences',
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.history_outlined),

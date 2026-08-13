@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:chronosync/data/models/series.dart';
+import 'package:flutter/material.dart';
 
 class DeletionConfirmationDialog extends StatelessWidget {
   final Series series;
@@ -15,9 +15,10 @@ class DeletionConfirmationDialog extends StatelessWidget {
     }
 
     return AlertDialog(
-      title: Text('Delete series "$displayTitle"?'),
+      title: Text('Delete sequence "$displayTitle"?'),
       content: Text(
-        'This will permanently delete ${series.events.length} event(s).',
+        'This will permanently delete ${series.events.length} '
+        '${series.events.length == 1 ? 'interval' : 'intervals'}.',
       ),
       actions: <Widget>[
         TextButton(
@@ -26,7 +27,9 @@ class DeletionConfirmationDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, true),
-          style: TextButton.styleFrom(foregroundColor: Colors.red),
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.error,
+          ),
           child: const Text('Delete'),
         ),
       ],

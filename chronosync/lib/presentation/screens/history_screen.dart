@@ -127,8 +127,8 @@ class _EmptyHistory extends StatelessWidget {
               ),
               const SizedBox(height: ChronoSpacing.xs),
               const Text(
-                'Start a plan to capture its actual timing, actions, and '
-                'schedule variance.',
+                'Start a sequence to capture its actual timing, actions, and '
+                'timing drift.',
                 textAlign: TextAlign.center,
               ),
             ],
@@ -184,7 +184,8 @@ class _HistoryCard extends StatelessWidget {
                     const SizedBox(height: ChronoSpacing.xxs),
                     Text(
                       '${DateFormat.yMMMd().add_jm().format(timestamp.toLocal())}'
-                      ' • ${session.planSnapshot.steps.length} steps'
+                      ' • ${session.planSnapshot.steps.length} '
+                      '${session.planSnapshot.steps.length == 1 ? 'interval' : 'intervals'}'
                       ' • ${formatFriendlyDuration(session.totalElapsedAt(DateTime.now()))}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),

@@ -115,8 +115,8 @@ Keep commits focused and use a concise imperative subject. Conventional Commit
 prefixes are preferred, for example:
 
 ```text
-feat(session): add controller acknowledgement status
-fix(web): preserve plans after worker restart
+feat(session): add Timekeeper acknowledgement status
+fix(web): preserve sequences after worker restart
 test(relay): reject a duplicated command id
 docs: clarify native signing setup
 ```
@@ -131,8 +131,9 @@ Pull requests should:
   platform-specific behavior;
 - avoid unrelated formatting or cleanup.
 
-Never include real invitations, capabilities, room secrets, private plan data,
-or raw device identifiers in commits, logs, fixtures, screenshots, or issues.
+Never include real invitations, capabilities, room secrets, private Sequence
+data, or raw device identifiers in commits, logs, fixtures, screenshots, or
+issues.
 
 ## Documentation
 

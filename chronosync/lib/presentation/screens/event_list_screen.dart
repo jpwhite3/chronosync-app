@@ -19,7 +19,7 @@ class EventListScreen extends StatelessWidget {
         if (state is DeletionError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Could not delete the event. Try again.'),
+              content: const Text('Could not delete the interval. Try again.'),
               duration: const Duration(seconds: 5),
               action: SnackBarAction(
                 label: 'Retry',
@@ -86,7 +86,7 @@ class EventListScreen extends StatelessWidget {
                     // Show undo snackbar
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text('Event deleted'),
+                        content: const Text('Interval deleted'),
                         duration: const Duration(seconds: 8),
                         action: SnackBarAction(
                           label: 'Undo',
@@ -123,13 +123,15 @@ class EventListScreen extends StatelessWidget {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text('Add Event'),
+              title: const Text('Add interval'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   TextField(
                     controller: titleController,
-                    decoration: const InputDecoration(hintText: 'Event Title'),
+                    decoration: const InputDecoration(
+                      hintText: 'Interval title',
+                    ),
                   ),
                   TextField(
                     controller: durationController,
@@ -139,7 +141,7 @@ class EventListScreen extends StatelessWidget {
                     keyboardType: TextInputType.number,
                   ),
                   SwitchListTile(
-                    title: const Text('Auto-progress'),
+                    title: const Text('Auto-advance'),
                     subtitle: const Text('Auto-advance when time expires'),
                     value: autoProgress,
                     onChanged: (bool value) {
@@ -161,12 +163,16 @@ class EventListScreen extends StatelessWidget {
                     final int duration =
                         int.tryParse(durationController.text) ?? 0;
                     if (duration < 1) {
+                      final ColorScheme colorScheme = Theme.of(
+                        context,
+                      ).colorScheme;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text(
-                            'Event duration must be at least 1 second',
+                            'Interval duration must be at least 1 second',
+                            style: TextStyle(color: colorScheme.onError),
                           ),
-                          backgroundColor: Colors.red,
+                          backgroundColor: colorScheme.error,
                         ),
                       );
                       return;
@@ -227,13 +233,15 @@ class EventListScreen extends StatelessWidget {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text('Edit Event'),
+              title: const Text('Edit interval'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   TextField(
                     controller: titleController,
-                    decoration: const InputDecoration(hintText: 'Event Title'),
+                    decoration: const InputDecoration(
+                      hintText: 'Interval title',
+                    ),
                   ),
                   TextField(
                     controller: durationController,
@@ -243,7 +251,7 @@ class EventListScreen extends StatelessWidget {
                     keyboardType: TextInputType.number,
                   ),
                   SwitchListTile(
-                    title: const Text('Auto-progress'),
+                    title: const Text('Auto-advance'),
                     subtitle: const Text('Auto-advance when time expires'),
                     value: autoProgress,
                     onChanged: (bool value) {
@@ -265,12 +273,16 @@ class EventListScreen extends StatelessWidget {
                     final int duration =
                         int.tryParse(durationController.text) ?? 0;
                     if (duration < 1) {
+                      final ColorScheme colorScheme = Theme.of(
+                        context,
+                      ).colorScheme;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text(
-                            'Event duration must be at least 1 second',
+                            'Interval duration must be at least 1 second',
+                            style: TextStyle(color: colorScheme.onError),
                           ),
-                          backgroundColor: Colors.red,
+                          backgroundColor: colorScheme.error,
                         ),
                       );
                       return;

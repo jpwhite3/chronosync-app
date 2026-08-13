@@ -14,3 +14,8 @@ published.
 - Repository-wide user and developer documentation.
 - GitHub issue forms, pull-request guidance, support policy, and security
   disclosure instructions.
+
+### Changed
+
+- Reframed ChronoSync as a shared timer for any coordinated group, with
+  Sequence, Interval, Timekeeper, and Timing drift product language.

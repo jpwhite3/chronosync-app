@@ -23,16 +23,14 @@ void main() {
       findsOneWidget,
     );
     expect(
-      find.bySemanticsLabel(RegExp(r'Nearby team.*Unavailable')),
+      find.bySemanticsLabel(RegExp(r'Nearby.*Unavailable')),
       findsOneWidget,
     );
-    expect(
-      find.bySemanticsLabel(RegExp(r'Online team.*Available')),
-      findsOneWidget,
-    );
+    expect(find.bySemanticsLabel(RegExp(r'Online.*Available')), findsOneWidget);
+    expect(find.text('How will everyone join?'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('Online team'));
-    await tester.tap(find.text('Online team'));
+    await tester.ensureVisible(find.text('Online'));
+    await tester.tap(find.text('Online'));
     expect(selectedMode, SessionLaunchMode.online);
     semantics.dispose();
   });

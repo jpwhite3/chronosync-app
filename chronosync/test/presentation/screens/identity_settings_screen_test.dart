@@ -18,6 +18,10 @@ void main() {
     expect(find.textContaining('No account is required'), findsOneWidget);
     expect(find.textContaining('saved on this device'), findsOneWidget);
     expect(find.textContaining('temporary name'), findsNothing);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).decoration?.hintText,
+      'Alex Rivera',
+    );
   });
 
   testWidgets('save failures do not expose internal details', (
@@ -26,7 +30,7 @@ void main() {
     await _pumpSettings(tester, const _ThrowingIdentityRepository());
     await tester.enterText(
       find.widgetWithText(TextField, 'Display name'),
-      'Stage manager',
+      'Jordan Lee',
     );
     await tester.tap(find.text('Save name'));
     await tester.pumpAndSettle();

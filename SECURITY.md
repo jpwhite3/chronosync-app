@@ -44,7 +44,7 @@ Reports are especially useful when they involve:
 - relay behavior that exposes or logs decrypted session content;
 - unsafe `.chronosync` or CSV import/export handling;
 - local-network permission or nearby-session access issues;
-- unintended persistence or disclosure of plan, history, or device data.
+- unintended persistence or disclosure of Sequence, history, or device data.
 
 Online payloads are encrypted by the application; the relay should only handle
 opaque room state. Nearby sessions use application-layer authenticated

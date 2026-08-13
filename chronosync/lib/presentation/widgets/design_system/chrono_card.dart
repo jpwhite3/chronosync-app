@@ -38,7 +38,7 @@ class ChronoCard extends StatelessWidget {
       color: backgroundColor ?? colors.surface,
       surfaceTintColor: Colors.transparent,
       elevation: selected ? 1 : 0,
-      shadowColor: const Color(0x140F1D17),
+      shadowColor: Theme.of(context).colorScheme.shadow,
       shape: RoundedRectangleBorder(
         borderRadius: ChronoRadii.surfaceBorder,
         side: border,

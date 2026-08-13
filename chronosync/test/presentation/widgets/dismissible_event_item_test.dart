@@ -62,8 +62,11 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('Cannot Delete'), findsOneWidget);
-    expect(find.text('Event is in use. Stop the timer first.'), findsOneWidget);
+    expect(find.text('Cannot delete'), findsOneWidget);
+    expect(
+      find.text('Interval is in use. Stop the timer first.'),
+      findsOneWidget,
+    );
     expect(find.text('OK'), findsOneWidget);
     expect(find.text('Go to Timer'), findsNothing);
     expect(allowDeletion, isFalse);
@@ -72,7 +75,7 @@ void main() {
     await tester.tap(find.text('OK'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Cannot Delete'), findsNothing);
+    expect(find.text('Cannot delete'), findsNothing);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();

@@ -93,16 +93,16 @@ void main() {
 
     expect(find.text('Advance'), findsOneWidget);
     expect(
-      find.bySemanticsLabel('Acknowledge the current step'),
+      find.bySemanticsLabel('Acknowledge the current interval'),
       findsOneWidget,
     );
-    expect(find.text('Jump to step'), findsOneWidget);
+    expect(find.text('Jump to interval'), findsOneWidget);
     expect(find.text('End session'), findsNothing);
 
     await tester.ensureVisible(
-      find.bySemanticsLabel('Acknowledge the current step'),
+      find.bySemanticsLabel('Acknowledge the current interval'),
     );
-    await tester.tap(find.bySemanticsLabel('Acknowledge the current step'));
+    await tester.tap(find.bySemanticsLabel('Acknowledge the current interval'));
 
     expect(acknowledged, isTrue);
     expect(tester.takeException(), isNull);
@@ -155,7 +155,7 @@ void main() {
       );
 
       final Finder announcement = find.bySemanticsLabel(
-        'Current step Opening keynote. Session running.',
+        'Current interval Opening keynote. Session running.',
       );
       expect(announcement, findsOneWidget);
       expect(
@@ -337,6 +337,19 @@ void main() {
     expect(find.text('OVERTIME'), findsAtLeastNWidgets(1));
     expect(find.text('Advance'), findsNothing);
     expect(find.text('Got it'), findsNothing);
+
+    final Scaffold scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
+    final Text clock = tester.widget<Text>(find.text('+01:15'));
+    expect(scaffold.backgroundColor, ChronoColors.dark.canvas);
+    expect(clock.style?.color, ChronoColors.dark.overtime);
+    expect(
+      _contrastRatio(ChronoColors.dark.textPrimary, ChronoColors.dark.canvas),
+      greaterThanOrEqualTo(7),
+    );
+    expect(
+      _contrastRatio(ChronoColors.dark.overtime, ChronoColors.dark.canvas),
+      greaterThanOrEqualTo(7),
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -354,6 +367,18 @@ void main() {
     expect(find.text('21:45'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+}
+
+double _contrastRatio(Color foreground, Color background) {
+  final double foregroundLuminance = foreground.computeLuminance();
+  final double backgroundLuminance = background.computeLuminance();
+  final double lighter = foregroundLuminance > backgroundLuminance
+      ? foregroundLuminance
+      : backgroundLuminance;
+  final double darker = foregroundLuminance > backgroundLuminance
+      ? backgroundLuminance
+      : foregroundLuminance;
+  return (lighter + 0.05) / (darker + 0.05);
 }
 
 Future<void> _pumpLive(

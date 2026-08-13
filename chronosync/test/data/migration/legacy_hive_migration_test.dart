@@ -112,7 +112,8 @@ void main() {
       title: oversizedStepTitle,
       durationInSeconds: 60,
     );
-    await eventBox.addAll(<Event>[boundaryStep, oversizedStep]);
+    final Event untitledStep = Event(title: '  ', durationInSeconds: 60);
+    await eventBox.addAll(<Event>[boundaryStep, oversizedStep, untitledStep]);
     await seriesBox.addAll(<Series>[
       Series(
         title: maximumPlanTitle,
@@ -121,6 +122,10 @@ void main() {
       Series(
         title: oversizedPlanTitle,
         events: HiveList<Event>(eventBox, objects: <Event>[oversizedStep]),
+      ),
+      Series(
+        title: '  ',
+        events: HiveList<Event>(eventBox, objects: <Event>[untitledStep]),
       ),
     ]);
 
@@ -132,6 +137,9 @@ void main() {
     final Plan truncatedPlan = plans.singleWhere(
       (Plan plan) => plan.title.startsWith('Q'),
     );
+    final Plan untitledPlan = plans.singleWhere(
+      (Plan plan) => plan.title == 'Untitled sequence',
+    );
 
     expect(boundaryPlan.title, maximumPlanTitle);
     expect(boundaryPlan.steps.single.title, maximumStepTitle);
@@ -140,6 +148,7 @@ void main() {
       truncatedPlan.steps.single.title,
       oversizedStepTitle.substring(0, 240),
     );
+    expect(untitledPlan.steps.single.title, 'Untitled interval');
   });
 
   test('splits legacy series that exceed the 250-step plan limit', () async {

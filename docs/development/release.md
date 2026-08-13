@@ -121,7 +121,7 @@ distribution additionally requires Hardened Runtime and notarization.
 
 ## 5. Run Manual Acceptance
 
-Use fictional plans and fresh anonymous rooms. At minimum verify:
+Use fictional Sequences and fresh anonymous rooms. At minimum verify:
 
 - create, edit, reorder, duplicate, import, export, delete, and recover;
 - scheduled/instant starts, pause/resume, adjust, jump, auto-advance, cues, end,

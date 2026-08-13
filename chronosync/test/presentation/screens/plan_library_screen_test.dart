@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:chronosync/data/portability/plan_archive_service.dart';
 import 'package:chronosync/data/portability/portability_file_service.dart';
 import 'package:chronosync/data/repositories/plan_repository.dart';
@@ -7,9 +9,10 @@ import 'package:chronosync/presentation/theme/theme.dart';
 import 'package:flutter/material.dart' hide Step;
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:file_picker/file_picker.dart';
 
 void main() {
-  testWidgets('creates a plan and opens its editor', (
+  testWidgets('creates a sequence and opens its editor', (
     WidgetTester tester,
   ) async {
     final _LibraryRepository repository = _LibraryRepository(
@@ -17,15 +20,35 @@ void main() {
     );
     await _pumpLibrary(tester, repository: repository);
 
-    await tester.tap(find.text('Create a plan'));
+    await tester.tap(find.text('Create a sequence'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Saturday conference');
     await tester.tap(find.text('Create'));
     await tester.pumpAndSettle();
 
     expect(repository.createdTitles, <String>['Saturday conference']);
-    expect(find.text('Edit plan'), findsOneWidget);
+    expect(find.text('Edit sequence'), findsOneWidget);
     expect(find.text('Saturday conference'), findsOneWidget);
+  });
+
+  testWidgets('empty library introduces the broad sequence workflow', (
+    WidgetTester tester,
+  ) async {
+    await _pumpLibrary(
+      tester,
+      repository: _LibraryRepository(plans: const <Plan>[]),
+    );
+
+    expect(find.text('Keep every clock in sync'), findsOneWidget);
+    expect(
+      find.text(
+        'Build a sequence of timed intervals, then share the live moment '
+        'with anyone nearby or online.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('event example'), findsNothing);
+    expect(find.textContaining('plan', findRichText: true), findsNothing);
   });
 
   testWidgets('repository failures do not expose internal details', (
@@ -37,13 +60,13 @@ void main() {
     );
     await _pumpLibrary(tester, repository: repository);
 
-    await tester.tap(find.byTooltip('Plan actions'));
+    await tester.tap(find.byTooltip('Sequence actions'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Duplicate'));
     await tester.pumpAndSettle();
 
     expect(
-      find.text('Could not duplicate the plan. Try again.'),
+      find.text('Could not duplicate the sequence. Try again.'),
       findsOneWidget,
     );
     expect(find.textContaining('plans.sqlite'), findsNothing);
@@ -58,11 +81,11 @@ void main() {
     );
     await _pumpLibrary(tester, repository: repository);
 
-    await tester.tap(find.text('Start with an event example'));
+    await tester.tap(find.text('Try a sample sequence'));
     await tester.pumpAndSettle();
 
     expect(
-      find.text('Could not create the example plan. Try again.'),
+      find.text('Could not create the sample sequence. Try again.'),
       findsOneWidget,
     );
     expect(find.textContaining('example.sqlite'), findsNothing);
@@ -77,13 +100,13 @@ void main() {
     );
     await _pumpLibrary(tester, repository: repository);
 
-    await tester.tap(find.text('Start with an event example'));
+    await tester.tap(find.text('Try a sample sequence'));
     await tester.pumpAndSettle();
 
     expect(repository.plans, isEmpty);
     expect(repository.deletedIds, <String>['plan-1']);
     expect(
-      find.text('Could not create the example plan. Try again.'),
+      find.text('Could not create the sample sequence. Try again.'),
       findsOneWidget,
     );
   });
@@ -97,14 +120,17 @@ void main() {
     );
     await _pumpLibrary(tester, repository: repository);
 
-    await tester.tap(find.byTooltip('Plan actions'));
+    await tester.tap(find.byTooltip('Sequence actions'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Delete'));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FilledButton, 'Delete'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Could not delete the plan. Try again.'), findsOneWidget);
+    expect(
+      find.text('Could not delete the sequence. Try again.'),
+      findsOneWidget,
+    );
     expect(find.textContaining('sqlite code'), findsNothing);
     expect(find.text('Opening night'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -118,11 +144,14 @@ void main() {
     );
     await _pumpLibrary(tester, repository: repository);
 
-    expect(find.text('ChronoSync could not open your plans.'), findsOneWidget);
+    expect(
+      find.text('ChronoSync could not open your sequences.'),
+      findsOneWidget,
+    );
     expect(find.textContaining('chronosync.sqlite'), findsNothing);
   });
 
-  testWidgets('plan cards remain overflow-free at 200 percent text scale', (
+  testWidgets('sequence cards remain overflow-free at 200 percent text scale', (
     WidgetTester tester,
   ) async {
     tester.view.devicePixelRatio = 1;
@@ -136,11 +165,14 @@ void main() {
       textScale: 2,
     );
 
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -320));
+    await tester.pumpAndSettle();
+
     expect(find.text('Opening night'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('compact library has one aligned New plan action', (
+  testWidgets('compact library has one aligned New sequence action', (
     WidgetTester tester,
   ) async {
     tester.view.devicePixelRatio = 1;
@@ -153,9 +185,9 @@ void main() {
       repository: _LibraryRepository(plans: <Plan>[_plan()]),
     );
 
-    expect(find.text('New plan'), findsOneWidget);
+    expect(find.text('New sequence'), findsOneWidget);
     expect(find.byType(FloatingActionButton), findsOneWidget);
-    expect(tester.getTopLeft(find.text('Your plans')).dx, lessThan(40));
+    expect(tester.getTopLeft(find.text('Your sequences')).dx, lessThan(40));
     expect(tester.takeException(), isNull);
   });
 
@@ -169,12 +201,39 @@ void main() {
     );
 
     final SemanticsNode card = tester.getSemantics(
-      find.bySemanticsLabel('Opening night, 1 step'),
+      find.bySemanticsLabel('Opening night, 1 interval'),
     );
     expect(card.flagsCollection.isButton, isFalse);
     expect(find.text('Edit'), findsOneWidget);
     expect(find.text('Start'), findsOneWidget);
     semantics.dispose();
+  });
+
+  testWidgets('singular import copy names one sequence and one interval', (
+    WidgetTester tester,
+  ) async {
+    final Uint8List archive = const PlanArchiveService().exportPlans(<Plan>[
+      _plan(),
+    ]);
+    await _pumpLibrary(
+      tester,
+      repository: _LibraryRepository(plans: const <Plan>[]),
+      fileService: PortabilityFileService(filePicker: _ArchivePicker(archive)),
+    );
+
+    await tester.tap(find.byTooltip('Sequence library actions'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Import .chronosync'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('1 sequence and 1 interval were exported by ChronoSync 1.0.0.'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Import'));
+    await tester.pumpAndSettle();
+    expect(find.text('Imported 1 sequence'), findsOneWidget);
   });
 }
 
@@ -182,6 +241,7 @@ Future<void> _pumpLibrary(
   WidgetTester tester, {
   required PlanRepository repository,
   double textScale = 1,
+  PortabilityFileService fileService = const PortabilityFileService(),
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -197,13 +257,46 @@ Future<void> _pumpLibrary(
       home: PlanLibraryScreen(
         repository: repository,
         archiveService: const PlanArchiveService(),
-        fileService: const PortabilityFileService(),
+        fileService: fileService,
         onStartPlan: (Plan _) async {},
         onJoinSession: () {},
       ),
     ),
   );
   await tester.pumpAndSettle();
+}
+
+final class _ArchivePicker implements FilePickerAdapter {
+  const _ArchivePicker(this.bytes);
+
+  final Uint8List bytes;
+
+  @override
+  Future<FilePickerResult?> pickFiles({
+    required String dialogTitle,
+    required FileType type,
+    required List<String> allowedExtensions,
+    required bool allowMultiple,
+    required bool withData,
+    required bool withReadStream,
+  }) async {
+    return FilePickerResult(<PlatformFile>[
+      PlatformFile(
+        name: 'one-sequence.chronosync',
+        size: bytes.length,
+        readStream: Stream<List<int>>.value(bytes),
+      ),
+    ]);
+  }
+
+  @override
+  Future<String?> saveFile({
+    required String dialogTitle,
+    required String fileName,
+    required FileType type,
+    required List<String> allowedExtensions,
+    required Uint8List bytes,
+  }) async => null;
 }
 
 Plan _plan({String title = 'Opening night'}) {

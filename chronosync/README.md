@@ -1,8 +1,12 @@
 # ChronoSync
 
-ChronoSync is an account-free shared runbook for live event teams. Create a
-timed plan, run it from iPhone, Mac, or the web, and keep hosts, controllers,
-participants, and displays aligned on the current step and schedule variance.
+**Time moves together.**
+
+ChronoSync is an account-free, local-first shared timer for groups moving
+through a Sequence together. Create a reusable Sequence of timed Intervals,
+run it from iPhone, Mac, or the web, and keep Hosts, Timekeepers, Participants,
+and Displays aligned on what is happening now, what comes next, and how the
+timing is drifting.
 
 ## Supported targets
 
@@ -37,8 +41,8 @@ flutter run
 flutter run -d macos
 ```
 
-The web app persists plans and session history locally with Drift and ships the
-SQLite WASM worker required for offline use. Build the installable PWA with:
+The web app persists Sequences and Session history locally with Drift and ships
+the SQLite WASM worker required for offline use. Build the installable PWA with:
 
 ```sh
 flutter build web --release
@@ -79,8 +83,8 @@ disabled when the relay URL or a secure PWA join URL is missing or invalid.
 The native Mac app includes the full editor, solo and online hosting, all
 shared-session roles, fullscreen Display, local history, and import/export.
 Paste a shared invitation into **Join session** to participate natively.
-Mac uses visual and audio cues; haptic preferences remain portable for plans
-that will also run on supported mobile devices.
+Mac uses visual and audio cues; haptic preferences remain portable for
+Sequences that will also run on supported mobile devices.
 
 Nearby hosting is iPhone-only. It advertises a Bonjour service and hosts an
 authenticated local WebSocket while the app remains awake and in the
@@ -89,15 +93,17 @@ invitation.
 
 ## Architecture
 
-- `lib/domain/`: immutable plans, live-session state, reducer, and protocol.
+- `lib/domain/`: immutable `Plan` models, live-session state, reducer, and
+  protocol.
 - `lib/data/`: Drift repositories, migration, portability, cues, and transports.
 - `lib/logic/`: host-authoritative live-session coordination.
 - `lib/presentation/`: responsive editor, lobby, role views, and summaries.
 - `test/`: unit, transport, migration, BLoC, widget, and responsive coverage.
 
-Plans and histories remain on-device unless explicitly exported. The versioned
-`.chronosync` archive supports portable plan exchange; activity history exports
-as CSV.
+Sequences and histories remain on-device unless explicitly exported. The
+versioned `.chronosync` archive supports portable Sequence exchange; activity
+history exports as CSV. Compatibility-sensitive domain and archive code retains
+the internal `Plan` name.
 
 ## Verify changes
 

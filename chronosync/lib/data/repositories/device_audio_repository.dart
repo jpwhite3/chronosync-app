@@ -28,7 +28,7 @@ class DeviceAudioRepository {
         DeviceSound.systemDefault(),
         const DeviceSound(
           id: 'beep',
-          displayName: 'Auto-Progress Beep',
+          displayName: 'Auto-advance beep',
           filePath: 'assets/audio/auto_progress_beep.mp3',
           isSystemSound: true,
         ),

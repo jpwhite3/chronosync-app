@@ -90,6 +90,14 @@ class RunnerTests: XCTestCase {
     XCTAssertTrue(NearbyHostService.fallbackJoinPageScrubsFragment())
   }
 
+  func testFallbackJoinPageUsesNeutralAudienceLanguage() {
+    XCTAssertTrue(NearbyHostService.fallbackJoinPageUsesNeutralAudienceLanguage())
+  }
+
+  func testFallbackJoinPageUsesAdaptiveDarkDecoPalette() {
+    XCTAssertTrue(NearbyHostService.fallbackJoinPageUsesAdaptiveDarkDecoPalette())
+  }
+
   func testNearbyEnvelopeDirectionsAreRestrictedByRole() {
     XCTAssertTrue(
       NearbyHostService.hostCanBroadcastEnvelopeKind("snapshot")

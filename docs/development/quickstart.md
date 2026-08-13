@@ -45,7 +45,7 @@ health. Resolve relevant errors before proceeding. `make setup` runs
 make run-web
 ```
 
-Chrome opens the development server on `http://localhost:8080`. Plans and
+Chrome opens the development server on `http://localhost:8080`. Sequences and
 history persist in the browser's local Drift SQLite/WASM database.
 
 ### Native Mac

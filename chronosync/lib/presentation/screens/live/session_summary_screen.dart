@@ -6,7 +6,7 @@ import 'package:chronosync/presentation/widgets/design_system/design_system.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-/// Planned-versus-actual review shown after a live session ends.
+/// Scheduled-versus-actual review shown after a live session ends.
 class SessionSummaryScreen extends StatelessWidget {
   const SessionSummaryScreen({
     required this.data,
@@ -33,7 +33,7 @@ class SessionSummaryScreen extends StatelessWidget {
             ? null
             : IconButton(
                 onPressed: onDone,
-                tooltip: 'Back to plans',
+                tooltip: 'Back to sequences',
                 icon: const Icon(Icons.close_rounded),
               ),
         title: const Text('Session summary'),
@@ -275,7 +275,7 @@ class _SummaryOverview extends StatelessWidget {
           Text('At a glance', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: ChronoSpacing.md),
           _SummaryMetric(
-            label: 'Planned',
+            label: 'Scheduled',
             value: formatFriendlyDuration(data.plannedDuration),
             icon: Icons.event_available_outlined,
           ),
@@ -304,7 +304,7 @@ class _SummaryOverview extends StatelessWidget {
           ),
           const SizedBox(height: ChronoSpacing.sm),
           _SummaryMetric(
-            label: 'Steps reviewed',
+            label: 'Intervals reviewed',
             value: '${data.steps.length}',
             icon: Icons.checklist_rounded,
           ),
@@ -387,12 +387,12 @@ class _StepSummaryList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text(
-            'Planned vs. actual',
+            'Scheduled vs. actual',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: ChronoSpacing.xxs),
           Text(
-            'Positive variance means the step ran longer than planned.',
+            'Positive drift means the interval ran longer than scheduled.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: ChronoSpacing.md),
@@ -400,7 +400,7 @@ class _StepSummaryList extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: ChronoSpacing.lg),
               child: Text(
-                'No step timing was recorded.',
+                'No interval timing was recorded.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
@@ -442,8 +442,8 @@ class _StepSummaryRow extends StatelessWidget {
     return Semantics(
       container: true,
       label:
-          'Step ${index + 1}, ${step.title}. '
-          'Planned ${_durationSemantic(step.plannedDuration)}. '
+          'Interval ${index + 1}, ${step.title}. '
+          'Scheduled ${_durationSemantic(step.plannedDuration)}. '
           'Actual ${_durationSemantic(step.actualDuration)}. '
           '${step.wasCompleted ? _varianceSemantic(step.variance) : 'Not reached'}.'
           '${_acknowledgementSemantic(step)}',
@@ -491,7 +491,7 @@ class _StepSummaryRow extends StatelessWidget {
                     runSpacing: ChronoSpacing.xs,
                     children: <Widget>[
                       _InlineMetric(
-                        label: 'Planned',
+                        label: 'Scheduled',
                         value: formatClock(step.plannedDuration),
                       ),
                       _InlineMetric(
@@ -499,7 +499,7 @@ class _StepSummaryRow extends StatelessWidget {
                         value: formatClock(step.actualDuration),
                       ),
                       _InlineMetric(
-                        label: 'Variance',
+                        label: 'Timing drift',
                         value: varianceText,
                         valueColor: visual.foreground,
                       ),
@@ -690,12 +690,12 @@ ChronoStatus _varianceStatus(Duration variance) {
 
 String _varianceLabel(Duration variance) {
   if (variance > const Duration(seconds: 30)) {
-    return 'Behind plan';
+    return 'Behind schedule';
   }
   if (variance < const Duration(seconds: -30)) {
-    return 'Ahead of plan';
+    return 'Ahead of schedule';
   }
-  return 'Schedule result';
+  return 'Timing drift';
 }
 
 String _varianceSemantic(Duration variance) {

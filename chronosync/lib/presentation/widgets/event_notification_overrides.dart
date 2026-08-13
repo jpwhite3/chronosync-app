@@ -6,6 +6,7 @@ import '../../logic/event_notification_settings_bloc/event_notification_settings
 import '../../logic/event_notification_settings_bloc/event_notification_settings_event.dart';
 import '../../logic/event_notification_settings_bloc/event_notification_settings_state.dart';
 import '../screens/sound_picker_screen.dart';
+import '../theme/theme.dart';
 
 /// Widget for managing event-level notification setting overrides
 class EventNotificationOverrides extends StatelessWidget {
@@ -70,9 +71,11 @@ class EventNotificationOverrides extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Override global notification settings for this event',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    Text(
+                      'Override global notification settings for this interval',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: context.chronoColors.textSecondary,
+                      ),
                     ),
                     const SizedBox(height: 16),
 
@@ -175,7 +178,7 @@ class EventNotificationOverrides extends StatelessWidget {
                               );
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Event settings saved'),
+                                  content: Text('Interval settings saved'),
                                   duration: Duration(seconds: 2),
                                 ),
                               );

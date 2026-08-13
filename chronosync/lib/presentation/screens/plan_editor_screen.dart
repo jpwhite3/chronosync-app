@@ -58,7 +58,7 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Edit plan'),
+          title: const Text('Edit sequence'),
           actions: <Widget>[
             TextButton.icon(
               onPressed: _saving ? null : _save,
@@ -163,7 +163,8 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
               child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
                   final Widget summary = Text(
-                    '${_draft.steps.length} steps · '
+                    '${_draft.steps.length} '
+                    '${_draft.steps.length == 1 ? 'interval' : 'intervals'} · '
                     '${formatFriendlyDuration(_draft.totalDuration)}',
                     style: Theme.of(context).textTheme.bodyMedium,
                   );
@@ -225,7 +226,7 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
   Future<bool> _save() async {
     final String title = _titleController.text.trim();
     if (title.isEmpty) {
-      _showMessage('Give this plan a name.');
+      _showMessage('Give this sequence a name.');
       return false;
     }
     setState(() {
@@ -244,11 +245,11 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
         _draft = saved;
         _dirty = false;
       });
-      _showMessage('Plan saved');
+      _showMessage('Sequence saved');
       return true;
     } on Object {
       if (mounted) {
-        _showMessage('Could not save the plan. Try again.');
+        _showMessage('Could not save the sequence. Try again.');
       }
       return false;
     } finally {
@@ -270,7 +271,7 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
       builder: (BuildContext context) => AlertDialog(
         title: const Text('Discard changes?'),
         content: const Text(
-          'Changes to this plan have not been saved. You can keep editing '
+          'Changes to this sequence have not been saved. You can keep editing '
           'or discard them.',
         ),
         actions: <Widget>[
@@ -321,7 +322,7 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
       firstDate: firstDate,
       lastDate: lastDate,
       initialDate: initial,
-      helpText: 'Plan start date',
+      helpText: 'Sequence start date',
     );
     if (date == null || !mounted) {
       return;
@@ -329,7 +330,7 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
     final TimeOfDay? time = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(initial),
-      helpText: 'Plan start time',
+      helpText: 'Sequence start time',
     );
     if (time == null) {
       return;
@@ -361,7 +362,7 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
 
   Future<void> _addStep() async {
     if (_draft.steps.length >= maxPlanSteps) {
-      _showMessage('A plan can contain up to $maxPlanSteps steps.');
+      _showMessage('A sequence can contain up to $maxPlanSteps intervals.');
       return;
     }
     final _StepDraft? result = await showDialog<_StepDraft>(
@@ -418,7 +419,7 @@ class _PlanEditorScreenState extends State<PlanEditorScreen> {
 
   void _duplicateStep(Step step) {
     if (_draft.steps.length >= maxPlanSteps) {
-      _showMessage('A plan can contain up to $maxPlanSteps steps.');
+      _showMessage('A sequence can contain up to $maxPlanSteps intervals.');
       return;
     }
     final List<Step> steps = List<Step>.of(_draft.steps);
@@ -519,15 +520,18 @@ class _PlanDetails extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('Plan details', style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            'Sequence details',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: ChronoSpacing.sm),
           TextField(
             controller: titleController,
             textCapitalization: TextCapitalization.sentences,
             maxLength: 160,
             decoration: const InputDecoration(
-              labelText: 'Plan name',
-              hintText: 'Opening night run of show',
+              labelText: 'Sequence name',
+              hintText: 'Morning workshop',
               counterText: '',
             ),
             onChanged: onTitleChanged,
@@ -630,14 +634,13 @@ class _StepsEditor extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Steps',
+                        'Intervals',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       Text(
                         atStepLimit
-                            ? '$maxPlanSteps-step limit reached'
-                            : 'Drag to reorder. The live session uses this '
-                                  'sequence.',
+                            ? '$maxPlanSteps-interval limit reached'
+                            : 'Drag to reorder. Intervals play in this order.',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -646,7 +649,7 @@ class _StepsEditor extends StatelessWidget {
                 TextButton.icon(
                   onPressed: atStepLimit ? null : onAdd,
                   icon: const Icon(Icons.add_rounded),
-                  label: const Text('Add step'),
+                  label: const Text('Add interval'),
                 ),
               ],
             ),
@@ -740,7 +743,7 @@ class _StepTile extends StatelessWidget {
           ),
           onTap: onEdit,
           trailing: PopupMenuButton<String>(
-            tooltip: 'Step actions',
+            tooltip: 'Interval actions',
             onSelected: (String value) {
               switch (value) {
                 case 'moveUp':
@@ -815,19 +818,19 @@ class _EmptySteps extends StatelessWidget {
                     ),
                     const SizedBox(height: ChronoSpacing.sm),
                     Text(
-                      'Add the first step',
+                      'Add the first interval',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: ChronoSpacing.xs),
                     Text(
-                      'Each step gets a title, duration, and optional '
+                      'Each interval gets a title, duration, and optional '
                       'auto-advance.',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: ChronoSpacing.md),
                     ChronoPrimaryButton(
-                      label: 'Add step',
+                      label: 'Add interval',
                       icon: Icons.add_rounded,
                       onPressed: onAdd,
                     ),
@@ -897,7 +900,7 @@ class _StepDialogState extends State<_StepDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.initial == null ? 'Add step' : 'Edit step'),
+      title: Text(widget.initial == null ? 'Add interval' : 'Edit interval'),
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 480),
         child: SingleChildScrollView(
@@ -910,8 +913,8 @@ class _StepDialogState extends State<_StepDialog> {
                 maxLength: 240,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: const InputDecoration(
-                  labelText: 'Step title',
-                  hintText: 'Doors open',
+                  labelText: 'Interval title',
+                  hintText: 'Focus time',
                 ),
               ),
               const SizedBox(height: ChronoSpacing.xs),
@@ -948,7 +951,7 @@ class _StepDialogState extends State<_StepDialog> {
               SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('Custom timing cues'),
-                subtitle: const Text('Override the plan defaults'),
+                subtitle: const Text('Override the sequence defaults'),
                 value: _customCues,
                 onChanged: (bool value) {
                   setState(() {
@@ -976,7 +979,9 @@ class _StepDialogState extends State<_StepDialog> {
         ),
         FilledButton(
           onPressed: _submit,
-          child: Text(widget.initial == null ? 'Add step' : 'Save step'),
+          child: Text(
+            widget.initial == null ? 'Add interval' : 'Save interval',
+          ),
         ),
       ],
     );
@@ -1100,7 +1105,8 @@ class _CueProfileDialogState extends State<_CueProfileDialog> {
                 onChanged: (bool value) => setState(() => _haptic = value),
                 title: const Text('Haptic'),
                 subtitle: const Text(
-                  'Plays on supported mobile devices; saved with this plan.',
+                  'Plays on supported mobile devices; saved with this '
+                  'sequence.',
                 ),
               ),
             ],

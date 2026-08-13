@@ -50,16 +50,22 @@ class DismissibleSeriesItem extends StatelessWidget {
           },
           onDismissed: (DismissDirection direction) => onDismissed(),
           background: Container(
-            color: Colors.red,
+            color: Theme.of(context).colorScheme.error,
             alignment: direction == SwipeDirection.ltr
                 ? Alignment.centerLeft
                 : Alignment.centerRight,
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: const Icon(Icons.delete, color: Colors.white),
+            child: Icon(
+              Icons.delete,
+              color: Theme.of(context).colorScheme.onError,
+            ),
           ),
           child: ListTile(
             title: Text(series.title),
-            subtitle: Text('${series.events.length} event(s)'),
+            subtitle: Text(
+              '${series.events.length} '
+              '${series.events.length == 1 ? 'interval' : 'intervals'}',
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[

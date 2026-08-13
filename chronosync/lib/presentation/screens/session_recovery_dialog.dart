@@ -143,7 +143,7 @@ String _recoveryExplanation(LiveSessionStatus status) {
   return switch (status) {
     LiveSessionStatus.waiting =>
       'This solo session was ready but had not started. It will reopen at '
-          'the first step.',
+          'the first interval.',
     LiveSessionStatus.running =>
       'ChronoSync closed while this timer was running. Time continued while '
           'the app was closed.',

@@ -138,7 +138,7 @@ void main() {
       expect(view.planTitle, 'Live show');
       expect(view.currentStepTitle, 'Doors');
       expect(view.nextStepTitle, 'Welcome');
-      expect(view.stepPositionLabel, 'Step 1 of 3');
+      expect(view.stepPositionLabel, 'Interval 1 of 3');
       expect(view.statusLabel, 'Live');
       expect(view.elapsedLabel, '01:30');
       expect(view.remainingLabel, '03:30');
@@ -309,7 +309,7 @@ void main() {
           );
 
       expect(view.role, SessionRole.controller);
-      expect(view.roleLabel, 'Controller');
+      expect(view.roleLabel, 'Timekeeper');
       expect(view.showsActionPanel, isTrue);
       expect(view.showsControllerControls, isTrue);
       expect(view.canPauseResume, isTrue);
@@ -436,7 +436,10 @@ void main() {
 
         expect(shouldAnnounceNearbyStep(null, initial), isTrue);
         expect(shouldAnnounceNearbyStep(initial, running), isTrue);
-        expect(nearbyStepAnnouncement(running), 'Live. Step 1 of 3: Doors.');
+        expect(
+          nearbyStepAnnouncement(running),
+          'Live. Interval 1 of 3: Doors.',
+        );
       },
     );
 

@@ -55,6 +55,23 @@ void main() {
     expect(started, isFalse);
   });
 
+  testWidgets('singular interval count is announced grammatically', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    await _pumpLobby(
+      tester,
+      size: const Size(390, 844),
+      data: _lobbyData(isHostReady: false, stepCount: 1),
+    );
+
+    expect(
+      find.bySemanticsLabel('Event run of show, 1 interval, 2 connected'),
+      findsOneWidget,
+    );
+    semantics.dispose();
+  });
+
   testWidgets('host can change a connected participant role', (
     WidgetTester tester,
   ) async {
@@ -216,11 +233,11 @@ Future<void> _pumpLobby(
   await tester.pump();
 }
 
-LobbyViewData _lobbyData({required bool isHostReady}) {
+LobbyViewData _lobbyData({required bool isHostReady, int stepCount = 4}) {
   return LobbyViewData(
     planTitle: 'Event run of show',
     transportLabel: 'Nearby · Offline',
-    stepCount: 4,
+    stepCount: stepCount,
     totalDuration: const Duration(minutes: 45),
     isHostReady: isHostReady,
     sessionCode: 'LIME-482',

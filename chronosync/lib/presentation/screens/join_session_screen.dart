@@ -183,7 +183,7 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
     final String roleLabel = switch (widget.invitation.requestedRole) {
       SessionRole.participant => 'Participant',
       SessionRole.display => 'Display',
-      SessionRole.controller => 'Controller',
+      SessionRole.controller => 'Timekeeper',
       SessionRole.host => 'Host',
     };
     final bool isDisplay =
@@ -517,7 +517,7 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
     final int? target = await showDialog<int>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Jump to step'),
+        title: const Text('Jump to interval'),
         content: SizedBox(
           width: 420,
           child: ListView.builder(
@@ -566,7 +566,7 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
               ListTile(
                 title: Text(participant.displayName),
                 subtitle: Text(
-                  '${participant.role.name} · '
+                  '${_roleLabel(participant.role)} · '
                   '${participant.connectionState.name}',
                 ),
               ),
@@ -654,4 +654,13 @@ class _JoinSessionScreenState extends State<JoinSessionScreen> {
   Future<void> _releaseActivity() {
     return widget.releaseActivity?.call() ?? _activityLease.release();
   }
+}
+
+String _roleLabel(SessionRole role) {
+  return switch (role) {
+    SessionRole.host => 'Host',
+    SessionRole.controller => 'Timekeeper',
+    SessionRole.participant => 'Participant',
+    SessionRole.display => 'Display',
+  };
 }

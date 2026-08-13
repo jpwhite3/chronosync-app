@@ -6,6 +6,7 @@ import 'package:chronosync/data/models/user_preferences.dart';
 import 'package:chronosync/logic/settings_cubit/settings_cubit.dart';
 import 'package:chronosync/logic/settings_cubit/settings_state.dart';
 import 'package:chronosync/logic/live_timer_bloc/live_timer_bloc.dart';
+import 'package:chronosync/presentation/theme/theme.dart';
 
 class DismissibleEventItem extends StatelessWidget {
   final Event event;
@@ -50,18 +51,24 @@ class DismissibleEventItem extends StatelessWidget {
           },
           onDismissed: (DismissDirection direction) => onDismissed(),
           background: Container(
-            color: Colors.red,
+            color: Theme.of(context).colorScheme.error,
             alignment: direction == SwipeDirection.ltr
                 ? Alignment.centerLeft
                 : Alignment.centerRight,
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: const Icon(Icons.delete, color: Colors.white),
+            child: Icon(
+              Icons.delete,
+              color: Theme.of(context).colorScheme.onError,
+            ),
           ),
           child: ListTile(
             title: Text(event.title),
             subtitle: Text(_formatDuration(event.duration)),
             trailing: event.autoProgress
-                ? const Icon(Icons.play_circle_outline, color: Colors.blue)
+                ? Icon(
+                    Icons.play_circle_outline,
+                    color: context.chronoColors.live,
+                  )
                 : null,
             onTap: onEdit,
           ),
@@ -82,8 +89,8 @@ class DismissibleEventItem extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Cannot Delete'),
-        content: const Text('Event is in use. Stop the timer first.'),
+        title: const Text('Cannot delete'),
+        content: const Text('Interval is in use. Stop the timer first.'),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),

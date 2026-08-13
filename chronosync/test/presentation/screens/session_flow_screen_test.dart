@@ -239,6 +239,7 @@ void main() {
       ),
     );
     expect(find.text('Session lobby'), findsOneWidget);
+    expect(find.textContaining('network as everyone else.'), findsOneWidget);
 
     clock.advance(const Duration(seconds: 11));
     await controller.refresh();
@@ -326,7 +327,7 @@ void main() {
     tester
         .widget<IconButton>(
           find.ancestor(
-            of: find.byTooltip('Back to plans'),
+            of: find.byTooltip('Back to sequences'),
             matching: find.byType(IconButton),
           ),
         )
