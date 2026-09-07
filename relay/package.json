@@ -13,11 +13,11 @@
     "check": "npm run audit && npm run typecheck && npm test"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "0.21.1",
+    "@cloudflare/vitest-pool-workers": "0.22.0",
     "@cloudflare/workers-types": "^5.20260809.1",
     "typescript": "^7.0.2",
     "vitest": "4.1.10",
-    "wrangler": "4.121.0"
+    "wrangler": "4.129.0"
   },
   "overrides": {
     "nanoid": "3.3.18"
